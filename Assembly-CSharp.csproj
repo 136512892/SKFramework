@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{D555F54F-5CA4-ED63-5340-CCA39E9E472E}</ProjectGuid>
+    <ProjectGuid>{8F416DCC-7F46-9272-CF3E-3D9B7E050DD7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -79,6 +79,7 @@
     <Compile Include="Assets\SKFramework\Core\Extension\ReflectionExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Input\IInput.cs" />
     <Compile Include="Assets\SKFramework\Core\UI\UIView\IUIView.cs" />
+    <Compile Include="Assets\SKFramework\Core\Question\QuestionsHandler.cs" />
     <Compile Include="Assets\SKFramework\Core\UI\Animation\UIAnimation.cs" />
     <Compile Include="Assets\SKFramework\Core\Timer\ITimer.cs" />
     <Compile Include="Assets\SKFramework\Core\ObjectPool\IPoolable.cs" />
@@ -117,13 +118,10 @@
     <Compile Include="Assets\SKFramework\Core\Timer\Alarm.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\ClassExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Question\ChoiceType.cs" />
-    <Compile Include="Assets\WebRequestData.cs" />
-    <Compile Include="Assets\AimView.cs" />
     <Compile Include="Assets\SKFramework\Core\UI\Animation\UIFadeAnimation.cs" />
     <Compile Include="Assets\SKFramework\Core\Question\EssayQuestion.cs" />
     <Compile Include="Assets\SKFramework\Core\WebRequest\WebRequestMethod.cs" />
     <Compile Include="Assets\SKFramework\Core\Singleton\ISingleton.cs" />
-    <Compile Include="Assets\HomeView.cs" />
     <Compile Include="Assets\SKFramework\Core\Score\ScoreMaster.cs" />
     <Compile Include="Assets\SKFramework\Core\Timer\Timer.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\PlayableDirectorExtension.cs" />
@@ -138,6 +136,7 @@
     <Compile Include="Assets\SKFramework\Core\Extension\BoundsExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\ObjectPool\MonoObjectPool.cs" />
     <Compile Include="Assets\SKFramework\Core\UI\Animation\UIScaleAnimation.cs" />
+    <Compile Include="Assets\SKFramework\Core\Action\TimelineActionChain.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\ObjectExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Question\JudgeQuestion.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\CanvasExtension.cs" />
@@ -147,7 +146,6 @@
     <Compile Include="Assets\SKFramework\Core\Audio\Sound.cs" />
     <Compile Include="Assets\SKFramework\Core\Switchable\SwitchableDoor.cs" />
     <Compile Include="Assets\SKFramework\Core\Input\AxisNames.cs" />
-    <Compile Include="Assets\Example.cs" />
     <Compile Include="Assets\SKFramework\Core\Question\QuestionsProfile.cs" />
     <Compile Include="Assets\SKFramework\Core\WebRequest\WebInterface.cs" />
     <Compile Include="Assets\SKFramework\Core\Action\ConcurrentActionChain.cs" />
@@ -165,12 +163,12 @@
     <Compile Include="Assets\SKFramework\Core\Extension\ImageExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\DateTimeExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\SelectableExtension.cs" />
+    <Compile Include="Assets\SKFramework\Core\Action\TimelineAction.cs" />
     <Compile Include="Assets\SKFramework\Core\Singleton\Singleton.cs" />
     <Compile Include="Assets\SKFramework\Core\Audio\SoundSource.cs" />
     <Compile Include="Assets\SKFramework\Tools\AnimationSampler\AnimationSampler.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\CanvasScalerExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\UI\Animation\UIAnimationActor.cs" />
-    <Compile Include="Assets\WebRequestHandler.cs" />
     <Compile Include="Assets\SKFramework\Plugins\DOTween\Modules\DOTweenModulePhysics.cs" />
     <Compile Include="Assets\SKFramework\Core\Input\KeyInput.cs" />
     <Compile Include="Assets\SKFramework\Core\Audio\AudioData.cs" />
@@ -230,9 +228,6 @@
     <Compile Include="Assets\SKFramework\Core\Score\ScoreProfile.cs" />
     <Compile Include="Assets\SKFramework\Core\UI\UI.cs" />
     <Compile Include="Assets\SKFramework\Core\FSM\FSM.cs" />
-    <Compile Include="Assets\SKFramework\Core\Action\TimelineAction.cs" />
-    <Compile Include="Assets\SKFramework\Core\Action\TimelineActionChain.cs" />
-    <Compile Include="Assets\SKFramework\Core\Question\QuestionsHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\SKFramework\Tools\HighlightOutline\Resources\Shaders\OutlineMask.shader" />
