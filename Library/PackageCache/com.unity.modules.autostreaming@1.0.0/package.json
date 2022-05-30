@@ -1,0 +1,15 @@
+{
+    "name": "com.unity.modules.autostreaming",
+    "version": "1.0.0",
+    "type": "module",
+    "displayName": "Auto Streaming",
+    "description": "The AutoStreaming module implements the resource auto-streaming feature in Unity. Scripting API: https://docs.unity3d.com/ScriptReference/UnityEngine.AutoStreamingModule.html",
+    "dependencies": {
+        "com.unity.modules.animation": "1.0.0",
+        "com.unity.modules.assetbundle": "1.0.0",
+        "com.unity.modules.audio": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.modules.unitywebrequest": "1.0.0",
+        "com.unity.modules.unitywebrequestassetbundle": "1.0.0"
+    }
+}

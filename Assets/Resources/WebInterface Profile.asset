@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 259b75c626119fb4b97bdb2810158528, type: 3}
+  m_Name: WebInterface Profile
+  m_EditorClassIdentifier: 
+  data:
+  - name: "\u73AF\u5883\u6C14\u4F53\u6570\u636E\u76D1\u6D4B\u7EDF\u8BA1"
+    url: http://123.60.143.231:8681/v1.0/car/getHourStatistics
+    method: 1
+    args: []
