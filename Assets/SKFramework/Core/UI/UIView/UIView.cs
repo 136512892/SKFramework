@@ -52,6 +52,7 @@ namespace SK.Framework
         /// <param name="instant">是否立即显示</param>
         public void Show(IViewData data = null, bool instant = false)
         {
+            gameObject.SetActive(true);
             transform.SetAsLastSibling();
             OnShow(data);
 
@@ -93,6 +94,7 @@ namespace SK.Framework
                 //执行动画结束事件
                 onVisible.onEnd?.Invoke();
                 animationChain = null;
+                gameObject.SetActive(false);
             });
         }
         /// <summary>
