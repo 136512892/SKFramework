@@ -5,14 +5,10 @@ namespace SK.Framework
 {
     public static class ArrayExtension
     {
-        public static T[] ForEach<T>(this T[] self, Action<T> action)
-        {
-            for (int i = 0; i < self.Length; i++)
-            {
-                action(self[i]);
-            }
-            return self;
-        }
+        /// <summary>
+        /// 遍历
+        /// </summary>
+        /// <param name="action">遍历事件</param>
         public static T[] ForEach<T>(this T[] self, Action<int, T> action)
         {
             for (int i = 0; i < self.Length; i++)
@@ -21,6 +17,10 @@ namespace SK.Framework
             }
             return self;
         }
+        /// <summary>
+        /// 倒序遍历
+        /// </summary>
+        /// <param name="action">遍历事件</param>
         public static T[] ForEachReverse<T>(this T[] self, Action<T> action)
         {
             for (int i = self.Length - 1; i >= 0; i--)
@@ -29,6 +29,10 @@ namespace SK.Framework
             }
             return self;
         }
+        /// <summary>
+        /// 倒序遍历
+        /// </summary>
+        /// <param name="action">遍历事件</param>
         public static T[] ForEachReverse<T>(this T[] self, Action<int, T> action)
         {
             for(int i = self.Length - 1; i>=0; i--)
@@ -37,6 +41,11 @@ namespace SK.Framework
             }
             return self;
         }
+        /// <summary>
+        /// 合并
+        /// </summary>
+        /// <param name="target">合并的目标</param>
+        /// <returns>返回一个新的Array 包含被合并的两个Array中的所有元素</returns>
         public static T[] Merge<T>(this T[] self, T[] target)
         {
             T[] retArray = new T[self.Length + target.Length];
@@ -50,32 +59,9 @@ namespace SK.Framework
             }
             return retArray;
         }
-        public static T[] Merge<T>(this T[] self, List<T> target)
-        {
-            T[] retArray = new T[self.Length + target.Count];
-            for (int i = 0; i < self.Length; i++)
-            {
-                retArray[i] = self[i];
-            }
-            for (int i = 0; i < target.Count; i++)
-            {
-                retArray[i + self.Length] = target[i];
-            }
-            return retArray;
-        }
-        public static T[] Copy<T>(this T[] self)
-        {
-            T[] retArray = new T[self.Length];
-            for (int i = 0; i < self.Length; i++)
-            {
-                retArray[i] = self[i];
-            }
-            return retArray;
-        }
         /// <summary>
         /// 插入排序
         /// </summary>
-        /// <param name="self">数组</param>
         /// <returns>返回排序后的数组</returns>
         public static int[] SortInsertion(this int[] self)
         {
@@ -95,7 +81,6 @@ namespace SK.Framework
         /// <summary>
         /// 希尔排序
         /// </summary>
-        /// <param name="self">数组</param>
         /// <returns>返回排序后的数组</returns>
         public static int[] SortShell(this int[] self)
         {
@@ -120,7 +105,6 @@ namespace SK.Framework
         /// <summary>
         /// 选择排序
         /// </summary>
-        /// <param name="self">数组</param>
         /// <returns>返回排序后的数组</returns>
         public static int[] SortSelection(this int[] self)
         {
@@ -143,7 +127,6 @@ namespace SK.Framework
         /// <summary>
         /// 冒泡排序
         /// </summary>
-        /// <param name="self">数组</param>
         /// <returns>返回排序后的数组</returns>
         public static int[] SortBubble(this int[] self) 
         {

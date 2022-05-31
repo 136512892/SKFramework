@@ -7,8 +7,7 @@ namespace SK.Framework
         /// <summary>
         /// 转化为字母 (1-26表示字母A-Z)
         /// </summary>
-        /// <param name="self">int值</param>
-        /// <returns>字母值</returns>
+        /// <returns>字母字符</returns>
         public static char ToLetter(this int self)
         {
             if (self < 1 || self > 26) return default;
@@ -17,7 +16,6 @@ namespace SK.Framework
         /// <summary>
         /// 阶乘
         /// </summary>
-        /// <param name="self">int值</param>
         /// <returns>阶乘结果</returns>
         public static int Fact(this int self)
         {

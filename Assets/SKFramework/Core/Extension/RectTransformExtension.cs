@@ -220,18 +220,6 @@ namespace SK.Framework
             self.sizeDelta = sizeDelta;
             return self;
         }
-        public static RectTransform SetSizeWithCurrentAnchors(this RectTransform self, Vector2 size)
-        {
-            self.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
-            self.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
-            return self;
-        }
-        public static RectTransform SetSizeWithCurrentAnchors(this RectTransform self, float width, float height)
-        {
-            self.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
-            self.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
-            return self;
-        }
         public static RectTransform SetWidthWithCurrentAnchors(this RectTransform self, float width)
         {
             self.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);

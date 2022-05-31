@@ -5,6 +5,9 @@ namespace SK.Framework
 {
     public static class DictionaryExtension
     {
+        /// <summary>
+        /// 拷贝字典
+        /// </summary>
         public static Dictionary<K, V> Copy<K, V>(this Dictionary<K, V> self)
         {
             Dictionary<K, V> retDic = new Dictionary<K, V>(self.Count);
@@ -17,6 +20,10 @@ namespace SK.Framework
             }
             return retDic;
         }
+        /// <summary>
+        /// 遍历字典
+        /// </summary>
+        /// <param name="action">遍历事件</param>
         public static Dictionary<K, V> ForEach<K, V>(this Dictionary<K, V> self, Action<K, V> action)
         {
             using(var dicE = self.GetEnumerator())
@@ -31,9 +38,6 @@ namespace SK.Framework
         /// <summary>
         /// 合并字典
         /// </summary>
-        /// <typeparam name="K">键类型</typeparam>
-        /// <typeparam name="V">值类型</typeparam>
-        /// <param name="self">字典</param>
         /// <param name="target">被合并的字典</param>
         /// <param name="isOverride">若存在相同键，是否覆盖对应值</param>
         /// <returns>合并后的字典</returns>
@@ -60,9 +64,6 @@ namespace SK.Framework
         /// <summary>
         /// 将字典的所有值放入一个列表
         /// </summary>
-        /// <typeparam name="K">键类型</typeparam>
-        /// <typeparam name="V">值类型</typeparam>
-        /// <param name="self">字典</param>
         /// <returns>列表</returns>
         public static List<V> Value2List<K, V>(this Dictionary<K, V> self)
         {
@@ -76,9 +77,6 @@ namespace SK.Framework
         /// <summary>
         /// 将字典的所有值放入一个数组
         /// </summary>
-        /// <typeparam name="K">键类型</typeparam>
-        /// <typeparam name="V">值类型</typeparam>
-        /// <param name="self">字典</param>
         /// <returns>数组</returns>
         public static V[] Value2Array<K, V>(this Dictionary<K, V> self)
         {
@@ -93,9 +91,6 @@ namespace SK.Framework
         /// <summary>
         /// 尝试添加
         /// </summary>
-        /// <typeparam name="K">键类型</typeparam>
-        /// <typeparam name="V">值类型</typeparam>
-        /// <param name="self">字典</param>
         /// <param name="k">键</param>
         /// <param name="v">值</param>
         /// <returns>若不存在相同键，添加成功并返回true，否则返回false</returns>

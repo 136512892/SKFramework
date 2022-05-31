@@ -7,7 +7,6 @@ namespace SK.Framework
         /// <summary>
         /// 获取时间戳
         /// </summary>
-        /// <param name="self">时间</param>
         /// <returns>时间戳</returns>
         public static double GetTimeStamp(this DateTime self)
         {
@@ -18,7 +17,6 @@ namespace SK.Framework
         /// <summary>
         /// 转换为中文
         /// </summary>
-        /// <param name="self">时间</param>
         /// <param name="prefix">前缀 周/星期</param>
         /// <returns></returns>
         public static string ToChinese(this DayOfWeek self, string prefix)
@@ -36,7 +34,6 @@ namespace SK.Framework
             }
         }
 
-
-        /* yyyy/MM/dd HH:mm:ss*/
+        // yyyy/MM/dd HH:mm:ss:fff
     }
 }

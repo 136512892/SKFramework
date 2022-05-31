@@ -5,6 +5,10 @@ namespace SK.Framework
 {
     public static class QueueExtension
     {
+        /// <summary>
+        /// 遍历
+        /// </summary>
+        /// <param name="action">遍历事件</param>
         public static Queue<T> ForEach<T>(this Queue<T> self, Action<T> action)
         {
             foreach (var item in self)
@@ -13,25 +17,10 @@ namespace SK.Framework
             }
             return self;
         }
-        public static T[] ToArray<T>(this Queue<T> self)
-        {
-            T[] retArray = new T[self.Count];
-            for (int i = 0; i < self.Count; i++)
-            {
-                retArray[i] = self.Dequeue();
-            }
-            return retArray;
-        }
-        public static List<T> ToList<T>(this Queue<T> self)
-        {
-            List<T> retList = new List<T>(self.Count);
-            int count = self.Count;
-            for (int i = 0; i < count; i++)
-            {
-                retList.Add(self.Dequeue());
-            }
-            return retList;
-        }
+        /// <summary>
+        /// 合并 目标队列中的元素将依次出列被合并
+        /// </summary>
+        /// <param name="target">合并的目标</param>
         public static Queue<T> Merge<T>(this Queue<T> self, Queue<T> target)
         {
             int count = target.Count;
@@ -41,6 +30,10 @@ namespace SK.Framework
             }
             return self;
         }
+        /// <summary>
+        /// 拷贝
+        /// </summary>
+        /// <returns>返回一个包含相同元素的新的队列</returns>
         public static Queue<T> Copy<T>(this Queue<T> self)
         {
             Queue<T> retQueue = new Queue<T>(self.Count);

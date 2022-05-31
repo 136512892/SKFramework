@@ -5,6 +5,10 @@ namespace SK.Framework
 {
     public static class StackExtension
     {
+        /// <summary>
+        /// 遍历
+        /// </summary>
+        /// <param name="action">遍历事件</param>
         public static Stack<T> ForEach<T>(this Stack<T> self, Action<T> action)
         {
             foreach (var item in self)
@@ -12,25 +16,6 @@ namespace SK.Framework
                 action(item);
             }
             return self;
-        }
-        public static T[] ToArray<T>(this Stack<T> self)
-        {
-            T[] retArray = new T[self.Count];
-            for (int i = 0; i < retArray.Length; i++)
-            {
-                retArray[i] = self.Pop();
-            }
-            return retArray;
-        }
-        public static List<T> ToList<T>(this Stack<T> self)
-        {
-            List<T> retList = new List<T>(self.Count);
-            int count = self.Count;
-            for (int i = 0; i < count; i++)
-            {
-                retList.Add(self.Pop());
-            }
-            return retList;
         }
     }
 }
