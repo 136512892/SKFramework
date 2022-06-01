@@ -39,9 +39,11 @@ namespace SK.Framework
                     states.Add(state);
                     //执行状态初始化事件
                     state.OnInitialization();
+                    Log.Info(Module.FSM, string.Format("状态机[{0}]添加状态[{1}]", Name, state.Name));
                     return true;
                 }
             }
+            Log.Error(Module.FSM, string.Format("状态机[{0}]已包含状态[{1}] 无需重复添加", Name, state.Name));
             return false;
         }
         /// <summary>
@@ -73,10 +75,13 @@ namespace SK.Framework
                     CurrentState.OnExit();
                     CurrentState = null;
                 }
+                Log.Info(Module.FSM, string.Format("状态机[{0}]移除状态[{1}]", Name, state.Name));
                 //执行状态终止事件
                 state.OnTermination();
-                return states.Remove(state);
+                states.Remove(state);
+                return true;
             }
+            Log.Error(Module.FSM, string.Format("状态机[{0}]不包含状态[{1}] 移除失败", Name, state.Name));
             return false;
         }
         /// <summary>
@@ -95,9 +100,11 @@ namespace SK.Framework
                     CurrentState.OnExit();
                     CurrentState = null;
                 }
+                Log.Info(Module.FSM, string.Format("状态机[{0}]移除状态[{1}]", Name, stateName));
                 targetState.OnTermination();
                 return states.Remove(targetState);
             }
+            Log.Error(Module.FSM, string.Format("状态机[{0}]不包含状态[{1}] 移除失败", Name, stateName));
             return false;
         }
         /// <summary>
@@ -125,7 +132,11 @@ namespace SK.Framework
             //更新当前状态
             CurrentState = state;
             //更新后 当前状态不为空则执行状态进入事件
-            CurrentState?.OnEnter();
+            if (CurrentState != null)
+            {
+                Log.Info(Module.FSM, string.Format("状态机[{0}]切换至状态[{1}]", Name, CurrentState.Name));
+                CurrentState.OnEnter();
+            }
             return true;
         }
         /// <summary>
@@ -172,6 +183,7 @@ namespace SK.Framework
                 {
                     CurrentState = states[0];
                 }
+                Log.Info(Module.FSM, string.Format("状态机[{0}]切换至下一状态[{1}]", Name, CurrentState.Name));
                 //执行状态进入事件
                 CurrentState.OnEnter();
             }
@@ -200,6 +212,7 @@ namespace SK.Framework
                 {
                     CurrentState = states[states.Count - 1];
                 }
+                Log.Info(Module.FSM, string.Format("状态机[{0}]切换至上一状态[{1}]", Name, CurrentState.Name));
                 //执行状态进入事件
                 CurrentState.OnEnter();
             }
@@ -213,6 +226,7 @@ namespace SK.Framework
             {
                 CurrentState.OnExit();
                 CurrentState = null;
+                Log.Info(Module.FSM, string.Format("状态机[{0}]退出当前状态", Name));
             }
         }
         /// <summary>
@@ -293,6 +307,7 @@ namespace SK.Framework
         public StateMachine SwitchWhen(Func<bool> predicate, string targetStateName)
         {
             conditions.Add(new StateSwitchCondition(predicate, null, targetStateName));
+            Log.Info(Module.FSM, string.Format("状态机[{0}]添加切换至状态[{1}]的条件", Name, targetStateName));
             return this;
         }
         /// <summary>
@@ -305,6 +320,7 @@ namespace SK.Framework
         public StateMachine SwitchWhen(Func<bool> predicate, string sourceStateName, string targetStateName)
         {
             conditions.Add(new StateSwitchCondition(predicate, sourceStateName, targetStateName));
+            Log.Info(Module.FSM, string.Format("状态机[{0}]添加状态[{0}]切换至状态[{2}]的条件", Name, sourceStateName, targetStateName));
             return this;
         }
 
@@ -317,13 +333,17 @@ namespace SK.Framework
         public StateBuilder<T> Build<T>(string stateName = null) where T : State, new()
         {
             Type type = typeof(T);
-            T t = (T)Activator.CreateInstance(type);
-            t.Name = string.IsNullOrEmpty(stateName) ? type.Name : stateName;
-            if (states.Find(m => m.Name == t.Name) == null)
+            string name = string.IsNullOrEmpty(stateName) ? type.Name : stateName;
+            if (states.Find(m => m.Name == name) == null)
             {
+                T t = (T)Activator.CreateInstance(type);
+                t.Name = name;
                 states.Add(t);
+                Log.Info(Module.FSM, string.Format("状态机[{0}]构建状态[{1}]", Name, name));
+                return new StateBuilder<T>(t, this);
             }
-            return new StateBuilder<T>(t, this);
+            Log.Error(Module.FSM, string.Format("状态机[{0}]已包含名为[{1}]的状态 构建失败", Name, name));
+            return null;
         }
 
         /// <summary>

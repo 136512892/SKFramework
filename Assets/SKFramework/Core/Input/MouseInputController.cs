@@ -108,14 +108,15 @@ namespace SK.Framework
                 return false;
             }
             mouseButtonInputs.Add(mouseButtonInput);
-
-            var target = infos.Find(m => m.mouseButton == mouseButtonInput.Key);
+            int key = mouseButtonInput.Key;
+            var target = infos.Find(m => m.mouseButton == key);
             if (target == null)
             {
-                target = new MouseButtonInputInfo(mouseButtonInput.Key);
+                target = new MouseButtonInputInfo(key);
                 infos.Add(target);
             }
             target.mouseButtonInputs.Add(mouseButtonInput);
+            Log.Info(Module.Input, string.Format("注册鼠标{0}输入监听", key == 0 ? "左键" : key == 1 ? "右键" : "滚轮"));
             return true;
         }
 
@@ -126,8 +127,8 @@ namespace SK.Framework
                 return false;
             }
             mouseButtonInputs.Remove(mouseButtonInput);
-
-            var target = infos.Find(m => m.mouseButton == mouseButtonInput.Key);
+            int key = mouseButtonInput.Key;
+            var target = infos.Find(m => m.mouseButton == key);
             if (target != null)
             {
                 target.mouseButtonInputs.Remove(mouseButtonInput);
@@ -136,6 +137,7 @@ namespace SK.Framework
                     infos.Remove(target);
                 }
             }
+            Log.Info(Module.Input, string.Format("注销鼠标{0}输入监听", key == 0 ? "左键" : key == 1 ? "右键" : "滚轮"));
             return true;
         }
 
@@ -162,7 +164,8 @@ namespace SK.Framework
                 if (!triggers.ContainsKey(mouseButton) && type != InputTriggerType.Held)
                 {
                     triggers.Add(mouseButton, new InputTrigger(type));
-                    Debug.Log($"触发鼠标按键 [{mouseButton}] {(type == InputTriggerType.Pressed ? "按下" : "抬起")}");
+                    Log.Info(Module.Input, string.Format("触发鼠标{0}{1}", mouseButton == 0 ? "左键" : mouseButton == 1 ? "右键" : "滚轮",
+                        type == InputTriggerType.Pressed ? "按下" : "抬起"));
                 }
             }
         }
@@ -173,7 +176,7 @@ namespace SK.Framework
                 if (!triggers.ContainsKey(mouseButton) && type == InputTriggerType.Held)
                 {
                     triggers.Add(mouseButton, new InputTrigger(type, disposeWhen));
-                    Debug.Log($"触发鼠标按键 [{mouseButton}] 持续按下");
+                    Log.Info(Module.Input, string.Format("触发鼠标{0}持续按下", mouseButton == 0 ? "左键" : mouseButton == 1 ? "右键" : "滚轮"));
                 }
             }
         }

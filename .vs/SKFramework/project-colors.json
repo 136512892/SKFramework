@@ -10,7 +10,12 @@
       "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
       "DisplayName": "杂项文件",
       "ColorIndex": -1
+    },
+    "23c4ef1d-5df7-a2e8-6d86-080d4369c631": {
+      "ProjectGuid": "23c4ef1d-5df7-a2e8-6d86-080d4369c631",
+      "DisplayName": "Assembly-CSharp-Editor",
+      "ColorIndex": 1
     }
   },
-  "NextColorIndex": 1
+  "NextColorIndex": 2
 }

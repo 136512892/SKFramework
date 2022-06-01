@@ -30,7 +30,7 @@ namespace SK.Framework
             QuestionsProfile profile = Resources.Load<QuestionsProfile>(resourcesPath);
             if (profile == null)
             {
-                Debug.LogError(string.Format("加载问题配置文件失败 {0}", resourcesPath));
+                Log.Info(Module.Question, string.Format("加载配置文件失败 {0}", resourcesPath));
             }
             else
             {

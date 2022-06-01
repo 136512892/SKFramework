@@ -22,6 +22,7 @@ namespace SK.Framework
                     {
                         instance = Activator.CreateInstance<T>();
                         instance.OnInit();
+                        Log.Info(Module.Singleton, string.Format("单例[{0}]初始化完成", typeof(Singleton<T>).Name));
                     }
                 }
                 return instance;
@@ -30,6 +31,7 @@ namespace SK.Framework
         public static void Dispose()
         {
             instance = null;
+            Log.Info(Module.Singleton, string.Format("单例[{0}]被释放", typeof(Singleton<T>).Name));
         }
     }
 }

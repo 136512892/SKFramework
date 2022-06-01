@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 using System.Reflection;
 using System.Collections.Generic;
 
@@ -59,11 +58,12 @@ namespace SK.Framework
             {
                 if (null == instance)
                 {
+                    //类型需要具有无参构造函数 对象池才能通过new运算符自动创建对象
                     var ctors = typeof(T).GetConstructors(BindingFlags.Instance | BindingFlags.Public);
                     var index = Array.FindIndex(ctors, m => m.GetParameters().Length == 0);
                     if (index == -1)
                     {
-                        Debug.LogError($"{typeof(ObjectPool<T>)} 类型不具有公有无参构造函数.");
+                        Log.Error(Module.ObjectPool, string.Format("[{0}]类型不具有无参构造函数", typeof(T).Name));
                     }
                     else
                     {
@@ -106,6 +106,7 @@ namespace SK.Framework
                             removeCount--;
                         }
                     }
+                    Log.Info(Module.ObjectPool, string.Format("对象池[{0}]最大缓存数量设置为[{1}]", typeof(ObjectPool<T>).Name, value));
                 }
             }
         }
@@ -118,6 +119,7 @@ namespace SK.Framework
             //若对象池中有缓存则从对象池中获取
             T retT = pool.Count > 0 ? pool.Pop() : new T();
             retT.IsRecycled = false;
+            Log.Info(Module.ObjectPool, string.Format("对象池[{0}]分配对象 当前池中数量[{1}]", typeof(ObjectPool<T>).Name, pool.Count));
             return retT;
         }
         /// <summary>
@@ -135,6 +137,7 @@ namespace SK.Framework
             {
                 pool.Push(t);
             }
+            Log.Info(Module.ObjectPool, string.Format("对象池[{0}]回收对象 当前池中数量[{1}]", typeof(ObjectPool<T>).Name, pool.Count));
             return true;
         }
         /// <summary>
@@ -144,6 +147,7 @@ namespace SK.Framework
         {
             pool.Clear();
             instance = null;
+            Log.Info(Module.ObjectPool, string.Format("对象池[{0}]被释放", typeof(ObjectPool<T>).Name));
         }
     }
 }

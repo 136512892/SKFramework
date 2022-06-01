@@ -19,7 +19,7 @@ namespace SK.Framework
                     UI res = Resources.Load<UI>("UI");
                     if (null == res)
                     {
-                        Debug.LogError("加载UI预制体失败");
+                        Log.Error(Module.UI, "加载UI预制体失败");
                     }
                     else
                     {
@@ -89,6 +89,7 @@ namespace SK.Framework
                 GameObject viewPrefab = Resources.Load<GameObject>(viewResourcePath);
                 if (null != viewPrefab)
                 {
+                    Log.Info(Module.UI, "加载视图[{0}]", viewName);
                     var instance = Instantiate(viewPrefab);
                     instance.transform.SetParent(transform.GetChild((int)level), false);
                     instance.name = viewName;
@@ -100,6 +101,7 @@ namespace SK.Framework
                     viewDic.Add(viewName, view);
                     return true;
                 }
+                Log.Error(Module.UI, "加载视图[{0}]失败 {1}", viewName, viewResourcePath);
             }
             return false;
         }
@@ -114,9 +116,12 @@ namespace SK.Framework
         {
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
+                Log.Info(Module.UI, "显示视图[{0}]", viewName);
                 view.Show(data, instant);
+                return view;
             }
-            return view;
+            Log.Error(Module.UI, "显示视图[{0}]失败: 不存在", viewName);
+            return null;
         }
         /// <summary>
         /// 隐藏视图
@@ -128,9 +133,12 @@ namespace SK.Framework
         {
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
+                Log.Info(Module.UI, "隐藏视图[{0}]", viewName);
                 view.Hide(instant);
+                return view;
             }
-            return view;
+            Log.Error(Module.UI, "隐藏视图[{0}]失败: 不存在", viewName);
+            return null;
         }
         /// <summary>
         /// 获取视图
@@ -152,10 +160,12 @@ namespace SK.Framework
         {
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
+                Log.Info(Module.UI, "卸载视图[{0}]", viewName);
                 viewDic.Remove(viewName);
                 view.Unload(instant);
                 return true;
             }
+            Log.Error(Module.UI, "卸载视图[{0}]失败: 不存在", viewName);
             return false;
         }
         /// <summary>
@@ -163,6 +173,7 @@ namespace SK.Framework
         /// </summary>
         public void UnloadAll()
         {
+            Log.Info(Module.UI, "卸载所有视图");
             List<IUIView> views = new List<IUIView>();
             foreach (var kv in viewDic)
             {

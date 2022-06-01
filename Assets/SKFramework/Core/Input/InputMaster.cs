@@ -67,7 +67,7 @@ namespace SK.Framework
                         Mouse.Reset();
                         Axis.Reset();
                     }
-                    Debug.Log($"{(Instance.toggle ? "打开" : "关闭")}输入监听.");
+                    Log.Info(Module.Input, string.Format("{0}输入监听", value ? "打开" : "关闭"));
                 }
             }
         }

@@ -34,12 +34,11 @@ namespace SK.Framework
             //调用加载开始事件
             onBegan?.Invoke();
             yield return null;
-            AsyncOperation asyncOperation;
+            AsyncOperation asyncOperation = null;
             switch (getSceneMode)
             {
                 case GetSceneMode.Name: asyncOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode); break;
                 case GetSceneMode.BuildIndex: asyncOperation = SceneManager.LoadSceneAsync(sceneBuildIndex, loadSceneMode); break;
-                default: asyncOperation = null; break;
             }
             //不允许场景激活
             asyncOperation.allowSceneActivation = false;
@@ -48,7 +47,7 @@ namespace SK.Framework
                 //真实加载进度占总进度20%
                 Progress = Mathf.Clamp01(asyncOperation.progress / .9f) * .2f;
                 onLoading?.Invoke(Progress);
-                Debug.Log(string.Format("场景加载进度：{0}", Progress));
+                Log.Info(Module.Scene, string.Format("场景加载进度[{0}]", Progress));
                 yield return null;
             }
             //开始延时时间
@@ -60,7 +59,7 @@ namespace SK.Framework
                 //延时进度占总进度的80%
                 Progress = Mathf.Clamp01(t) * .8f + .2f;
                 onLoading?.Invoke(Progress);
-                Debug.Log(string.Format("场景加载进度：{0}", Progress));
+                Log.Info(Module.Scene, string.Format("场景加载进度[{0}]", Progress));
                 yield return null;
             }
             //延时完成后允许场景激活
@@ -69,7 +68,8 @@ namespace SK.Framework
             {
                 yield return null;
             }
-            Debug.Log("场景加载完成");
+            Log.Info(Module.Scene, "场景加载完成");
+
             //调用加载完成事件
             onCompleted?.Invoke();
             Destroy(gameObject);

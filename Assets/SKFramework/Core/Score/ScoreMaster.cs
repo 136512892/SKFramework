@@ -28,7 +28,7 @@ namespace SK.Framework
                     instance.profile = Resources.Load<ScoreProfile>("Score Profile");
                     if (instance.profile == null)
                     {
-                        Debug.LogError("加载分数信息配置表失败.");
+                        Log.Error(Module.Score, "加载配置文件失败");
                     }
                 }
                 return instance;
@@ -44,7 +44,7 @@ namespace SK.Framework
             {
                 var flag = Guid.NewGuid().ToString();
                 var score = new ScoreItem(flag, info.description, info.value);
-                Debug.Log($"创建分数ID为 [{id}] 的分数项 [{info.description}] flag: {flag}");
+                Log.Info(Module.Score, string.Format("创建分数ID为[{0}]的分数项 [{1}]", id, info.description));
                 if (!groups.ContainsKey(ungrouped))
                 {
                     groups.Add(ungrouped, new ScoreGroup(ungrouped, ValueMode.Additive, score));
@@ -57,7 +57,7 @@ namespace SK.Framework
             }
             else
             {
-                Debug.LogError($"配置中不存在ID为 [{id}] 的分数信息.");
+                Log.Error(Module.Score, string.Format("配置表中不存在ID为[{0}]的分数信息", id));
                 return null;
             }
         }
@@ -73,30 +73,36 @@ namespace SK.Framework
                     var flag = Guid.NewGuid().ToString();
                     flags[i] = flag;
                     scores[i] = new ScoreItem(flag, info.description, info.value);
-                    Debug.Log($"创建分数ID为 [{idArray[i]}] 的分数项 [{info.description}] flag: {flag}");
+                    Log.Info(Module.Score, string.Format("创建分数ID为[{0}]的分数项 [{1}]", idArray[i], info.description));
                 }
                 else
                 {
-                    Debug.LogError($"配置中不存在ID为 [{idArray[i]}] 的分数信息.");
+                    Log.Error(Module.Score, string.Format("配置表中不存在ID为[{0}]的分数信息", idArray[i]));
                 }
             }
             ScoreGroup group = new ScoreGroup(groupDescription, valueMode, scores);
             groups.Add(groupDescription, group);
-            Debug.Log($"创建分数组合 [{groupDescription}] 计分模式[{valueMode}]");
+            Log.Info(Module.Score, string.Format("创建分数组合[{0}] 计分模式[{1}]", groupDescription, valueMode));
             return flags;
         }
 
         public bool Delete(string flag)
         {
-            return groups[ungrouped].Delete(flag);
+            if (groups.ContainsKey(ungrouped))
+            {
+                return groups[ungrouped].Delete(flag);
+            }
+            return false;
         }
         public bool DeleteGroup(string groupDescription)
         {
             if (groups.ContainsKey(groupDescription))
             {
                 groups.Remove(groupDescription);
+                Log.Info(Module.Score, string.Format("删除分数组合[{0}]", groupDescription));
                 return true;
             }
+            Log.Info(Module.Score, string.Format("不存在分数组合[{0}]", groupDescription));
             return false;
         }
         public bool DeleteGroupItem(string groupDescription, string flag)
@@ -105,12 +111,17 @@ namespace SK.Framework
             {
                 return target.Delete(flag);
             }
+            Log.Info(Module.Score, string.Format("不存在分数组合[{0}]", groupDescription));
             return false;
         }
 
         public bool Obtain(string flag)
         {
-            return groups[ungrouped].Obtain(flag);
+            if (groups.ContainsKey(ungrouped))
+            {
+                return groups[ungrouped].Obtain(flag);
+            }
+            return false;
         }
         public bool Obtain(string groupDescription, string flag)
         {
@@ -118,12 +129,17 @@ namespace SK.Framework
             {
                 return target.Obtain(flag);
             }
+            Log.Info(Module.Score, string.Format("不存在分数组合[{0}]", groupDescription));
             return false;
         }
 
         public bool Cancle(string flag)
         {
-            return groups[ungrouped].Cancle(flag);
+            if (groups.ContainsKey(ungrouped))
+            {
+                return groups[ungrouped].Cancle(flag);
+            }
+            return false;
         }
         public bool Cancle(string groupDescription, string flag)
         {
@@ -131,6 +147,7 @@ namespace SK.Framework
             {
                 return target.Cancle(flag);
             }
+            Log.Info(Module.Score, string.Format("不存在分数组合[{0}]", groupDescription));
             return false;
         }
 
@@ -140,6 +157,7 @@ namespace SK.Framework
             {
                 return target.GetSum();
             }
+            Log.Info(Module.Score, string.Format("不存在分数组合[{0}]", groupDescription));
             return 0f;
         }
         public float GetSum()

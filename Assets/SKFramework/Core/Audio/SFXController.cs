@@ -34,6 +34,7 @@ namespace SK.Framework
                     {
                         handlers[i].SetMute(isMuted);
                     }
+                    Log.Info(Module.Audio, string.Format("音效{0}静音", value ? "设置" : "取消"));
                 }
             }
         }
@@ -56,6 +57,7 @@ namespace SK.Framework
                         handlers[i].IsPaused = isPaused;
                     }
                 }
+                Log.Info(Module.Audio, string.Format("音效{0}", value ? "暂停" : "恢复"));
             }
         }
         #endregion
@@ -92,10 +94,12 @@ namespace SK.Framework
             {
                 handlers[i].Stop();
             }
+            Log.Info(Module.Audio, "终止音效播放");
         }
 
         public AudioHandler Play(AudioClip clip)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -104,6 +108,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, AudioMixerGroup output)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -113,6 +118,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, Vector3 position)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -123,6 +129,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, Vector3 position, AudioMixerGroup output)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -134,6 +141,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, Transform followTarget)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -144,6 +152,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, Transform followTarget, AudioMixerGroup output)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -155,6 +164,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -164,6 +174,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Vector3 position)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -175,6 +186,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Transform followTarget)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -186,6 +198,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, float pitch, Vector3 position)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -198,6 +211,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, float pitch, Transform followTarget)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -210,6 +224,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Vector3 position, float minDistance, float maxDistance)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -222,6 +237,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Transform followTarget, float minDistance, float maxDistance)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -234,6 +250,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Vector3 position, float minDistance, float maxDistance, bool autoRecycle)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -247,6 +264,7 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Transform followTarget, float minDistance, float maxDistance, bool autoRecycle)
         {
+            Log.Info(Module.Audio, string.Format("播放音效 {0}", clip != null ? clip.name : "--"));
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)

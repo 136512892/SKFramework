@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace SK.Framework
 {
     [CustomEditor(typeof(QuestionsProfile))]
-    [CSDNUrl("https://coderz.blog.csdn.net/")]
+    [CSDNUrl("https://coderz.blog.csdn.net/article/details/125045409?spm=1001.2014.3001.5502")]
     public sealed class QuestionsTargetInspector : AbstractEditor<QuestionsProfile>
     {
         private QuestionType currentType;

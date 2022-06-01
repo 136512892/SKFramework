@@ -32,10 +32,13 @@ namespace SK.Framework
                 if (index == -1)
                 {
                     list.Add(database);
+                    Log.Info(Module.Audio, string.Format("成功加载音频库 {0}", database.name));
                     return true;
                 }
+                Log.Info(Module.Audio, string.Format("音频库[{0}]已存在 无需重复加载", database.name));
                 return false;
             }
+            Log.Error(Module.Audio, string.Format("加载音频库失败 {0}", resourcesPath));
             return false;
         }
         /// <summary>
@@ -50,8 +53,10 @@ namespace SK.Framework
             {
                 list.Remove(target);
                 Resources.UnloadAsset(target);
+                Log.Info(Module.Audio, string.Format("成功卸载音频库 {0}", databaseName));
                 return true;
             }
+            Log.Error(Module.Audio, string.Format("卸载音频库[{0}]失败 不存在", databaseName));
             return false;
         }
         /// <summary>

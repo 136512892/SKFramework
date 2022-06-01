@@ -50,8 +50,10 @@ namespace SK.Framework
                         break;
                     default: break;
                 }
+                Log.Info(Module.Score, string.Format("获得分数组合[{0}]中标识为[{1}]的分数项的分值", Description, flag));
                 return true;
             }
+            Log.Info(Module.Score, string.Format("分数组合[{0}]不存在标识为[{1}]的分数项", Description, flag));
             return false;
         }
         /// <summary>
@@ -62,11 +64,17 @@ namespace SK.Framework
         public bool Cancle(string flag)
         {
             var target = Scores.Find(m => m.Flag == flag);
-            if (target != null && target.IsObtained)
+            if (target != null)
             {
-                target.IsObtained = false;
-                return true;
+                if (target.IsObtained)
+                {
+                    target.IsObtained = false;
+                    Log.Info(Module.Score, string.Format("取消分数组合[{0}]中标识为[{1}]的分数项的分值", Description, flag));
+                    return true;
+                }
+                return false;
             }
+            Log.Info(Module.Score, string.Format("分数组合[{0}]不存在标识为[{1}]的分数项", Description, flag));
             return false;
         }
         /// <summary>
@@ -80,8 +88,10 @@ namespace SK.Framework
             if (target != null)
             {
                 Scores.Remove(target);
+                Log.Info(Module.Score, string.Format("分数组合[{0}]删除标识为[{1}]的分数项", Description, flag));
                 return true;
             }
+            Log.Info(Module.Score, string.Format("分数组合[{0}]不存在标识为[{1}]的分数项", Description, flag));
             return false;
         }
         /// <summary>

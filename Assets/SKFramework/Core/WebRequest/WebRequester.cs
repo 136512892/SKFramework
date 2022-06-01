@@ -27,7 +27,7 @@ namespace SK.Framework
                     instance.profile = Resources.Load<WebInterfaceProfile>("WebInterface Profile");
                     if(instance.profile == null)
                     {
-                        Debug.LogError("加载网络接口配置文件失败");
+                        Log.Error(Module.WebRequest, "加载配置文件失败");
                     }
                     DontDestroyOnLoad(instance);
                 }
@@ -57,7 +57,7 @@ namespace SK.Framework
                 }
                 else
                 {
-                    Debug.LogError(string.Format("GET 调用网络接口{0}失败：{1}", url, request.error));
+                    Log.Error(Module.WebRequest, string.Format("发起网络请求[{0}]失败: {1}", url, request.error));
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace SK.Framework
                 }
                 else
                 {
-                    Debug.LogError(string.Format("POST 调用网络接口{0}失败：{1}", url, request.error));
+                    Log.Error(Module.WebRequest, string.Format("发起网络请求[{0}]失败: {1}", url, request.error));
                 }
             }
         }
@@ -124,12 +124,13 @@ namespace SK.Framework
                     t.args = info.args;
                     Instance.dic.Add(webInterfaceName, t);
                     target = t;
+                    Log.Info(Module.WebRequest, string.Format("成功注册网络接口[{0}]", webInterfaceName));
                     return true;
                 }
-                Debug.Log(string.Format("注册网络接口 {0} 失败 - 未找到相关配置信息", webInterfaceName));
+                Log.Error(Module.WebRequest, string.Format("注册网络接口[{0}]失败: 未找到相关配置信息", webInterfaceName));
                 return false;
             }
-            Debug.Log(string.Format("注册网络接口 {0} 失败 - 已经存在", webInterfaceName));
+            Log.Error(Module.WebRequest, string.Format("注册网络接口[{0}]失败: 已经存在", webInterfaceName));
             return false;
         }
         /// <summary>
@@ -142,9 +143,10 @@ namespace SK.Framework
             if (Instance.dic.ContainsKey(webInterfaceName))
             {
                 Instance.dic.Remove(webInterfaceName);
+                Log.Info(Module.WebRequest, string.Format("注销网络接口[{0}]", webInterfaceName));
                 return true;
             }
-            Debug.Log(string.Format("注销网络接口 {0} 失败 - 未注册", webInterfaceName));
+            Log.Error(Module.WebRequest, string.Format("注销网络接口[{0}]失败: 不存在", webInterfaceName));
             return false;
         }
         /// <summary>
@@ -157,10 +159,11 @@ namespace SK.Framework
         {
             if (Instance.dic.TryGetValue(webInterfaceName, out var webInterface))
             {
+                Log.Info(Module.WebRequest, string.Format("调用网络接口[{0}]", webInterfaceName), args);
                 webInterface.SendWebRequest(args);
                 return true;
             }
-            Debug.Log(string.Format("调用网络接口 {0} 失败 - 请先进行注册", webInterfaceName));
+            Log.Error(Module.WebRequest, string.Format("调用网络接口[{0}]失败: 未注册", webInterfaceName));
             return false;
         }
     }

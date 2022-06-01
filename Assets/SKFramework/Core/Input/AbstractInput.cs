@@ -51,23 +51,30 @@ namespace SK.Framework
 
         public bool BeginListening()
         {
-            if (!isListening && IsValid)
+            if (isListening)
             {
-                Register();
-                isListening = true;
-                return true;
+                Log.Info(Module.Input, string.Format("[{0}]已经在监听状态", key));
+                return false;
             }
-            return false;
+            if (!IsValid)
+            {
+                Log.Error(Module.Input, string.Format("开启监听失败 无效值[{0}]", key));
+                return false;
+            }
+            Register();
+            isListening = true;
+            return true;
         }
         public bool StopListening()
         {
-            if (isListening)
+            if (!isListening)
             {
-                Unregister();
-                isListening = false;
-                return true;
+                Log.Info(Module.Input, string.Format("终止监听失败 [{0}]不在监听状态", key));
+                return false;
             }
-            return false;
+            Unregister();
+            isListening = false;
+            return true;
         }
         public void Reset()
         {

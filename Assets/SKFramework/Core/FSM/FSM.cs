@@ -63,9 +63,11 @@ namespace SK.Framework
                 T machine = (T)Activator.CreateInstance(type);
                 machine.Name = stateMachineName;
                 machines.Add(machine);
+                Log.Info(Module.FSM, string.Format("成功创建状态机 {0}", stateMachineName));
                 return machine;
             }
-            return default;
+            Log.Error(Module.FSM, string.Format("已存在名称为[{0}]的状态机 创建失败", stateMachineName));
+            return null;
         }
         /// <summary>
         /// 销毁状态机
@@ -79,8 +81,10 @@ namespace SK.Framework
             {
                 targetMachine.OnDestroy();
                 machines.Remove(targetMachine);
+                Log.Info(Module.FSM, string.Format("成功销毁状态机 {0}", stateMachineName));
                 return true;
             }
+            Log.Error(Module.FSM, string.Format("不存在名称为[{0}]的状态机 销毁失败", stateMachineName));
             return false;
         }
         /// <summary>
@@ -93,10 +97,12 @@ namespace SK.Framework
         {
             if (machines.Contains(stateMachine))
             {
+                Log.Info(Module.FSM, string.Format("成功销毁状态机 {0}", stateMachine.Name));
                 stateMachine.OnDestroy();
                 machines.Remove(stateMachine);
                 return true;
             }
+            Log.Error(Module.FSM, "销毁状态机失败");
             return false;
         }
         /// <summary>

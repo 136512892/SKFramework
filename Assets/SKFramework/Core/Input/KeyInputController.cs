@@ -108,6 +108,7 @@ namespace SK.Framework
                 infos.Add(target);
             }
             target.keyInputs.Add(keyInput);
+            Log.Info(Module.Input, string.Format("注册键盘按键[{0}]输入监听", keyInput.Key));
             return true;
         }
         public bool Unregister(KeyInput keyInput)
@@ -127,6 +128,7 @@ namespace SK.Framework
                     infos.Remove(target);
                 }
             }
+            Log.Info(Module.Input, string.Format("注销键盘按键[{0}]输入监听", keyInput.Key));
             return true;
         }
 
@@ -151,7 +153,7 @@ namespace SK.Framework
             if (keyCode != KeyCode.None && !triggers.ContainsKey(keyCode) && type != InputTriggerType.Held)
             {
                 triggers.Add(keyCode, new InputTrigger(type));
-                Debug.Log($"触发键盘按键 [{keyCode}] {(type == InputTriggerType.Pressed ? "按下" : "抬起")}");
+                Log.Info(Module.Input, string.Format("触发键盘按键[{0}]{1}", keyCode, type == InputTriggerType.Pressed ? "按下" : "抬起"));
             }
         }
         public void Trigger(KeyCode keyCode, InputTriggerType type, Func<bool> disposeWhen)
@@ -159,7 +161,7 @@ namespace SK.Framework
             if (keyCode != KeyCode.None && !triggers.ContainsKey(keyCode) && type == InputTriggerType.Held)
             {
                 triggers.Add(keyCode, new InputTrigger(type, disposeWhen));
-                Debug.Log($"触发键盘按键 [{keyCode}] 持续按下");
+                Log.Info(Module.Input, string.Format("触发键盘按键[{0}]持续按下", keyCode));
             }
         }
     }

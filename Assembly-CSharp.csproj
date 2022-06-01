@@ -146,6 +146,8 @@
     <Compile Include="Assets\SKFramework\Core\Audio\Sound.cs" />
     <Compile Include="Assets\SKFramework\Core\Switchable\SwitchableDoor.cs" />
     <Compile Include="Assets\SKFramework\Core\Input\AxisNames.cs" />
+    <Compile Include="Assets\SKFramework\Core\Main\Module.cs" />
+    <Compile Include="Assets\SKFramework\Core\Debug\Log.cs" />
     <Compile Include="Assets\SKFramework\Core\Question\QuestionsProfile.cs" />
     <Compile Include="Assets\SKFramework\Core\WebRequest\WebInterface.cs" />
     <Compile Include="Assets\SKFramework\Core\Action\ConcurrentActionChain.cs" />

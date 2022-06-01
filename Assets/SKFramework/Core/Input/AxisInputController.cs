@@ -87,6 +87,7 @@ namespace SK.Framework
                 infos.Add(target);
             }
             target.axisInputs.Add(axisInput);
+            Log.Info(Module.Input, string.Format("注册轴[{0}]输入监听", axisInput.Key));
             return true;
         }
 
@@ -107,6 +108,7 @@ namespace SK.Framework
                     infos.Remove(target);
                 }
             }
+            Log.Info(Module.Input, string.Format("注销轴[{0}]输入监听", axisInput.Key));
             return true;
         }
 

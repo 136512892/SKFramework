@@ -25,6 +25,7 @@ namespace SK.Framework
                 if (source.volume != value)
                 {
                     source.volume = value;
+                    Log.Info(Module.Audio, string.Format("背景音乐音量调整为 {0}", source.volume));
                 }
             }
         }
@@ -39,6 +40,7 @@ namespace SK.Framework
                 if (source.priority != value)
                 {
                     source.priority = value;
+                    Log.Info(Module.Audio, string.Format("背景音乐优先级调整为 {0}", source.priority));
                 }
             }
         }
@@ -53,6 +55,7 @@ namespace SK.Framework
                 if (source.pitch != value)
                 {
                     source.pitch = value;
+                    Log.Info(Module.Audio, string.Format("背景音乐音高调整为 {0}", source.pitch));
                 }
             }
         }
@@ -67,6 +70,7 @@ namespace SK.Framework
                 if (source.mute != value)
                 {
                     source.mute = value;
+                    Log.Info(Module.Audio, string.Format("背景音乐{0}静音", value ? "设置" : "取消"));
                 }
             }
         }
@@ -84,10 +88,12 @@ namespace SK.Framework
                     if (isPaused)
                     {
                         source.Pause();
+                        Log.Info(Module.Audio, "暂停背景音乐");
                     }
                     else
                     {
                         source.UnPause();
+                        Log.Info(Module.Audio, "恢复背景音乐");
                     }
                 }
             }
@@ -110,6 +116,7 @@ namespace SK.Framework
                 if (source.loop != value)
                 {
                     source.loop = value;
+                    Log.Info(Module.Audio, string.Format("背景音乐循环 {0}", source.loop));
                 }
             }
         }
@@ -163,10 +170,12 @@ namespace SK.Framework
             source.clip = bgm;
             source.Play();
             isPaused = false;
+            Log.Info(Module.Audio, string.Format("播放背景音乐 {0}", bgm != null ? bgm.name : "--"));
         }
         public void Stop()
         {
             source.Stop();
+            Log.Info(Module.Audio, "终止背景音乐");
         }
         #endregion
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using System.Reflection;
 using System.Collections.Generic;
 
 namespace SK.Framework
@@ -70,16 +69,7 @@ namespace SK.Framework
             {
                 if (null == instance)
                 {
-                    var ctors = typeof(T).GetConstructors(BindingFlags.Instance | BindingFlags.Public);
-                    var index = Array.FindIndex(ctors, m => m.GetParameters().Length == 0);
-                    if (index == -1)
-                    {
-                        Debug.LogError($"{typeof(MonoObjectPool<T>)} 类型不具有公有无参构造函数.");
-                    }
-                    else
-                    {
-                        instance = Activator.CreateInstance<MonoObjectPool<T>>();
-                    }
+                    instance = Activator.CreateInstance<MonoObjectPool<T>>();
                 }
                 return instance;
             }
@@ -118,6 +108,7 @@ namespace SK.Framework
                             removeCount--;
                         }
                     }
+                    Log.Info(Module.ObjectPool, string.Format("对象池[{0}]最大缓存数量设置为[{1}]", typeof(MonoObjectPool<T>).Name, value));
                 }
             }
         }
@@ -133,6 +124,7 @@ namespace SK.Framework
                 : (createMethod != null ? createMethod.Invoke() : new GameObject().AddComponent<T>());
             retT.hideFlags = HideFlags.HideInHierarchy;
             retT.IsRecycled = false;
+            Log.Info(Module.ObjectPool, string.Format("对象池[{0}]分配对象 当前池中数量[{1}]", typeof(MonoObjectPool<T>).Name, pool.Count));
             return retT;
         }
         /// <summary>
@@ -154,6 +146,7 @@ namespace SK.Framework
             {
                 UnityEngine.Object.Destroy(t.gameObject);
             }
+            Log.Info(Module.ObjectPool, string.Format("对象池[{0}]回收对象 当前池中数量[{1}]", typeof(MonoObjectPool<T>).Name, pool.Count));
             return true;
         }
         /// <summary>
@@ -167,6 +160,7 @@ namespace SK.Framework
             }
             pool.Clear();
             instance = null;
+            Log.Info(Module.ObjectPool, string.Format("对象池[{0}]被释放", typeof(MonoObjectPool<T>).Name));
         }
         /// <summary>
         /// 设置创建方法
@@ -175,6 +169,7 @@ namespace SK.Framework
         public void CreateBy(Func<T> createMethod)
         {
             this.createMethod = createMethod;
+            Log.Info(Module.ObjectPool, string.Format("对象池[{0}]设置创建方法 {1}", typeof(MonoObjectPool<T>).Name, createMethod.Method));
         }
     }
 }
