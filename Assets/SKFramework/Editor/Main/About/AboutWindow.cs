@@ -29,10 +29,12 @@ namespace SK.Framework
         }
 
         private const string csdnUrl = "https://coderz.blog.csdn.net/";
+        private const string githubUrl = "https://github.com/136512892";
         private Texture csdnLogo;
         private Texture csdnTex;
         private Texture wechatTex;
         private Texture qqTex;
+        private Texture githubTex;
 
         private void OnEnable()
         {
@@ -40,6 +42,7 @@ namespace SK.Framework
             csdnTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/SKFramework/Editor/Main/Texture/CSDN.png");
             wechatTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/SKFramework/Editor/Main/Texture/WeChat.png");
             qqTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/SKFramework/Editor/Main/Texture/QQ.png");
+            githubTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/SKFramework/Editor/Main/Texture/Github.png");
         }
 
         private void OnGUI()
@@ -50,7 +53,7 @@ namespace SK.Framework
             GUILayout.Label("本框架开发所用环境: Unity2020.3.16");
             GUILayout.Label("请将SKFramework直接放在Assets根目录下");
 
-            GUILayout.Space(50f);
+            GUILayout.Space(20f);
 
             GUILayout.Label("关于作者");
             //简介
@@ -90,9 +93,22 @@ namespace SK.Framework
                 GUILayout.EndVertical();
             }
             GUILayout.EndHorizontal();
+            
+            EditorGUILayout.Space();
+
+            //Github
+            GUILayout.Label(EditorGUIUtility.TrTextContentWithIcon(" Github:", githubTex), GUILayout.Width(90f));
+            GUILayout.BeginHorizontal();
+            GUILayout.Label($"  主页：{githubUrl}", GUILayout.Width(220f));
+            if (GUILayout.Button("访问", GUILayout.Width(35f)))
+            {
+                Application.OpenURL(githubUrl);
+            }
+            GUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
 
+            //腾讯QQ
             GUILayout.Label(EditorGUIUtility.TrTextContentWithIcon(" 腾讯QQ:", qqTex), GUILayout.Width(90f));
             GUILayout.BeginHorizontal();
             GUILayout.Label("  邮箱：136512892@qq.com", GUILayout.Width(220f));
