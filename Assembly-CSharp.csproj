@@ -162,6 +162,7 @@
     <Compile Include="Assets\SKFramework\Core\Action\ActionChain.cs" />
     <Compile Include="Assets\SKFramework\Core\Scene\GetSceneMode.cs" />
     <Compile Include="Assets\SKFramework\Core\ObjectPool\ObjectPool.cs" />
+    <Compile Include="Assets\SKFramework\Core\Attribute\PackageAttribute.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\ImageExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\DateTimeExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\SelectableExtension.cs" />
@@ -816,9 +817,6 @@
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.TextMeshPro.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualStudio.Editor.dll</HintPath>
     </Reference>
@@ -828,17 +826,11 @@
     <Reference Include="Unity.Timeline">
       <HintPath>Library\ScriptAssemblies\Unity.Timeline.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Rider.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
