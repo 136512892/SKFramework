@@ -69,16 +69,13 @@
     <Compile Include="Assets\SKFramework\Editor\Main\Attribute\CSDNUrlAttribute.cs" />
     <Compile Include="Assets\SKFramework\Editor\UI\ImageContext.cs" />
     <Compile Include="Assets\SKFramework\Editor\Scene\GameObjectFilter\GameObjectFilterConditionPreset.cs" />
-    <Compile Include="Assets\SKFramework\Editor\BatchBuild\BatchBuildProfile.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Audio\AudioDatabaseInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Score\ScoreMasterInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Assets\AssetsDependencies.cs" />
     <Compile Include="Assets\SKFramework\Editor\UI\RectTransformInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\FSM\FSMInspector.cs" />
-    <Compile Include="Assets\SKFramework\Editor\BatchBuild\BatchBuildProfileInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\AbstractEditor.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Question\QuestionsProfileInspector.cs" />
-    <Compile Include="Assets\SKFramework\Editor\BatchBuild\BuildTask.cs" />
     <Compile Include="Assets\SKFramework\Editor\UI\LanHu\LanHuView.cs" />
     <Compile Include="Assets\SKFramework\Editor\Assets\AssetsReference.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Aim\AimSystemInspector.cs" />

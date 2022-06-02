@@ -53,7 +53,6 @@
     <UnityVersion>2020.3.16f1c1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\SKFramework\Tools\HighlightOutline\HighlightOutline.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\ScrollRectExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\QueueExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\VideoPlayerExtension.cs" />
@@ -93,7 +92,6 @@
     <Compile Include="Assets\SKFramework\Core\Switchable\RotateDoor.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\CameraExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Question\MultipleChoiceQuestion.cs" />
-    <Compile Include="Assets\SKFramework\Tools\AnimationSampler\AnimationSamplerInspector.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\RectTransformExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Switchable\SwitchableObjectHandler.cs" />
     <Compile Include="Assets\SKFramework\Core\Audio\AudioHandler.cs" />
@@ -169,7 +167,6 @@
     <Compile Include="Assets\SKFramework\Core\Action\TimelineAction.cs" />
     <Compile Include="Assets\SKFramework\Core\Singleton\Singleton.cs" />
     <Compile Include="Assets\SKFramework\Core\Audio\SoundSource.cs" />
-    <Compile Include="Assets\SKFramework\Tools\AnimationSampler\AnimationSampler.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\CanvasScalerExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\UI\Animation\UIAnimationActor.cs" />
     <Compile Include="Assets\SKFramework\Plugins\DOTween\Modules\DOTweenModulePhysics.cs" />
@@ -233,9 +230,7 @@
     <Compile Include="Assets\SKFramework\Core\FSM\FSM.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\SKFramework\Tools\HighlightOutline\Resources\Shaders\OutlineMask.shader" />
     <None Include="Assets\SKFramework\Plugins\DOTween\DOTween.dll" />
-    <None Include="Assets\SKFramework\Tools\HighlightOutline\Resources\Shaders\OutlineFill.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

@@ -4,30 +4,29 @@
 	"version":"0.0.1",
 	"author":"CoderZ",
 	"description":"动画采样器",
-	"documentationUrl":"https://coderz.blog.csdn.net/",
-	"dependencies":
-	[
-
-	],
-	"releaseDate":"2022.06.02",
-},
-{
-	"name":"AnimationSampler",
-	"version":"0.0.2",
-	"author":"CoderZ",
-	"description":"动画采样器",
-	"documentationUrl":"https://coderz.blog.csdn.net/",
-	"dependencies":
-	[
-
-	],
-	"releaseDate":"2022.06.02",
+	"documentationUrl":"",
+	"dependencies":[],
+	"releaseDate":"2022.06.01",
 },
 {
 	"name":"BatchBuild",
 	"version":"0.0.1",
 	"author":"CoderZ",
 	"description":"批量打包工具",
-	"releaseDate":"2022.06.01",
+	"releaseDate":"2022.06.02",
+},
+{
+	"name":"RawImageModelView",
+	"version":"0.0.1",
+	"author":"CoderZ",
+	"description":"RawImage展示3D模型，支持拖拽旋转模型",
+	"releaseDate":"2022.06.02",
+},
+{
+	"name":"RawImageModelView",
+	"version":"0.0.2",
+	"author":"CoderZ",
+	"description":"RawImage展示3D模型，支持拖拽旋转模型",
+	"releaseDate":"2022.06.02",
 },
 ]

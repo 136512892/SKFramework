@@ -30,13 +30,4 @@ namespace SK.Framework
             return string.Format("{0}-{1}", Name, Version);
         }
     }
-
-    /// <summary>
-    /// 用于资源包管理 请勿修改
-    /// </summary>
-    public class PackagePathConst
-    {
-        public const string BatchBuild = "SKFramework/Editor/BatchBuild";
-        public const string AnimationSampler = "SKFramework/Tools/AnimationSampler";
-    }
 }

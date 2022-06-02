@@ -35,6 +35,8 @@ namespace SK.Framework
         private Dictionary<string, List<PackageInfoDetail>> dic;
         //折叠栏字典
         private Dictionary<string, bool> foldout;
+        //用于存储资源包版本是否可升级的字典
+        private Dictionary<string, bool> updatable;
         //检索内容
         private string searchContent;
         //左侧内容滚动
@@ -61,6 +63,14 @@ namespace SK.Framework
         private GUIStyle dependenciesStyle;
         //依赖项折叠栏
         private bool dependenciesFoldOut = true;
+        //GUIContents
+        private class Contents
+        {
+            //已安装
+            public static GUIContent installed = new GUIContent("√", "This package is installed.");
+            //可升级
+            public static GUIContent updatable = new GUIContent("↑", "A newer version of this package is available.");
+        }
 
         private void OnEnable()
         {
@@ -135,10 +145,16 @@ namespace SK.Framework
             //检索输入框
             searchContent = GUILayout.TextField(searchContent, "SearchTextField", GUILayout.Width(searchFieldWidth));
             //当点击鼠标且鼠标位置不在输入框中时 取消控件的聚焦
-            if(Event.current.type == EventType.MouseDown  && !GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+            if (Event.current.type == EventType.MouseDown  && !GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
             {
                 GUI.FocusControl(null);
                 Repaint();
+            }
+            GUILayout.Space(10f);
+            //点击该按钮打开博客链接
+            if (GUILayout.Button(EditorGUIUtility.IconContent("_Help"), "toolbarbuttonRight", GUILayout.Width(25f)))
+            {
+                Application.OpenURL("https://coderz.blog.csdn.net");
             }
             GUILayout.EndHorizontal();
         }
@@ -155,18 +171,19 @@ namespace SK.Framework
                     var package = kv.Value[0];
                     //如果检索输入框内容不为空 判断资源包的名称是否包含检索的内容
                     if (!string.IsNullOrEmpty(searchContent) && !package.name.ToLower().Contains(searchContent.ToLower())) continue;
-
                     //折叠栏
                     GUILayout.BeginHorizontal(selectedPackage == package ? "MeTransitionSelectHead" : "ProjectBrowserHeaderBgTop");
                     foldout[kv.Key] = EditorGUILayout.Foldout(foldout[kv.Key], package.name);
                     GUILayout.FlexibleSpace();
                     //版本信息
                     GUILayout.Label(package.version);
-                    //是否已经安装
+                    //已安装
                     if (package.isInstalled)
                     {
-                        GUILayout.Label("√", GUILayout.Width(10f));
+                        GUILayout.Label(updatable[kv.Key] ? Contents.updatable : Contents.installed, GUILayout.Width(15f));
                     }
+                    //未安装
+                    else GUILayout.Label(GUIContent.none, GUILayout.Width(15f));
                     GUILayout.EndHorizontal();
                     //鼠标点击选中当前项
                     if (Event.current.type == EventType.MouseDown && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
@@ -189,7 +206,7 @@ namespace SK.Framework
                                 //是否已经安装
                                 if (package.isInstalled)
                                 {
-                                    GUILayout.Label("√", GUILayout.Width(10f));
+                                    GUILayout.Label(Contents.installed, GUILayout.Width(10f));
                                 }
                                 GUILayout.EndHorizontal();
                                 //鼠标点击选中当前项
@@ -381,6 +398,7 @@ namespace SK.Framework
             //初始化字典
             dic = new Dictionary<string, List<PackageInfoDetail>>();
             foldout = new Dictionary<string, bool>();
+            updatable = new Dictionary<string, bool>();
             //遍历资源包列表
             for (int i = 0; i < packages.Count; i++)
             {
@@ -416,6 +434,7 @@ namespace SK.Framework
                 {
                     dic.Add(package.name, new List<PackageInfoDetail>());
                     foldout.Add(package.name, false);
+                    updatable.Add(package.name, false);
                 }
                 dic[package.name].Add(package);
             }
@@ -424,6 +443,8 @@ namespace SK.Framework
             {
                 var list = kv.Value;
                 list = list.OrderByDescending(m => m.isInstalled).ThenByDescending(m => m.version).ToList();
+                //判断是否有可升级版本
+                updatable[kv.Key] = list[0].isInstalled && list.Count > 1 && list.OrderByDescending(m => m.version).ToList()[0] != list[0];
             }
         }
         //刷新资源包信息
@@ -493,7 +514,7 @@ namespace SK.Framework
                         totalDownloadBytes += size;
                         fs.Write(bytes, 0, size);
                         size = stream.Read(bytes, 0, bytes.Length);
-                        Debug.Log(string.Format("下载进度：{0}B", totalDownloadBytes));
+                        Debug.Log(string.Format("{0}-{1} 下载进度：{2}B", name, version, totalDownloadBytes));
                     }
                 }
             }
