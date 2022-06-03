@@ -20,13 +20,6 @@
 	"version":"0.0.1",
 	"author":"CoderZ",
 	"description":"RawImage展示3D模型，支持拖拽旋转模型",
-	"releaseDate":"2022.06.02",
-},
-{
-	"name":"RawImageModelView",
-	"version":"0.0.2",
-	"author":"CoderZ",
-	"description":"RawImage展示3D模型，支持拖拽旋转模型",
-	"releaseDate":"2022.06.02",
+	"releaseDate":"2022.06.03",
 },
 ]
