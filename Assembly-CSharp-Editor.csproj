@@ -53,7 +53,6 @@
     <UnityVersion>2020.3.16f1c1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\SKFramework\Editor\Scene\GameObjectReplacer.cs" />
     <Compile Include="Assets\SKFramework\Editor\PackageManager\PackageInfoDetail.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Score\ScoreIDPropertyAttributeDrawer.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Messenger\MessengerInspector.cs" />
@@ -63,44 +62,27 @@
     <Compile Include="Assets\SKFramework\Editor\Main\Scene\SceneLoaderInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\UI\RawImageContext.cs" />
     <Compile Include="Assets\SKFramework\Editor\PackageManager\PackageManager.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Bounds\AutoBoxCollider.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Input\AxisInputPropertyDrawer.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Audio\AudioInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Attribute\CSDNUrlAttribute.cs" />
     <Compile Include="Assets\SKFramework\Editor\UI\ImageContext.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Scene\GameObjectFilter\GameObjectFilterConditionPreset.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Audio\AudioDatabaseInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Score\ScoreMasterInspector.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Assets\AssetsDependencies.cs" />
     <Compile Include="Assets\SKFramework\Editor\UI\RectTransformInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\FSM\FSMInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\AbstractEditor.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Question\QuestionsProfileInspector.cs" />
-    <Compile Include="Assets\SKFramework\Editor\UI\LanHu\LanHuView.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Assets\AssetsReference.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Aim\AimSystemInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\WebRequest\WebInterfaceProfileInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Input\MouseButtonInputPropertyDrawer.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Action\ActionMasterInspector.cs" />
-    <Compile Include="Assets\SKFramework\Editor\UI\LanHu\LanHuViewElement.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Scene\GameObjectFilter\GameObjectFilterMode.cs" />
-    <Compile Include="Assets\SKFramework\Editor\UI\LanHu\LanHu.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Scene\GameObjectFilter\GameObjectFilter.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Scene\GameObjectFilter\GameObjectFilterCondition.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Input\KeyInputPropertyDrawer.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Mesh\MeshExtracter.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Duplicator\MaterialDuplicator.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Mesh\MeshCombiner.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Input\InputMasterInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\WebRequest\WebRequesterInspector.cs" />
-    <Compile Include="Assets\SKFramework\Editor\LOD\DeleteLOD.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Audio\SoundPropertyDrawer.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Bounds\AutoModelCenter.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\UI\UIViewInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\Aim\AimableObjectInspector.cs" />
     <Compile Include="Assets\SKFramework\Editor\Main\About\AboutWindow.cs" />
-    <Compile Include="Assets\SKFramework\Editor\UI\UISelector.cs" />
-    <Compile Include="Assets\SKFramework\Editor\Scene\GameObjectFilter\GameObjectFilterTarget.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\SKFramework\Plugins\DOTween\Editor\DOTweenEditor.dll" />
