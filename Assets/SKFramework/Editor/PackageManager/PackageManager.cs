@@ -154,7 +154,7 @@ namespace SK.Framework
             //点击该按钮打开博客链接
             if (GUILayout.Button(EditorGUIUtility.IconContent("_Help"), "toolbarbuttonRight", GUILayout.Width(25f)))
             {
-                Application.OpenURL("https://coderz.blog.csdn.net");
+                Application.OpenURL("https://blog.csdn.net/qq_42139931/article/details/125108284?spm=1001.2014.3001.5501");
             }
             GUILayout.EndHorizontal();
         }
@@ -368,7 +368,19 @@ namespace SK.Framework
                     //移除按钮
                     if (GUILayout.Button("Remove", GUILayout.Width(80f)))
                     {
-                        RemovePackage(package);
+                        if (package.referencies != null && package.referencies.Length > 0)
+                        {
+                            bool confirm = EditorUtility.DisplayDialog("提醒", "有其他工具包依赖于该项，是否确认将其移除？", "确认", "取消");
+                            if (confirm)
+                            {
+                                RemovePackage(package);
+                            }
+                        }
+                        else
+                        {
+                            RemovePackage(package);
+
+                        }
                     }
                 }
             }

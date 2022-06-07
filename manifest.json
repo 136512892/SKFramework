@@ -40,6 +40,23 @@
 	"releaseDate":"2022.06.03",
 },
 {
+	"name":"FreeCameraController",
+	"version":"0.0.1",
+	"author":"CoderZ",
+	"description":"上帝视角/自由视角 相机控制脚本\r\n同时支持Input System Package(New)和Input Manager(Old)新、旧两种输入系统",
+	"documentationUrl":"https://blog.csdn.net/qq_42139931/article/details/125150480?spm=1001.2014.3001.5501",
+	"releaseDate":"2022.06.06",
+	"dependencies":[],
+},
+{
+	"name":"RoamCameraController",
+	"version":"0.0.1",
+	"author":"CoderZ",
+	"description":"漫游视角 相机控制脚本\r\n同时支持Input System Package(New)和Input Manager(Old)新、旧两种输入系统",
+	"documentationUrl":"https://blog.csdn.net/qq_42139931/article/details/125164161?spm=1001.2014.3001.5501",
+	"releaseDate":"2022.06.07",
+},
+{
 	"name":"GameObject Filter",
 	"version":"0.0.1",
 	"author":"CoderZ",

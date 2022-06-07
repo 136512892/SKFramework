@@ -159,8 +159,8 @@
     <Compile Include="Assets\SKFramework\Core\Input\InputTriggerType.cs" />
     <Compile Include="Assets\SKFramework\Core\Action\ActionChain.cs" />
     <Compile Include="Assets\SKFramework\Core\Scene\GetSceneMode.cs" />
-    <Compile Include="Assets\SKFramework\Core\ObjectPool\ObjectPool.cs" />
     <Compile Include="Assets\SKFramework\Core\Attribute\PackageAttribute.cs" />
+    <Compile Include="Assets\SKFramework\Core\ObjectPool\ObjectPool.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\ImageExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\DateTimeExtension.cs" />
     <Compile Include="Assets\SKFramework\Core\Extension\SelectableExtension.cs" />
@@ -189,8 +189,8 @@
     <Compile Include="Assets\SKFramework\Plugins\DOTween\Modules\DOTweenModuleUtils.cs" />
     <Compile Include="Assets\SKFramework\Core\Audio\AudioDatabase.cs" />
     <Compile Include="Assets\SKFramework\Core\Input\MouseInputController.cs" />
-    <Compile Include="Assets\SKFramework\Plugins\DOTween\Modules\DOTweenModuleUI.cs" />
     <Compile Include="Assets\SKFramework\Core\Action\UntilAction.cs" />
+    <Compile Include="Assets\SKFramework\Plugins\DOTween\Modules\DOTweenModuleUI.cs" />
     <Compile Include="Assets\SKFramework\Core\Question\SingleChoiceQuestion.cs" />
     <Compile Include="Assets\SKFramework\Core\Audio\AudioDatabaseController.cs" />
     <Compile Include="Assets\SKFramework\Core\Action\ActionMaster.cs" />
