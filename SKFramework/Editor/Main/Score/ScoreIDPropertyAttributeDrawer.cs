@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using System.Reflection;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace SK.Framework
 {
@@ -12,29 +12,23 @@ namespace SK.Framework
         private int[] scoreIDArray;
         private GUIContent[] scoreIDConstArray;
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return base.GetPropertyHeight(property, label);
-        }
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (scoreIDConstArray == null)
             {
-                ArrayList constants = new ArrayList();
+                List<FieldInfo> list = new List<FieldInfo>();
                 FieldInfo[] fieldInfos = typeof(ScoreIDConstant).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
                 for (int i = 0; i < fieldInfos.Length; i++)
                 {
                     var fi = fieldInfos[i];
-                    if (fi.IsLiteral && !fi.IsInitOnly) constants.Add(fi);
+                    if (fi.IsLiteral && !fi.IsInitOnly) list.Add(fi);
                 }
-                FieldInfo[] fieldInfoArray = (FieldInfo[])constants.ToArray(typeof(FieldInfo));
-                scoreIDArray = new int[fieldInfoArray.Length];
-                scoreIDConstArray = new GUIContent[fieldInfoArray.Length];
-                for (int i = 0; i < fieldInfoArray.Length; i++)
+                scoreIDArray = new int[list.Count];
+                scoreIDConstArray = new GUIContent[list.Count];
+                for (int i = 0; i < list.Count; i++)
                 {
-                    scoreIDConstArray[i] = new GUIContent(fieldInfoArray[i].Name);
-                    scoreIDArray[i] = (int)fieldInfoArray[i].GetValue(null);
+                    scoreIDConstArray[i] = new GUIContent(list[i].Name);
+                    scoreIDArray[i] = (int)list[i].GetValue(null);
                 }
             }
             var index = Array.IndexOf(scoreIDArray, property.intValue);
