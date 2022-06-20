@@ -145,7 +145,7 @@ namespace SK.Framework
             //检索输入框
             searchContent = GUILayout.TextField(searchContent, "SearchTextField", GUILayout.Width(searchFieldWidth));
             //当点击鼠标且鼠标位置不在输入框中时 取消控件的聚焦
-            if (Event.current.type == EventType.MouseDown  && !GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+            if (Event.current.type == EventType.MouseDown && !GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
             {
                 GUI.FocusControl(null);
                 Repaint();
@@ -178,10 +178,9 @@ namespace SK.Framework
                     //版本信息
                     GUILayout.Label(package.version);
                     //已安装
-                    if (package.isInstalled)
-                    {
-                        GUILayout.Label(updatable[kv.Key] ? Contents.updatable : Contents.installed, GUILayout.Width(15f));
-                    }
+                    if (package.isInstalled) GUILayout.Label(Contents.installed, GUILayout.Width(15f));
+                    //可升级
+                    else if (updatable[kv.Key]) GUILayout.Label(Contents.updatable, GUILayout.Width(15f));
                     //未安装
                     else GUILayout.Label(GUIContent.none, GUILayout.Width(15f));
                     GUILayout.EndHorizontal();
@@ -206,7 +205,7 @@ namespace SK.Framework
                                 //是否已经安装
                                 if (package.isInstalled)
                                 {
-                                    GUILayout.Label(Contents.installed, GUILayout.Width(10f));
+                                    GUILayout.Label(Contents.installed, GUILayout.Width(12f));
                                 }
                                 GUILayout.EndHorizontal();
                                 //鼠标点击选中当前项
@@ -357,7 +356,7 @@ namespace SK.Framework
                         if (GUILayout.Button(string.Format("Update to {0}", package.version), GUILayout.Width(120f)))
                         {
                             //首先移除
-                            RemovePackage(installed);
+                            ClearInstalled(installed);
                             //再升级安装
                             InstallPackage(package);
                         }
@@ -450,13 +449,14 @@ namespace SK.Framework
                 }
                 dic[package.name].Add(package);
             }
-            //遍历字典 进行排序 优先按照是否已经安装排序 再按照版本进行排序
+            //遍历字典 进行排序
             foreach (var kv in dic)
             {
                 var list = kv.Value;
-                list = list.OrderByDescending(m => m.isInstalled).ThenByDescending(m => m.version).ToList();
+                list = list.OrderByDescending(m => m.version).ToList();
                 //判断是否有可升级版本
-                updatable[kv.Key] = list[0].isInstalled && list.Count > 1 && list.OrderByDescending(m => m.version).ToList()[0] != list[0];
+                updatable[kv.Key] = list.Count > 1 && list.OrderBy(m => m.isInstalled).ToList()[0] != list.OrderBy(m => m.version).ToList()[0]
+                    && list.Find(m => m.isInstalled) != null && list.Find(m => m.isInstalled) != list[0];
             }
         }
         //刷新资源包信息
@@ -467,7 +467,7 @@ namespace SK.Framework
             //发起网络请求
             WebRequest request = WebRequest.Create(url);
             WebResponse webResponse = request.GetResponse();
-            using(Stream stream = webResponse.GetResponseStream())
+            using (Stream stream = webResponse.GetResponseStream())
             {
                 //读取流
                 using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
@@ -518,22 +518,39 @@ namespace SK.Framework
             {
                 using (FileStream fs = new FileStream(path, FileMode.Create))
                 {
-                    byte[] bytes = new byte[1024];
-                    int size = stream.Read(bytes, 0, bytes.Length);
-                    long totalDownloadBytes = 0;
-                    while (size > 0)
+                    try
                     {
-                        totalDownloadBytes += size;
-                        fs.Write(bytes, 0, size);
-                        size = stream.Read(bytes, 0, bytes.Length);
-                        Debug.Log(string.Format("{0}-{1} 下载进度：{2}B", name, version, totalDownloadBytes));
+                        byte[] bytes = new byte[1024];
+                        int size = stream.Read(bytes, 0, bytes.Length);
+                        long totalDownloadBytes = 0;
+                        while (size > 0)
+                        {
+                            totalDownloadBytes += size;
+                            fs.Write(bytes, 0, size);
+                            size = stream.Read(bytes, 0, bytes.Length);
+                            Debug.Log(string.Format("{0}-{1} 下载进度：{2}B", name, version, totalDownloadBytes));
+                        }
+                    }
+                    catch (Exception error)
+                    {
+                        Debug.LogError(error);
+                    }
+                    finally
+                    {
+                        fs.Close();
+                        stream.Close();
                     }
                 }
             }
-            //下载完成 导入unitypackage包
-            AssetDatabase.ImportPackage(path, false);
-            //导入完成后 删除下载的文件
-            File.Delete(path);
+            if (File.Exists(path))
+            {
+                //下载完成 导入unitypackage包
+                AssetDatabase.ImportPackage(path, false);
+                //导入完成后 删除下载的文件
+                File.Delete(path);
+                //资源变更事件
+                OnPackageChanged(name, version);
+            }
         }
         //移除安装的资源包
         private void RemovePackage(PackageInfoDetail package)
@@ -549,6 +566,30 @@ namespace SK.Framework
                 File.Delete(metaPath);
             }
             AssetDatabase.Refresh();
+        }
+        private void ClearInstalled(PackageInfoDetail package)
+        {
+            string path = string.Format("{0}/{1}", Application.dataPath, package.path);
+            DirectoryInfo di = new DirectoryInfo(path);
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
+        }
+        private void OnPackageChanged(string name, string version)
+        {
+            var list = dic[name];
+            for (int i = 0; i < list.Count; i++)
+            {
+                var current = list[i];
+                current.isInstalled = current.version == version;
+            }
+            updatable[name] = list.Count > 1 && list.OrderBy(m => m.isInstalled).ToList()[0] != list.OrderBy(m => m.version).ToList()[0]
+                    && list.Find(m => m.isInstalled) != null && list.Find(m => m.isInstalled) != list[0];
         }
     }
 }
