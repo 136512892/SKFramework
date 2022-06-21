@@ -567,19 +567,24 @@ namespace SK.Framework
             }
             AssetDatabase.Refresh();
         }
+        //清除已安装资源包内容
         private void ClearInstalled(PackageInfoDetail package)
         {
             string path = string.Format("{0}/{1}", Application.dataPath, package.path);
-            DirectoryInfo di = new DirectoryInfo(path);
-            foreach (FileInfo file in di.GetFiles())
+            if (Directory.Exists(path))
             {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
+                DirectoryInfo di = new DirectoryInfo(path);
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
             }
         }
+        //资源包变更事件(版本切换)
         private void OnPackageChanged(string name, string version)
         {
             var list = dic[name];
