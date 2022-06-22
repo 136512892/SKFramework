@@ -559,11 +559,15 @@ namespace SK.Framework
             if (Directory.Exists(path))
             {
                 Directory.Delete(path, true);
+                string metaPath = string.Format("{0}.meta", path);
+                if (File.Exists(metaPath))
+                {
+                    File.Delete(metaPath);
+                }
             }
-            string metaPath = string.Format("{0}.meta", path);
-            if (File.Exists(metaPath))
+            else
             {
-                File.Delete(metaPath);
+                Debug.Log(string.Format("<b><color=yellow>删除资源包[{0}]失败：路径已失效-{1}</color></b>", package.name, package.path));
             }
             AssetDatabase.Refresh();
         }
