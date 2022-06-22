@@ -143,7 +143,7 @@ namespace SK.Framework
             //点击该按钮打开博客链接
             if (GUILayout.Button(EditorGUIUtility.IconContent("_Help"), "toolbarbuttonRight", GUILayout.Width(25f)))
             {
-                Application.OpenURL("https://coderz.blog.csdn.net/");
+                Application.OpenURL("https://blog.csdn.net/qq_42139931/article/details/125413193?spm=1001.2014.3001.5501");
             }
             GUILayout.EndHorizontal();
         }
