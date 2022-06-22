@@ -564,11 +564,21 @@ namespace SK.Framework
                 {
                     File.Delete(metaPath);
                 }
+
+                //获取上层目录
+                DirectoryInfo parent = new DirectoryInfo(path).Parent;
+                //如果删除后上层目录已为空目录 将其删除
+                if (parent.GetFiles().Length == 0 && parent.GetDirectories().Length == 0)
+                {
+                    Directory.Delete(parent.FullName, true);
+                    File.Delete(string.Format("{0}.meta", parent.FullName));
+                }
             }
             else
             {
                 Debug.Log(string.Format("<b><color=yellow>删除资源包[{0}]失败：路径已失效-{1}</color></b>", package.name, package.path));
             }
+            
             AssetDatabase.Refresh();
         }
         //清除已安装资源包内容
