@@ -60,8 +60,8 @@ namespace SK.Framework
             GUILayout.BeginHorizontal();
             {
                 GUILayout.BeginVertical();
-                GUILayout.Label("  CoderZ，一名Unity3d开发工程师，从事游戏、\r\nVR/AR/MR、虚拟仿真、数字孪生等相关项目开\r\n发。" +
-                    "个人微信公众号：当代野生程序猿，欢迎扫\r\n码关注。");
+                GUILayout.Label("  CoderZ，一名Unity3d开发工程师，从事游戏、\r\nVR/AR/MR、虚拟仿真、数字孪生、元宇宙等相\r\n关项目开发。" +
+                    "个人微信公众号：当代野生程序猿，\r\n欢迎扫码关注。");
                 GUILayout.EndVertical();
 
                 GUILayout.BeginVertical();

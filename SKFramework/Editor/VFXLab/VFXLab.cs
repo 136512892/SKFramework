@@ -16,7 +16,7 @@ namespace SK.Framework
     /// </summary>
     public class VFXLab : EditorWindow
     {
-        [MenuItem("SKFramework/VFX Lab", priority = 8999)]
+        [MenuItem("SKFramework/VFX Lab", priority = 9998)]
         public static void Open()
         {
             var window = GetWindow<VFXLab>("VFX Lab");
@@ -67,7 +67,7 @@ namespace SK.Framework
             }
             else
             {
-                //读取manifest.json文件内容
+                //读取vfx.json文件内容
                 using (StreamReader sr = new StreamReader(json))
                 {
                     string content = sr.ReadToEnd();
