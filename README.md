@@ -6,7 +6,6 @@ SKFramework是基于Unity的一个小型开发框架，模块间相对独立，�
 
 - Unity版本：2020.3.16
 
-- .NET API版本：4.x
 
 ## 模块简介
 
