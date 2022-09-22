@@ -1,12 +1,12 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SK.Framework
+namespace SK.Framework.WebRequest
 {
     /// <summary>
     /// 网络接口配置文件
     /// </summary>
-    [CreateAssetMenu]
+    [CreateAssetMenu(fileName = "WebInterface Profile")]
     public class WebInterfaceProfile : ScriptableObject
     {
         public WebInterface[] data;

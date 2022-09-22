@@ -1,9 +1,10 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace SK.Framework
+namespace SK.Framework.Timer
 {
     /// <summary>
     /// 秒表
@@ -31,11 +32,11 @@ namespace SK.Framework
 
         private readonly MonoBehaviour executer;
 
-        private Action onLaunch;
-        private Action<float> onExecute;
-        private Action onPause;
-        private Action onResume;
-        private Action onStop;
+        private UnityAction onLaunch;
+        private UnityAction<float> onExecute;
+        private UnityAction onPause;
+        private UnityAction onResume;
+        private UnityAction onStop;
         private Func<bool> stopWhen;
         private Func<bool> shotWhen;
 
@@ -62,27 +63,27 @@ namespace SK.Framework
             records = new List<Record>();
         }
 
-        public Chronometer OnLaunch(Action onLaunch)
+        public Chronometer OnLaunch(UnityAction onLaunch)
         {
             this.onLaunch = onLaunch;
             return this;
         }
-        public Chronometer OnExecute(Action<float> onExecute)
+        public Chronometer OnExecute(UnityAction<float> onExecute)
         {
             this.onExecute = onExecute;
             return this;
         }
-        public Chronometer OnPause(Action onPause)
+        public Chronometer OnPause(UnityAction onPause)
         {
             this.onPause = onPause;
             return this;
         }
-        public Chronometer OnResume(Action onResume)
+        public Chronometer OnResume(UnityAction onResume)
         {
             this.onResume = onResume;
             return this;
         }
-        public Chronometer OnStop(Action onStop)
+        public Chronometer OnStop(UnityAction onStop)
         {
             this.onStop = onStop;
             return this;

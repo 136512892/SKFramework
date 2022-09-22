@@ -1,4 +1,4 @@
-﻿namespace SK.Framework
+﻿namespace SK.Framework.ObjectPool
 {
     public interface IPoolable
     {

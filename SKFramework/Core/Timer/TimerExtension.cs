@@ -1,8 +1,8 @@
-using System;
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 
-namespace SK.Framework
+namespace SK.Framework.Timer
 {
     public static class TimerExtension 
     {
@@ -33,32 +33,32 @@ namespace SK.Framework
             return new Chronometer(isIgnoreTimeScale, self);
         }
 
-        public static EverySeconds EverySecond(this MonoBehaviour self, Action everyAction, bool isIgnoreTimeScale = false, int loops = -1)
+        public static EverySeconds EverySecond(this MonoBehaviour self, UnityAction everyAction, bool isIgnoreTimeScale = false, int loops = -1)
         {
             return new EverySeconds(everyAction, 1f, isIgnoreTimeScale, self, loops);
         }
 
-        public static EverySeconds EverySeconds(this MonoBehaviour self, float seconds, Action everyAction, bool isIgnoreTimeScale = false, int loops = -1)
+        public static EverySeconds EverySeconds(this MonoBehaviour self, float seconds, UnityAction everyAction, bool isIgnoreTimeScale = false, int loops = -1)
         {
             return new EverySeconds(everyAction, seconds, isIgnoreTimeScale, self, loops);
         }
 
-        public static EveryFrames EveryFrame(this MonoBehaviour self, Action everyAction, int loops = -1)
+        public static EveryFrames EveryFrame(this MonoBehaviour self, UnityAction everyAction, int loops = -1)
         {
             return new EveryFrames(everyAction, 1, self, loops);
         }
 
-        public static EveryFrames EveryFrames(this MonoBehaviour self, int frameCount, Action everyAction, int loops = -1)
+        public static EveryFrames EveryFrames(this MonoBehaviour self, int frameCount, UnityAction everyAction, int loops = -1)
         {
             return new EveryFrames(everyAction, frameCount, self, loops);
         }
 
-        public static EveryFrames NextFrame(this MonoBehaviour self, Action callback)
+        public static EveryFrames NextFrame(this MonoBehaviour self, UnityAction callback)
         {
             return new EveryFrames(callback, 1, self, 1);
         }
 
-        public static Alarm Alarm(this MonoBehaviour self, int hour, int minute, int second, Action callback)
+        public static Alarm Alarm(this MonoBehaviour self, int hour, int minute, int second, UnityAction callback)
         {
             return new Alarm(hour, minute, second, callback, self);
         }

@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace SK.Framework
+namespace SK.Framework.Timer
 {
     /// <summary>
     /// 闹钟
@@ -14,14 +15,14 @@ namespace SK.Framework
 
         private readonly MonoBehaviour executer;
 
-        private readonly Action callback;
-        private Action onStop;
+        private readonly UnityAction callback;
+        private UnityAction onStop;
 
         public bool IsCompleted { get; private set; }
 
         public bool IsPaused { get; private set; }
 
-        public Alarm(int hour, int minute, int second, Action callback, MonoBehaviour executer = null)
+        public Alarm(int hour, int minute, int second, UnityAction callback, MonoBehaviour executer = null)
         {
             this.hour = hour;
             this.minute = minute;
@@ -30,7 +31,7 @@ namespace SK.Framework
             this.executer = executer;
         }
 
-        public Alarm OnStop(Action onStop)
+        public Alarm OnStop(UnityAction onStop)
         {
             this.onStop = onStop;
             return this;

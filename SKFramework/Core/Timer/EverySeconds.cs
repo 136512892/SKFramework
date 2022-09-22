@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace SK.Framework
+namespace SK.Framework.Timer
 {
     public sealed class EverySeconds : ITimer
     {
@@ -17,12 +18,12 @@ namespace SK.Framework
 
         private readonly MonoBehaviour executer;
 
-        private Action onLaunch;
-        private Action<float> onExecute;
-        private Action onPause;
-        private Action onResume;
-        private Action onStop;
-        private readonly Action everyAction;
+        private UnityAction onLaunch;
+        private UnityAction<float> onExecute;
+        private UnityAction onPause;
+        private UnityAction onResume;
+        private UnityAction onStop;
+        private readonly UnityAction everyAction;
         private Func<bool> stopWhen;
 
         private int loops;
@@ -31,7 +32,7 @@ namespace SK.Framework
 
         public bool IsPaused { get; private set; }
 
-        public EverySeconds(Action everyAction, float duration = 1f, bool isIgnoreTimeScale = false, MonoBehaviour executer = null, int loops = -1)
+        public EverySeconds(UnityAction everyAction, float duration = 1f, bool isIgnoreTimeScale = false, MonoBehaviour executer = null, int loops = -1)
         {
             this.duration = duration;
             this.everyAction = everyAction;
@@ -40,27 +41,27 @@ namespace SK.Framework
             this.loops = loops;
         }
 
-        public EverySeconds OnLaunch(Action onLaunch)
+        public EverySeconds OnLaunch(UnityAction onLaunch)
         {
             this.onLaunch = onLaunch;
             return this;
         }
-        public EverySeconds OnExecute(Action<float> onExecute)
+        public EverySeconds OnExecute(UnityAction<float> onExecute)
         {
             this.onExecute = onExecute;
             return this;
         }
-        public EverySeconds OnPause(Action onPause)
+        public EverySeconds OnPause(UnityAction onPause)
         {
             this.onPause = onPause;
             return this;
         }
-        public EverySeconds OnResume(Action onResume)
+        public EverySeconds OnResume(UnityAction onResume)
         {
             this.onResume = onResume;
             return this;
         }
-        public EverySeconds OnStop(Action onStop)
+        public EverySeconds OnStop(UnityAction onStop)
         {
             this.onStop = onStop;
             return this;

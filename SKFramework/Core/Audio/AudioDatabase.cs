@@ -2,7 +2,7 @@
 using UnityEngine.Audio;
 using System.Collections.Generic;
 
-namespace SK.Framework
+namespace SK.Framework.Audio
 {
     /// <summary>
     /// 音频库

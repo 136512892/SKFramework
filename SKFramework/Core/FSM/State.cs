@@ -1,16 +1,20 @@
 ﻿using System;
 
-namespace SK.Framework
+namespace SK.Framework.FSM
 {
     /// <summary>
     /// 抽象状态类
     /// </summary>
-    public class State : IState
+    public class State
     {
         /// <summary>
         /// 状态名称
         /// </summary>
-        public string Name { get; set; }
+        public string name;
+        /// <summary>
+        /// 是否可切换至自身
+        /// </summary>
+        public bool canSwitch2Self;
         /// <summary>
         /// 所属状态机
         /// </summary>
@@ -78,7 +82,7 @@ namespace SK.Framework
         /// <param name="targetStateName">目标状态名称</param>
         public void SwitchWhen(Func<bool> predicate, string targetStateName)
         {
-            machine.SwitchWhen(predicate, Name, targetStateName);
+            machine.SwitchWhen(predicate, name, targetStateName);
         }
     }
 }

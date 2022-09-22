@@ -3,11 +3,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-namespace SK.Framework
+namespace SK.Framework.UI
 {
     public class UI : MonoBehaviour
     {
         private static UI instance;
+
         private Dictionary<string, IUIView> viewDic;
 
         public static UI Instance
@@ -19,7 +20,7 @@ namespace SK.Framework
                     UI res = Resources.Load<UI>("UI");
                     if (null == res)
                     {
-                        Log.Error(message: "<color=red><b>[SKFramework.UI.Error]</b></color> 加载UI预制体失败");
+                        Debug.LogError("加载UI预制体失败");
                     }
                     else
                     {
@@ -89,7 +90,6 @@ namespace SK.Framework
                 GameObject viewPrefab = Resources.Load<GameObject>(viewResourcePath);
                 if (null != viewPrefab)
                 {
-                    Log.Info("<color=cyan><b>[SKFramework.UI.Info]</b></color> 加载视图[{0}]", viewName);
                     var instance = Instantiate(viewPrefab);
                     instance.transform.SetParent(transform.GetChild((int)level), false);
                     instance.name = viewName;
@@ -101,7 +101,6 @@ namespace SK.Framework
                     viewDic.Add(viewName, view);
                     return true;
                 }
-                Log.Error("<color=red><b>[SKFramework.UI.Error]</b></color> 加载视图[{0}]失败 {1}", viewName, viewResourcePath);
             }
             return false;
         }
@@ -116,11 +115,9 @@ namespace SK.Framework
         {
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
-                Log.Info("<color=cyan><b>[SKFramework.UI.Info]</b></color> 显示视图[{0}]", viewName);
                 view.Show(data, instant);
                 return view;
             }
-            Log.Error("<color=red><b>[SKFramework.UI.Error]</b></color> 显示视图[{0}]失败: 不存在", viewName);
             return null;
         }
         /// <summary>
@@ -133,11 +130,9 @@ namespace SK.Framework
         {
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
-                Log.Info("<color=cyan><b>[SKFramework.UI.Info]</b></color> 隐藏视图[{0}]", viewName);
                 view.Hide(instant);
                 return view;
             }
-            Log.Error("<color=red><b>[SKFramework.UI.Error]</b></color> 隐藏视图[{0}]失败: 不存在", viewName);
             return null;
         }
         /// <summary>
@@ -160,12 +155,10 @@ namespace SK.Framework
         {
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
-                Log.Info("<color=cyan><b>[SKFramework.UI.Info]</b></color> 卸载视图[{0}]", viewName);
                 viewDic.Remove(viewName);
                 view.Unload(instant);
                 return true;
             }
-            Log.Error("<color=red><b>[SKFramework.UI.Error]</b></color> 卸载视图[{0}]失败: 不存在", viewName);
             return false;
         }
         /// <summary>
@@ -173,7 +166,6 @@ namespace SK.Framework
         /// </summary>
         public void UnloadAll()
         {
-            Log.Info(message: "<color=cyan><b>[SKFramework.UI.Info]</b></color> 卸载所有视图");
             List<IUIView> views = new List<IUIView>();
             foreach (var kv in viewDic)
             {

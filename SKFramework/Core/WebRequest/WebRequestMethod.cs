@@ -1,4 +1,4 @@
-﻿namespace SK.Framework
+﻿namespace SK.Framework.WebRequest
 {
     /// <summary>
     /// 网络请求的方式

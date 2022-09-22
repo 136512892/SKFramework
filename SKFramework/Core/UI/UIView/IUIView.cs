@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SK.Framework
+namespace SK.Framework.UI
 {
     /// <summary>
     /// UI视图接口

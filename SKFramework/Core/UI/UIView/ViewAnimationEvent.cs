@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine.Events;
+using SK.Framework.Audio;
 
-namespace SK.Framework
+namespace SK.Framework.UI
 {
     /// <summary>
     /// 视图动画事件
@@ -11,12 +12,12 @@ namespace SK.Framework
     {
         public ViewAnimation animation;
 
-        public UnityEvent onBegan;
+        public UnityEvent onBeganEvent;
 
-        public UnityEvent onEnd;
+        public UnityEvent onEndEvent;
 
-        public Sound beginSound;
+        public Sound onBeganSound;
 
-        public Sound endSound;
+        public Sound onEndSound;
     }
 }

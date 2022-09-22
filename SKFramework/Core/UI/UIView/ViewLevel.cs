@@ -1,4 +1,4 @@
-﻿namespace SK.Framework
+﻿namespace SK.Framework.UI
 {
     /// <summary>
     /// 视图层级

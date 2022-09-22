@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SK.Framework
+namespace SK.Framework.Audio
 {
     /// <summary>
     /// 音频

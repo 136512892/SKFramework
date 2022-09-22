@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace SK.Framework
+namespace SK.Framework.Timer
 {
     /// <summary>
     /// 时钟/计时器
@@ -16,11 +17,11 @@ namespace SK.Framework
 
         private readonly MonoBehaviour executer;
 
-        private Action onLaunch;
-        private Action<float> onExecute;
-        private Action onPause;
-        private Action onResume;
-        private Action onStop;
+        private UnityAction onLaunch;
+        private UnityAction<float> onExecute;
+        private UnityAction onPause;
+        private UnityAction onResume;
+        private UnityAction onStop;
         private Func<bool> stopWhen;
 
         /// <summary>
@@ -38,27 +39,27 @@ namespace SK.Framework
             this.executer = executer;
         }
 
-        public Clock OnLaunch(Action onLaunch)
+        public Clock OnLaunch(UnityAction onLaunch)
         {
             this.onLaunch = onLaunch;
             return this;
         }
-        public Clock OnExecute(Action<float> onExecute)
+        public Clock OnExecute(UnityAction<float> onExecute)
         {
             this.onExecute = onExecute;
             return this;
         }
-        public Clock OnPause(Action onPause)
+        public Clock OnPause(UnityAction onPause)
         {
             this.onPause = onPause;
             return this;
         }
-        public Clock OnResume(Action onResume)
+        public Clock OnResume(UnityAction onResume)
         {
             this.onResume = onResume;
             return this;
         }
-        public Clock OnStop(Action onStop)
+        public Clock OnStop(UnityAction onStop)
         {
             this.onStop = onStop;
             return this;

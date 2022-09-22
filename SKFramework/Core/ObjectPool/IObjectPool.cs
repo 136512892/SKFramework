@@ -1,4 +1,4 @@
-﻿namespace SK.Framework
+﻿namespace SK.Framework.ObjectPool
 {
     /// <summary>
     /// 对象池接口

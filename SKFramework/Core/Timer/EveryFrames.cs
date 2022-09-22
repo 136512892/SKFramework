@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace SK.Framework
+namespace SK.Framework.Timer
 {
     public sealed class EveryFrames : ITimer
     {
@@ -15,12 +16,12 @@ namespace SK.Framework
 
         private readonly MonoBehaviour executer;
 
-        private Action onLaunch;
-        private Action onExecute;
-        private Action onPause;
-        private Action onResume;
-        private Action onStop;
-        private readonly Action everyAction;
+        private UnityAction onLaunch;
+        private UnityAction onExecute;
+        private UnityAction onPause;
+        private UnityAction onResume;
+        private UnityAction onStop;
+        private readonly UnityAction everyAction;
         private Func<bool> stopWhen;
 
         private int loops;
@@ -29,7 +30,7 @@ namespace SK.Framework
 
         public bool IsPaused { get; private set; }
 
-        public EveryFrames(Action everyAction, int duration = 1, MonoBehaviour executer = null, int loops = -1)
+        public EveryFrames(UnityAction everyAction, int duration = 1, MonoBehaviour executer = null, int loops = -1)
         {
             this.duration = duration;
             this.everyAction = everyAction;
@@ -37,27 +38,27 @@ namespace SK.Framework
             this.loops = loops;
         }
 
-        public EveryFrames OnLaunch(Action onLaunch)
+        public EveryFrames OnLaunch(UnityAction onLaunch)
         {
             this.onLaunch = onLaunch;
             return this;
         }
-        public EveryFrames OnExecute(Action onExecute)
+        public EveryFrames OnExecute(UnityAction onExecute)
         {
             this.onExecute = onExecute;
             return this;
         }
-        public EveryFrames OnPause(Action onPause)
+        public EveryFrames OnPause(UnityAction onPause)
         {
             this.onPause = onPause;
             return this;
         }
-        public EveryFrames OnResume(Action onResume)
+        public EveryFrames OnResume(UnityAction onResume)
         {
             this.onResume = onResume;
             return this;
         }
-        public EveryFrames OnStop(Action onStop)
+        public EveryFrames OnStop(UnityAction onStop)
         {
             this.onStop = onStop;
             return this;

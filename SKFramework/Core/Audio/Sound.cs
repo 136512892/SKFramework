@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SK.Framework
+namespace SK.Framework.Audio
 {
     /// <summary>
     /// 声音
@@ -25,20 +25,43 @@ namespace SK.Framework
         /// 音频数据名称(来源为音频库时起作用)
         /// </summary>
         public string audioDataName;
+        /// <summary>
+        /// 是否可播放
+        /// </summary>
+        public bool IsPlayable
+        {
+            get
+            {
+                switch (source)
+                {
+                    case SoundSource.AudioClip:
+                        return audioClip != null;
+                    case SoundSource.Datebase:
+                        AudioDatabase database = Audio.Database.Get(databaseName);
+                        if (database == null) Audio.Database.Load(databaseName, out database);
+                        return database != null && database.GetClip(audioDataName) != null;
+                }
+                return false;
+            }
+        }
 
+        /// <summary>
+        /// 获取音频
+        /// </summary>
+        /// <returns></returns>
         public AudioClip GetAudioClip()
         {
             switch (source)
             {
-                case SoundSource.AudioClip:  return audioClip;
+                case SoundSource.AudioClip:  
+                    return audioClip;
                 case SoundSource.Datebase:
                     AudioDatabase database = Audio.Database.Get(databaseName);
                     if (database == null) Audio.Database.Load(databaseName, out database);
-                    return database.GetClip(audioDataName);
-                default: return null;
+                    return database != null ? database.GetClip(audioDataName) : null;
             }
+            return null;
         }
-
         /// <summary>
         /// 播放
         /// </summary>
@@ -47,7 +70,10 @@ namespace SK.Framework
             switch (source)
             {
                 case SoundSource.AudioClip:
-                    Audio.SFX.Play(audioClip);
+                    if (audioClip != null)
+                    {
+                        Audio.SFX.Play(audioClip);
+                    }
                     break;
                 case SoundSource.Datebase:
                     AudioDatabase database = Audio.Database.Get(databaseName);
@@ -58,7 +84,7 @@ namespace SK.Framework
                     if (database != null)
                     {
                         AudioData data = database[audioDataName];
-                        if (data != null)
+                        if (data != null && data.clip != null)
                         {
                             Audio.SFX.Play(data.clip, database.outputAudioMixerGroup);
                         }

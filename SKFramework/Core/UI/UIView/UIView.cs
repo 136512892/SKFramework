@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using SK.Framework.Actions;
 
-namespace SK.Framework
+namespace SK.Framework.UI
 {
     /// <summary>
     /// UI视图基类
@@ -57,9 +58,9 @@ namespace SK.Framework
             OnShow(data);
 
             //执行动画开始事件
-            onVisible.onBegan?.Invoke();
+            onVisible.onBeganEvent?.Invoke();
             //播放动画开始音效
-            onVisible.beginSound.Play();
+            onVisible.onBeganSound.Play();
             //可交互性置为false
             CanvasGroup.interactable = false;
             //播放动画
@@ -67,7 +68,7 @@ namespace SK.Framework
             animationChain = onVisible.animation.Play(this, instant, () =>
             {
                 //执行动画结束事件
-                onVisible.onEnd?.Invoke();
+                onVisible.onEndEvent?.Invoke();
                 //可交互性置为true
                 CanvasGroup.interactable = true;
                 animationChain = null;
@@ -82,9 +83,9 @@ namespace SK.Framework
             OnHide();
 
             //执行动画开始事件
-            onInvisible.onBegan?.Invoke();
+            onInvisible.onBeganEvent?.Invoke();
             //播放动画开始音效
-            onInvisible.beginSound.Play();
+            onInvisible.onBeganSound.Play();
             //可交互性置为false
             CanvasGroup.interactable = false;
             //播放动画
@@ -92,7 +93,7 @@ namespace SK.Framework
             animationChain = onInvisible.animation.Play(this, instant, () =>
             {
                 //执行动画结束事件
-                onVisible.onEnd?.Invoke();
+                onVisible.onEndEvent?.Invoke();
                 animationChain = null;
                 gameObject.SetActive(false);
             });
@@ -107,9 +108,9 @@ namespace SK.Framework
             OnInit(data);
 
             //执行动画开始事件
-            onVisible.onBegan?.Invoke();
+            onVisible.onBeganEvent?.Invoke();
             //播放动画开始音效
-            onVisible.beginSound.Play();
+            onVisible.onBeganSound.Play();
             //可交互性置为false
             CanvasGroup.interactable = false;
             //播放动画
@@ -117,7 +118,7 @@ namespace SK.Framework
             animationChain = onVisible.animation.Play(this, instant, () =>
             {
                 //执行动画结束事件
-                onVisible.onEnd?.Invoke();
+                onVisible.onEndEvent?.Invoke();
                 //可交互性置为true
                 CanvasGroup.interactable = true;
                 animationChain = null;
@@ -133,9 +134,9 @@ namespace SK.Framework
             OnUnload();
 
             //执行动画开始事件
-            onInvisible.onBegan?.Invoke();
+            onInvisible.onBeganEvent?.Invoke();
             //播放动画开始音效
-            onInvisible.beginSound.Play();
+            onInvisible.onBeganSound.Play();
             //可交互性置为false
             CanvasGroup.interactable = false;
             //播放动画
@@ -143,7 +144,7 @@ namespace SK.Framework
             animationChain = onInvisible.animation.Play(this, instant, () =>
             {
                 //执行动画结束事件
-                onVisible.onEnd?.Invoke();
+                onVisible.onEndEvent?.Invoke();
                 //销毁视图物体
                 Destroy(gameObject);
             });

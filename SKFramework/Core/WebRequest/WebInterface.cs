@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SK.Framework
+namespace SK.Framework.WebRequest
 {
     /// <summary>
     /// 网络接口

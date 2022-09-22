@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace SK.Framework
+namespace SK.Framework.ObjectPool
 {
     public static class MonoObjectPool
     {
@@ -51,9 +51,9 @@ namespace SK.Framework
         {
             MonoObjectPool<T>.Instance.CreateBy(createMethod);
         }
-
     }
-    public class MonoObjectPool<T> : IObjectPool<T> where T : MonoBehaviour, IPoolable
+
+    internal class MonoObjectPool<T> : IObjectPool<T> where T : MonoBehaviour, IPoolable
     {
         private static MonoObjectPool<T> instance;
         //对象池缓存数量上限 默认9
@@ -108,7 +108,6 @@ namespace SK.Framework
                             removeCount--;
                         }
                     }
-                    Log.Info("<color=cyan><b>[SKFramework.ObjectPool.Info]</b></color> 对象池[{0}]最大缓存数量设置为[{1}]", typeof(MonoObjectPool<T>).Name, value);
                 }
             }
         }
@@ -124,7 +123,6 @@ namespace SK.Framework
                 : (createMethod != null ? createMethod.Invoke() : new GameObject().AddComponent<T>());
             retT.hideFlags = HideFlags.HideInHierarchy;
             retT.IsRecycled = false;
-            Log.Info("<color=cyan><b>[SKFramework.ObjectPool.Info]</b></color> 对象池[{0}]分配对象 当前池中数量[{1}]", typeof(MonoObjectPool<T>).Name, pool.Count);
             return retT;
         }
         /// <summary>
@@ -146,7 +144,6 @@ namespace SK.Framework
             {
                 UnityEngine.Object.Destroy(t.gameObject);
             }
-            Log.Info("<color=cyan><b>[SKFramework.ObjectPool.Info]</b></color> 对象池[{0}]回收对象 当前池中数量[{1}]", typeof(MonoObjectPool<T>).Name, pool.Count);
             return true;
         }
         /// <summary>
@@ -160,7 +157,6 @@ namespace SK.Framework
             }
             pool.Clear();
             instance = null;
-            Log.Info("<color=cyan><b>[SKFramework.ObjectPool.Info]</b></color> 对象池[{0}]被释放", typeof(MonoObjectPool<T>).Name);
         }
         /// <summary>
         /// 设置创建方法
@@ -169,7 +165,6 @@ namespace SK.Framework
         public void CreateBy(Func<T> createMethod)
         {
             this.createMethod = createMethod;
-            Log.Info("<color=cyan><b>[SKFramework.ObjectPool.Info]</b></color> 对象池[{0}]设置创建方法 {1}", typeof(MonoObjectPool<T>).Name, createMethod.Method);
         }
     }
 }

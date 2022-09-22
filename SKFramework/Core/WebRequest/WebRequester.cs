@@ -5,7 +5,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using System.Collections.Generic;
 
-namespace SK.Framework
+namespace SK.Framework.WebRequest
 {
     /// <summary>
     /// 网络请求器
@@ -25,9 +25,9 @@ namespace SK.Framework
                     instance = new GameObject("[SKFramework.WebRequest]").AddComponent<WebRequester>();
                     instance.dic = new Dictionary<string, AbstractWebInterface>();
                     instance.profile = Resources.Load<WebInterfaceProfile>("WebInterface Profile");
-                    if(instance.profile == null)
+                    if (instance.profile == null)
                     {
-                        Log.Error(message: "<color=red><b>[SKFramework.WebRequest.Error]</b></color> 加载配置文件失败");
+                        Debug.LogError("加载配置文件失败");
                     }
                     DontDestroyOnLoad(instance);
                 }
@@ -46,10 +46,9 @@ namespace SK.Framework
         }
         private static IEnumerator GetCoroutine(string url, Action<string> callback)
         {
-            using(UnityWebRequest request = UnityWebRequest.Get(url))
+            using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
                 yield return request.SendWebRequest();
-                //新版本中 已过时
                 //if (!request.isHttpError && !request.isNetworkError)
                 if (request.result == UnityWebRequest.Result.Success)
                 {
@@ -57,7 +56,7 @@ namespace SK.Framework
                 }
                 else
                 {
-                    Log.Error("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 发起网络请求[{0}]失败: {1}", url, request.error);
+                    Debug.LogError(string.Format("发起网络请求[{0}]失败: {1}", url, request.error));
                 }
             }
         }
@@ -88,7 +87,6 @@ namespace SK.Framework
                     request.SetRequestHeader(kv[0], kv[1]);
                 }
                 yield return request.SendWebRequest();
-                //新版本中 已过时
                 //if (!request.isHttpError && !request.isNetworkError)
                 if (request.result == UnityWebRequest.Result.Success)
                 {
@@ -96,7 +94,7 @@ namespace SK.Framework
                 }
                 else
                 {
-                    Log.Error("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 发起网络请求[{0}]失败: {1}", url, request.error);
+                    Debug.LogError(string.Format("发起网络请求[{0}]失败: {1}", url, request.error));
                 }
             }
         }
@@ -124,14 +122,11 @@ namespace SK.Framework
                     t.args = info.args;
                     Instance.dic.Add(webInterfaceName, t);
                     target = t;
-                    Log.Info("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 成功注册网络接口[{0}]", webInterfaceName);
 
                     return true;
                 }
-                Log.Error("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 注册网络接口[{0}]失败: 未找到相关配置信息", webInterfaceName);
                 return false;
             }
-            Log.Error("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 注册网络接口[{0}]失败: 已经存在", webInterfaceName);
             return false;
         }
         /// <summary>
@@ -144,11 +139,8 @@ namespace SK.Framework
             if (Instance.dic.ContainsKey(webInterfaceName))
             {
                 Instance.dic.Remove(webInterfaceName);
-                Log.Info("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 成功注销网络接口[{0}]", webInterfaceName);
                 return true;
             }
-            Log.Error("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 注销网络接口[{0}]失败: 不存在", webInterfaceName);
-
             return false;
         }
         /// <summary>
@@ -161,11 +153,9 @@ namespace SK.Framework
         {
             if (Instance.dic.TryGetValue(webInterfaceName, out var webInterface))
             {
-                Log.Info("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 调用网络接口[{0}] 参数: {1}", webInterfaceName, args);
                 webInterface.SendWebRequest(args);
                 return true;
             }
-            Log.Error("<color=red><b>[SKFramework.WebRequest.Error]</b></color> 调用网络接口[{0}]失败: 未注册", webInterfaceName);
             return false;
         }
     }

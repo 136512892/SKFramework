@@ -34,9 +34,5 @@ namespace SK.Framework
             self.Play();
             return self;
         }
-        public static bool IsPlaying(this PlayableDirector self)
-        {
-            return self.state == PlayState.Playing;
-        }
     }
 }

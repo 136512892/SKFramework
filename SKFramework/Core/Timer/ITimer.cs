@@ -1,4 +1,4 @@
-﻿namespace SK.Framework
+﻿namespace SK.Framework.Timer
 {
     /// <summary>
     /// 计时工具接口

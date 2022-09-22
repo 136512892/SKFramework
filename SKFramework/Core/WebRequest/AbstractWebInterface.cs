@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace SK.Framework
+namespace SK.Framework.WebRequest
 {
     /// <summary>
     /// 抽象网络接口

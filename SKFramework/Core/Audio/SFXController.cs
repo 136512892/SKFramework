@@ -2,7 +2,7 @@
 using UnityEngine.Audio;
 using System.Collections.Generic;
 
-namespace SK.Framework
+namespace SK.Framework.Audio
 {
     /// <summary>
     /// 音效控制器
@@ -34,7 +34,6 @@ namespace SK.Framework
                     {
                         handlers[i].SetMute(isMuted);
                     }
-                    Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 音效{0}静音", value ? "设置" : "取消");
                 }
             }
         }
@@ -57,7 +56,6 @@ namespace SK.Framework
                         handlers[i].IsPaused = isPaused;
                     }
                 }
-                Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 音效{0}", value ? "暂停" : "恢复");
             }
         }
         #endregion
@@ -94,12 +92,10 @@ namespace SK.Framework
             {
                 handlers[i].Stop();
             }
-            Log.Info(message: "<color=cyan><b>[SKFramework.Audio.Info]</b></color> 终止音效播放");
         }
 
         public AudioHandler Play(AudioClip clip)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -108,7 +104,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, AudioMixerGroup output)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -118,7 +113,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, Vector3 position)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -129,7 +123,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, Vector3 position, AudioMixerGroup output)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -141,7 +134,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, Transform followTarget)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -152,7 +144,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, Transform followTarget, AudioMixerGroup output)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -164,7 +155,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -174,7 +164,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Vector3 position)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -186,7 +175,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Transform followTarget)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -198,7 +186,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, float pitch, Vector3 position)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -211,7 +198,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, float pitch, Transform followTarget)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -224,7 +210,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Vector3 position, float minDistance, float maxDistance)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -237,7 +222,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Transform followTarget, float minDistance, float maxDistance)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -250,7 +234,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Vector3 position, float minDistance, float maxDistance, bool autoRecycle)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
@@ -264,7 +247,6 @@ namespace SK.Framework
         }
         public AudioHandler Play(AudioClip clip, float volume, Transform followTarget, float minDistance, float maxDistance, bool autoRecycle)
         {
-            Log.Info("<color=cyan><b>[SKFramework.Audio.Info]</b></color> 播放音效 {0}", clip != null ? clip.name : "--");
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)

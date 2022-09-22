@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SK.Framework
+namespace SK.Framework.WebRequest
 {
     /// <summary>
     /// 响应结果为text文本类型的网络接口

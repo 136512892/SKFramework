@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SK.Framework
+namespace SK.Framework.Timer
 {
     public class TimeUtility
     {
@@ -29,7 +29,8 @@ namespace SK.Framework
         /// <returns>时间戳</returns>
         public static double GetTimeStamp(DateTime dt)
         {
-            return (dt - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds;
+            TimeSpan ts = dt.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            return ts.TotalMilliseconds;
         }
         /// <summary>
         /// 将秒数转化为HH:mm:ss格式字符串

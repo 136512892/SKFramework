@@ -6,21 +6,6 @@ namespace SK.Framework
     public static class DictionaryExtension
     {
         /// <summary>
-        /// 拷贝字典
-        /// </summary>
-        public static Dictionary<K, V> Copy<K, V>(this Dictionary<K, V> self)
-        {
-            Dictionary<K, V> retDic = new Dictionary<K, V>(self.Count);
-            using (var dicE = self.GetEnumerator())
-            {
-                while (dicE.MoveNext())
-                {
-                    retDic.Add(dicE.Current.Key, dicE.Current.Value);
-                }
-            }
-            return retDic;
-        }
-        /// <summary>
         /// 遍历字典
         /// </summary>
         /// <param name="action">遍历事件</param>
@@ -62,46 +47,18 @@ namespace SK.Framework
             return self;
         }
         /// <summary>
-        /// 将字典的所有值放入一个列表
-        /// </summary>
-        /// <returns>列表</returns>
-        public static List<V> Value2List<K, V>(this Dictionary<K, V> self)
-        {
-            List<V> retList = new List<V>(self.Count);
-            foreach (var kv in self)
-            {
-                retList.Add(kv.Value);
-            }
-            return retList;
-        }
-        /// <summary>
-        /// 将字典的所有值放入一个数组
-        /// </summary>
-        /// <returns>数组</returns>
-        public static V[] Value2Array<K, V>(this Dictionary<K, V> self)
-        {
-            V[] retArray = new V[self.Count];
-            int index = -1;
-            foreach (var kv in self)
-            {
-                retArray[++index] = kv.Value;
-            }
-            return retArray;
-        }
-        /// <summary>
         /// 尝试添加
         /// </summary>
         /// <param name="k">键</param>
         /// <param name="v">值</param>
-        /// <returns>若不存在相同键，添加成功并返回true，否则返回false</returns>
-        public static bool TryAdd<K, V>(this Dictionary<K, V> self, K k, V v)
+        /// <returns></returns>
+        public static Dictionary<K, V> TryAdd<K, V>(this Dictionary<K, V> self, K k, V v)
         {
             if (!self.ContainsKey(k))
             {
                 self.Add(k, v);
-                return true;
             }
-            return false;
+            return self;
         }
     }
 }

@@ -2,12 +2,19 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace SK.Framework
+#if UNITY_EDITOR
+using UnityEditor;
+using System.Linq;
+using System.Reflection;
+#endif
+
+namespace SK.Framework.FSM
 {
     /// <summary>
     /// 有限状态机管理器
     /// </summary>
-    public class FSM : MonoBehaviour
+    [AddComponentMenu("")]
+    internal class FSM : MonoBehaviour
     {
         #region NonPublic Variables
         private static FSM instance;
@@ -41,10 +48,6 @@ namespace SK.Framework
                 machines[i].OnUpdate();
             }
         }
-        private void OnDestroy()
-        {
-            instance = null;
-        }
         #endregion
 
         #region Public Methods
@@ -54,7 +57,7 @@ namespace SK.Framework
         /// <typeparam name="T">状态机类型</typeparam>
         /// <param name="stateMachineName">状态机名称</param>
         /// <returns>状态机</returns>
-        public T Create<T>(string stateMachineName) where T : StateMachine, new()
+        internal T Create<T>(string stateMachineName) where T : StateMachine, new()
         {
             Type type = typeof(T);
             stateMachineName = string.IsNullOrEmpty(stateMachineName) ? type.Name : stateMachineName;
@@ -63,28 +66,24 @@ namespace SK.Framework
                 T machine = (T)Activator.CreateInstance(type);
                 machine.Name = stateMachineName;
                 machines.Add(machine);
-                Log.Info("<color=cyan><b>[SKFramework.FSM.Info]</b></color> 成功创建状态机[{0}]", stateMachineName);
                 return machine;
             }
-            Log.Error("<color=red><b>[SKFramework.FSM.Error]</b></color> 已存在名称为[{0}]的状态机 创建失败", stateMachineName);
             return null;
         }
         /// <summary>
         /// 销毁状态机
         /// </summary>
         /// <param name="stateMachineName">状态机名称</param>
-        /// <returns>销毁成功返回true 否则返回false</returns>
-        public bool Destroy(string stateMachineName)
+        /// <returns>true：销毁成功； false：目标状态机不存在，销毁失败</returns>
+        internal bool Destroy(string stateMachineName)
         {
             var targetMachine = machines.Find(m => m.Name == stateMachineName);
             if (targetMachine != null)
             {
                 targetMachine.OnDestroy();
                 machines.Remove(targetMachine);
-                Log.Info("<color=cyan><b>[SKFramework.FSM.Info]</b></color> 成功销毁状态机[{0}]", stateMachineName);
                 return true;
             }
-            Log.Error("<color=red><b>[SKFramework.FSM.Error]</b></color> 不存在名称为[{0}]的状态机 销毁失败", stateMachineName);
             return false;
         }
         /// <summary>
@@ -92,17 +91,15 @@ namespace SK.Framework
         /// </summary>
         /// <typeparam name="T">状态机类型</typeparam>
         /// <param name="stateMachine">状态机</param>
-        /// <returns>销毁成功返回true 否则返回false</returns>
-        public bool Destroy<T>(T stateMachine) where T : StateMachine, new()
+        /// <returns>true：销毁成功； false：目标状态机不存在，销毁失败</returns>
+        internal bool Destroy<T>(T stateMachine) where T : StateMachine, new()
         {
             if (machines.Contains(stateMachine))
             {
-                Log.Info("<color=cyan><b>[SKFramework.FSM.Info]</b></color> 成功销毁状态机[{0}]", stateMachine.Name);
                 stateMachine.OnDestroy();
                 machines.Remove(stateMachine);
                 return true;
             }
-            Log.Error(message: "<color=red><b>[SKFramework.FSM.Error]</b></color> 销毁状态机失败");
             return false;
         }
         /// <summary>
@@ -111,10 +108,93 @@ namespace SK.Framework
         /// <typeparam name="T">状态机类型</typeparam>
         /// <param name="stateMachineName">状态机名称</param>
         /// <returns>状态机</returns>
-        public T GetMachine<T>(string stateMachineName) where T : StateMachine
+        internal T GetMachine<T>(string stateMachineName) where T : StateMachine
         {
             return (T)machines.Find(m => m.Name == stateMachineName);
         }
         #endregion
     }
+
+#if UNITY_EDITOR
+    [CustomEditor(typeof(FSM))]
+    public class FSMEditor : Editor
+    {
+        private List<StateMachine> machines;
+        private FieldInfo statesFieldInfo;
+        private int currentMachineIndex;
+        private string[] machinesName;
+
+        private readonly GUIContent switch2Next = new GUIContent("Next", "切换到下一状态");
+        private readonly GUIContent switch2Last = new GUIContent("Last", "切换到上一状态");
+        private readonly GUIContent switch2Null = new GUIContent("Null", "切换到空状态 （退出当前状态）");
+
+        private void OnEnable()
+        {
+            //通过反射获取状态机列表
+            machines = typeof(FSM).GetField("machines", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(FSM.Instance) as List<StateMachine>;
+            //获取状态列表字段
+            statesFieldInfo = typeof(StateMachine).GetField("states", BindingFlags.Instance | BindingFlags.NonPublic);
+        }
+
+        public override void OnInspectorGUI()
+        {
+            //当状态机名称数组为空（初始化） 或数量与状态机数量不等时（状态机列表发生变化）
+            if (machinesName == null || machines.Count != machinesName.Length)
+            {
+                //重置当前状态机索引数值
+                currentMachineIndex = 0;
+                //重新获取状态机名称数组
+                machinesName = machines.Select(m => m.Name).ToArray();
+            }
+
+            if (machines.Count > 0)
+            {
+                currentMachineIndex = EditorGUILayout.Popup("状态机：", currentMachineIndex, machinesName);
+                var currentMachine = machines[currentMachineIndex];
+                //获取当前状态机的状态列表
+                var states = statesFieldInfo.GetValue(currentMachine) as List<State>;
+
+                GUILayout.BeginHorizontal();
+                //提供切换到上一状态的Button按钮
+                if (GUILayout.Button(switch2Last, "ButtonLeft"))
+                {
+                    currentMachine.Switch2Last();
+                }
+                //提供切换到下一状态的Button按钮
+                if (GUILayout.Button(switch2Next, "ButtonMid"))
+                {
+                    currentMachine.Switch2Next();
+                }
+                //提供切换到空状态的Button按钮
+                if (GUILayout.Button(switch2Null, "ButtonRight"))
+                {
+                    currentMachine.Switch2Null();
+                }
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginVertical("Box");
+                for (int i = 0; i < states.Count; i++)
+                {
+                    var state = states[i];
+                    //如果状态为当前状态 使用SelectionRect Style 否则使用IN Title Style进行区分
+                    GUILayout.BeginHorizontal(currentMachine.CurrentState == state ? "SelectionRect" : "IN Title");
+                    GUILayout.Label(state.name);
+
+                    //如果状态不是当前状态 提供切换到该状态的Button按钮
+                    if (currentMachine.CurrentState != state)
+                    {
+                        if (GUILayout.Button("Switch", GUILayout.Width(55f)))
+                        {
+                            currentMachine.Switch(state);
+                        }
+                    }
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndVertical();
+            }
+        }
+    }
+
+#endif
 }

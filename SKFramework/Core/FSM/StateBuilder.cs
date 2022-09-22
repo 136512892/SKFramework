@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SK.Framework
+namespace SK.Framework.FSM
 {
     /// <summary>
     /// 状态构建器
