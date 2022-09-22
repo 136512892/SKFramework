@@ -1,117 +1,37 @@
-<B>SKFramework</B>
-* 本框架开发所用环境：Unity 2020.3.16
-* 请将SKFramework文件夹放在Assets根目录下使用
----
+# Unity SKFramework
 
-# Audio
-## 🎈一、背景音乐
-### 🔸将一个AudioClip资产作为背景音乐进行播放
-```c#
-using UnityEngine;
-using SK.Framework;
+SKFramework是基于Unity的一个小型开发框架，模块间相对独立，致力于提高各类项目开发效率，提供持续维护、升级，若使用过程中有任何疑问或发现任何bug、缺陷，可以联系作者指出。
 
-public class Example : MonoBehaviour
-{
-    [SerializeField] private AudioClip combat;
+## 环境
 
-    private void Start()
-    {
-        Audio.BGM.Play(combat);        
-    }
-}   
-```
-### 🔸设置背景音乐是否循环
-```c#
-Audio.BGM.IsLoop = true;
-```
-### 🔸设置背景音乐音量
-```c#
-Audio.BGM.Volume = .3f;
-```
-### 🔸设置背景音乐是否暂停
-```c#
-Audio.BGM.IsPaused = true;
-```
-### 🔸设置背景音乐是否静音
-```c#
-Audio.BGM.IsMuted = true;
-```
-## 🎈二、音效
-### 🔸将一个AudioClip资产作为音效进行播放
-```c#
-using UnityEngine;
-using SK.Framework;
+- Unity版本：2020.3.16
 
-public class Example : MonoBehaviour
-{
-    [SerializeField] private AudioClip clip;
+- .NET API版本：4.x
 
-    private void Start()
-    {
-        Audio.SFX.Play(clip);
-    }
-}   
-```
-### 🔸在三维空间中的指定坐标位置播放音效
-```c#
-Audio.SFX.Play(clip, transform.position);
-```
-### 🔸音效跟随物体进行播放
-```c#
-Audio.SFX.Play(clip, transform);
-```
-### 🔸音效跟随物体进行播放
-```c#
-Audio.SFX.Play(clip, transform);
-```
-### 🔸所有播放音效的重载函数
-![](https://bbs-img.huaweicloud.com/blogs/img/20220721/1658388767634964796.png "音效播放重载")
-### 🔸设置音效是否静音
-```c#
-Audio.SFX.IsMuted = true;
-```
-### 🔸设置音效是否暂停
-```c#
-Audio.SFX.IsPaused = true;
-```
-### 🔸停止所有音效播放
-```c#
-Audio.SFX.Stop();
-```
-## 🎈三、音频库
-### 🔸创建音频库
-![](https://bbs-img.huaweicloud.com/blogs/img/20220721/1658389142636343275.png)
-### 🔸添加音频数据
-将`AudioClip`资产拖拽到`Drop AudioClips Here`区域以添加音频数据
-![](https://bbs-img.huaweicloud.com/blogs/img/20220721/1658389265815186081.gif)
-为音频数据命名：
-![](https://bbs-img.huaweicloud.com/blogs/img/20220721/1658389312733133472.png)
-### 🔸加载音频库
-```c#
-Audio.Database.Load("ClickAudioDatabase", out AudioDatabase clickAudioDatabase);
-```
-第一个参数传入音频库资产的`Resources`路径
-### 🔸卸载音频库
-```c#
-Audio.Database.Unload("Click");
-```
-参数传入音频库的`名称`
-![](https://bbs-img.huaweicloud.com/blogs/img/20220721/1658389462288508459.png)
-### 🔸获取音频库
-同样的，参数传入音频库的`名称`
-```c#
-AudioDatabase database = Audio.Database.Get("Click");
-```
-### 🔸播放音频库中的音频
-音频作为`音效`进行播放
-```c#
-Audio.Database.Load("ClickAudioDatabase", out AudioDatabase clickAudioDatabase);
-clickAudioDatabase.PlayAsSFX("点击音效01");
-```
-音频作为`背景音乐`进行播放
-```c#
-Audio.Database.Load("ClickAudioDatabase", out AudioDatabase clickAudioDatabase);
-clickAudioDatabase.PlayAsBGM("点击音效01");
-```
+## 模块简介
 
-//TODO:
+- [Actions](https://coderz.blog.csdn.net/) - 事件链模块，包含顺序事件链、并行事件链、时间轴事件链，事件包含普通事件、延时事件、定时事件、条件事件、动画事件等类型。
+
+- [Audio](https://coderz.blog.csdn.net/) - 音频管理模块，分为背景音乐管理器、音效管理器、音频库管理器三部分，提供音频的播放、暂停、恢复、停止等接口。
+
+- [Extension](https://coderz.blog.csdn.net/) - 函数拓展模块，使用this关键字封装了部分类的拓展函数，提供链式编程支持。
+
+- [FSM](https://coderz.blog.csdn.net/) - 有限状态机模块，提供了状态基类、状态机基类的封装，为步骤、流程类型内容、角色动画状态、角色AI等内容的处理提供了支持。
+
+- [Messenger](https://coderz.blog.csdn.net/) - 消息模块，包含消息的发布、订阅系统和消息的打包、拆包系统两部分，为代码的解耦提供支持。
+
+- [ObjectPool](https://coderz.blog.csdn.net/) - 对象池模块，分为普通类型对象池和Mono类型对象池两部分，为对象的复用提供支持。
+
+- [Timer](https://coderz.blog.csdn.net/) - 时间工具模块，提供了多种时间类工具，包括倒计时/定时器、时钟/计时器、闹钟、秒表等等。
+
+- [UI](https://coderz.blog.csdn.net/) - UI模块，集中管理UI视图，提供了视图的加载、显示、隐藏、卸载等接口，并集成了DoTween类型动画的编辑功能。
+
+- [WebRequest](https://coderz.blog.csdn.net/) - 网络请求模块，集中管理网络接口，为发起网络请求提供支持。
+
+- [Package Manager](https://coderz.blog.csdn.net/) - 开发工具包管理器，类似于官方的Package Manager，提供了作者开发工作中封装的各种小工具的介绍、下载、升级、移除等功能。
+
+## 注意事项
+
+- 1.请将SKFramework放在Assets根目录下使用；
+
+- 2.在框架的Package Manager中下载的工具包不要轻易移动其目录位置，若发生移动，不能再通过Package Manager移除；
