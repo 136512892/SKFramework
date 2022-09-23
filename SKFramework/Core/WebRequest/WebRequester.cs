@@ -5,6 +5,11 @@ using System.Collections;
 using UnityEngine.Networking;
 using System.Collections.Generic;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using System.Reflection;
+#endif
+
 namespace SK.Framework.WebRequest
 {
     /// <summary>
@@ -16,7 +21,7 @@ namespace SK.Framework.WebRequest
         private WebInterfaceProfile profile;
         private Dictionary<string, AbstractWebInterface> dic;
 
-        public static WebRequester Instance
+        internal static WebRequester Instance
         {
             get
             {
@@ -99,7 +104,6 @@ namespace SK.Framework.WebRequest
             }
         }
 
-
         /// <summary>
         /// 注册网络接口
         /// </summary>
@@ -159,4 +163,65 @@ namespace SK.Framework.WebRequest
             return false;
         }
     }
+
+#if UNITY_EDITOR
+    [CustomEditor(typeof(WebRequester))]
+    public class WebRequesterEditor : Editor
+    {
+        //接口字典
+        private Dictionary<string, AbstractWebInterface> dic;
+        //折叠栏字典
+        private Dictionary<AbstractWebInterface, bool> foldoutDic;
+
+        private void OnEnable()
+        {
+            if (EditorApplication.isPlaying)
+            {
+                dic = typeof(WebRequester).GetField("dic", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .GetValue(WebRequester.Instance) as Dictionary<string, AbstractWebInterface>;
+                foldoutDic = new Dictionary<AbstractWebInterface, bool>();
+            }
+        }
+
+        public override void OnInspectorGUI()
+        {
+            if (!EditorApplication.isPlaying || dic == null) return;
+            foreach (var kv in dic)
+            {
+                if (!foldoutDic.ContainsKey(kv.Value))
+                {
+                    foldoutDic.Add(kv.Value, true);
+                }
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(10f);
+                //折叠栏
+                foldoutDic[kv.Value] = EditorGUILayout.Foldout(foldoutDic[kv.Value], kv.Key, true);
+                GUILayout.EndHorizontal();
+                //如果折叠栏为打开状态
+                if (foldoutDic[kv.Value])
+                {
+                    GUILayout.Label(string.Format("  接口名称：{0}", kv.Value.name));
+                    GUILayout.Label(string.Format("  接口地址：{0}", kv.Value.url));
+                    GUILayout.Label(string.Format("  请求方式：{0}", kv.Value.method));
+                    GUILayout.Label(string.Format("  接口参数：{0}", kv.Value.args.Length));
+                    for (int i = 0; i < kv.Value.args.Length; i++)
+                    {
+                        string arg = kv.Value.args[i];
+                        GUILayout.Label(string.Format("    参数{0}: {1}", i + 1, arg));
+                    }
+                }
+            }
+
+            //清理折叠栏字典
+            foreach (var kv in foldoutDic)
+            {
+                if (!dic.ContainsValue(kv.Key))
+                {
+                    foldoutDic.Remove(kv.Key);
+                    break;
+                }
+            }
+        }
+    }
+#endif
 }

@@ -8,7 +8,7 @@ namespace SK.Framework.Timer
     {
         private static Timer instance;
 
-        public static Timer Instance
+        internal static Timer Instance
         {
             get
             {

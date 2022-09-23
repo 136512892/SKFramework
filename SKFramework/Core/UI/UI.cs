@@ -11,7 +11,7 @@ namespace SK.Framework.UI
 
         private Dictionary<string, IUIView> viewDic;
 
-        public static UI Instance
+        internal static UI Instance
         {
             get
             {

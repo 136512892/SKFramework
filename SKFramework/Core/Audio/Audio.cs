@@ -12,7 +12,7 @@ namespace SK.Framework.Audio
         private SFXController sfx;
         private AudioDatabaseController database;
 
-        public static Audio Instance
+        internal static Audio Instance
         {
             get
             {

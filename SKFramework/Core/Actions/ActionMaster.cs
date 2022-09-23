@@ -7,7 +7,7 @@ namespace SK.Framework.Actions
     {
         private static ActionMaster instance;
 
-        public static ActionMaster Instance
+        internal static ActionMaster Instance
         {
             get
             {

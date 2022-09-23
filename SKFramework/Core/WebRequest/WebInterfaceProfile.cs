@@ -6,7 +6,7 @@ namespace SK.Framework.WebRequest
     /// <summary>
     /// 网络接口配置文件
     /// </summary>
-    [CreateAssetMenu(fileName = "WebInterface Profile")]
+    [CreateAssetMenu(fileName = "WebInterface Profile", order = 250)]
     public class WebInterfaceProfile : ScriptableObject
     {
         public WebInterface[] data;

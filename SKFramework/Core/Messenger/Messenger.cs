@@ -16,7 +16,7 @@ namespace SK.Framework.Message
         private Dictionary<int, List<IMessage>> intMessages;
         private Dictionary<string, List<IMessage>> stringMessages;
 
-        public static Messenger Instance
+        internal static Messenger Instance
         {
             get
             {
