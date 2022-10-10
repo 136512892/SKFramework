@@ -60,6 +60,10 @@ namespace SK.Framework.Actions
         {
             return chain.Append(new DelayAction(duration, action));
         }
+        public static IActionChain Frame(this IActionChain chain, int duration, UnityAction action = null)
+        {
+            return chain.Append(new FrameAction(duration, action));
+        }
         public static IActionChain Timer(this IActionChain chain, float duration, bool isReverse, UnityAction<float> action)
         {
             return chain.Append(new TimerAction(duration, isReverse, action));
@@ -76,7 +80,8 @@ namespace SK.Framework.Actions
         {
             return chain.Append(new AnimateAction(animator, stateName, layerIndex));
         }
-        public static IActionChain Append(this IActionChain chain, float beginTime, float duration, UnityAction<float> playAction)
+
+        public static IActionChain Append(this TimelineActionChain chain, float beginTime, float duration, UnityAction<float> playAction)
         {
             return chain.Append(new TimelineAction(beginTime, duration, playAction));
         }
