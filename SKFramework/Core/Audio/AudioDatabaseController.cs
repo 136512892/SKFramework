@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace SK.Framework.Audio
+namespace SK.Framework.Audios
 {
     /// <summary>
     /// 音频库管理器

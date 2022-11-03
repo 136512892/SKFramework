@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 
-namespace SK.Framework.Audio
+namespace SK.Framework.Audios
 {
     /// <summary>
     /// 背景音乐控制器

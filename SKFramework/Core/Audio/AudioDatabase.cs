@@ -8,7 +8,7 @@ using System.Linq;
 using UnityEditor.AnimatedValues;
 #endif
 
-namespace SK.Framework.Audio
+namespace SK.Framework.Audios
 {
     /// <summary>
     /// 音频库

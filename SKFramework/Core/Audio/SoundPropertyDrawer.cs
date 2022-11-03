@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Linq;
 
-namespace SK.Framework.Audio
+namespace SK.Framework.Audios
 {
     [CustomPropertyDrawer(typeof(Sound))]
     public class SoundPropertyDrawer : PropertyDrawer

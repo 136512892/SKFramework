@@ -1,4 +1,4 @@
-﻿namespace SK.Framework.Audio
+﻿namespace SK.Framework.Audios
 {
     /// <summary>
     /// 声音来源
