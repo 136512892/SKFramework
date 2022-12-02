@@ -128,7 +128,6 @@ namespace SK.Framework.Utility
             }
             return count % 2 == 1;
         }
-
         /// <summary>
         /// 确定坐标是否在平面内
         /// </summary>

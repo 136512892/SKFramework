@@ -1,24 +1,18 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections.Generic;
 
-namespace SK.Framework.Audios
+namespace SK.Framework.Audio
 {
-    /// <summary>
-    /// 音效控制器
-    /// </summary>
-    public class SFXController
+    [DisallowMultipleComponent]
+    public class SFXController : MonoBehaviour
     {
-        #region Private Variables
         private bool isMuted;
-        private bool isPaused;
-        private readonly List<AudioHandler> handlers;
-        #endregion
 
-        #region Public Properties
-        /// <summary>
-        /// 是否静音
-        /// </summary>
+        private bool isPaused;
+        
+        private readonly List<AudioHandler> handlers = new List<AudioHandler>();
+
         public bool IsMuted
         {
             get
@@ -37,9 +31,7 @@ namespace SK.Framework.Audios
                 }
             }
         }
-        /// <summary>
-        /// 是否暂停
-        /// </summary>
+
         public bool IsPaused
         {
             get
@@ -58,24 +50,15 @@ namespace SK.Framework.Audios
                 }
             }
         }
-        #endregion
-
-        #region Private Methods
         private AudioHandler GetHandler()
         {
             var handler = AudioHandler.Allocate();
-            handler.transform.SetParent(Audio.Instance.transform);
+            handler.transform.SetParent(transform);
             handlers.Add(handler);
             return handler;
         }
-        #endregion
 
-        #region Public Methods
-        public SFXController()
-        {
-            handlers = new List<AudioHandler>();
-        }
-        public void Update()
+        public void OnUpdate()
         {
             for (int i = 0; i < handlers.Count; i++)
             {
@@ -258,6 +241,5 @@ namespace SK.Framework.Audios
                 .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        #endregion
     }
 }

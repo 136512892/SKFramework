@@ -242,7 +242,7 @@ namespace SK.Framework.FSM
         /// </summary>
         public void Destroy()
         {
-            FSM.Instance.Destroy(this);
+            Main.FSM.Destroy(this);
         }
         /// <summary>
         /// 状态机刷新事件
@@ -329,73 +329,6 @@ namespace SK.Framework.FSM
         {
             conditions.Add(new StateSwitchCondition(predicate, sourceStateName, targetStateName));
             return this;
-        }
-
-
-        /// <summary>
-        /// 创建状态机
-        /// </summary>
-        /// <param name="stateMachineName">状态机名称</param>
-        /// <returns>状态机</returns>
-        public static StateMachine Create(string stateMachineName)
-        {
-            return FSM.Instance.Create<StateMachine>(stateMachineName);
-        }
-        /// <summary>
-        /// 创建状态机
-        /// </summary>
-        /// <typeparam name="T">状态机类型</typeparam>
-        /// <param name="stateMachineName">状态机名称</param>
-        /// <returns>状态机</returns>
-        public static T Create<T>(string stateMachineName = null) where T : StateMachine, new()
-        {
-            return FSM.Instance.Create<T>(stateMachineName);
-        }
-        /// <summary>
-        /// 销毁状态机
-        /// </summary>
-        /// <param name="stateMachineName">状态机名称</param>
-        /// <returns>true：销毁成功； false：目标状态机不存在，销毁失败</returns>
-        public static bool Destroy(string stateMachineName)
-        {
-            return FSM.Instance.Destroy(stateMachineName);
-        }
-        /// <summary>
-        /// 销毁状态机
-        /// </summary>
-        /// <typeparam name="T">状态机类型</typeparam>
-        /// <returns>true：销毁成功； false：目标状态机不存在，销毁失败</returns>
-        public static bool Destroy<T>() where T : StateMachine
-        {
-            return FSM.Instance.Destroy(typeof(T).Name);
-        }
-        /// <summary>
-        /// 获取状态机
-        /// </summary>
-        /// <param name="stateMachineName">状态机名称</param>
-        /// <returns>状态机</returns>
-        public static StateMachine Get(string stateMachineName)
-        {
-            return FSM.Instance.GetMachine<StateMachine>(stateMachineName);
-        }
-        /// <summary>
-        /// 获取状态机
-        /// </summary>
-        /// <typeparam name="T">状态机类型</typeparam>
-        /// <param name="stateMachineName">状态机名称</param>
-        /// <returns>状态机</returns>
-        public static T Get<T>(string stateMachineName) where T : StateMachine
-        {
-            return FSM.Instance.GetMachine<T>(stateMachineName);
-        }
-        /// <summary>
-        /// 获取状态机
-        /// </summary>
-        /// <typeparam name="T">状态机类型</typeparam>
-        /// <returns>状态机</returns>
-        public static T Get<T>() where T : StateMachine
-        {
-            return FSM.Instance.GetMachine<T>(typeof(T).Name);
         }
     }
 }

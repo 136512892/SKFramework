@@ -6,9 +6,6 @@ using System.Collections.ObjectModel;
 
 namespace SK.Framework.Timer
 {
-    /// <summary>
-    /// 秒表
-    /// </summary>
     public sealed class Chronometer : ITimer
     {
         public sealed class Record
@@ -107,7 +104,7 @@ namespace SK.Framework.Timer
         {
             beginTime = isIgnoreTimeScale ? Time.realtimeSinceStartup : Time.time;
             onLaunch?.Invoke();
-            this.Begin(executer != null ? executer : Timer.Instance);
+            this.Begin(executer != null ? executer : Main.Timer);
         }
 
         public void Pause()

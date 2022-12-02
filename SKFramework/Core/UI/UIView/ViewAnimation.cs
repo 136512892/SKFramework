@@ -19,9 +19,9 @@ namespace SK.Framework.UI
             switch (type)
             {
                 case AnimationType.Tween:
-                    return animations.Play(view, view.transform as RectTransform, instant, callback);
+                    return animations.Play(view, view.transform as RectTransform, view.GetComponent<CanvasGroup>(), instant, callback);
                 case AnimationType.Animator:
-                    return view.Sequence()
+                    return Main.Actions.Sequence(view)
                         .Animate(view.GetComponent<Animator>(), stateName)
                         .Event(callback)
                         .Begin();

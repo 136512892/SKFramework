@@ -1,86 +1,23 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections.Generic;
 
-namespace SK.Framework.Audios
+namespace SK.Framework.Audio
 {
-    /// <summary>
-    /// 音频处理器
-    /// </summary>
     public class AudioHandler : MonoBehaviour
     {
-        #region 对象池
-        //对象池
-        private readonly static Stack<AudioHandler> pool = new Stack<AudioHandler>();
-        /// <summary>
-        /// 对象池中缓存的数量
-        /// </summary>
-        public static int CacheCount
-        {
-            get
-            {
-                return pool.Count;
-            }
-        }
-        /// <summary>
-        /// 分配音频处理器
-        /// </summary>
-        /// <returns>音频处理器</returns>
-        public static AudioHandler Allocate()
-        {
-            AudioHandler retHandler;
-            if (pool.Count > 0)
-            {
-                retHandler = pool.Pop();
-                retHandler.IsRecycled = false;
-                retHandler.gameObject.SetActive(true);
-            }
-            else
-            {
-                retHandler = new GameObject("[AudioHandler]").AddComponent<AudioHandler>();
-                retHandler.SetSource(retHandler.gameObject.AddComponent<AudioSource>());
-            }
-            return retHandler;
-        }
-        /// <summary>
-        /// 回收音频处理器
-        /// </summary>
-        /// <param name="handler">音频处理器</param>
-        public static void Recycle(AudioHandler handler)
-        {
-            handler.OnRecycle();
-            handler.IsRecycled = true;
-            pool.Push(handler);
-        }
-        /// <summary>
-        /// 释放对象池
-        /// </summary>
-        public static void Release()
-        {
-            foreach (var handler in pool)
-            {
-                Destroy(handler.gameObject);
-            }
-            pool.Clear();
-        }
-        #endregion
-
         private AudioSource source;
-        //是否暂停
+
         private bool isPaused;
-        //跟随对象
+
         private Transform followTarget;
-        //是否自动回收
+
         private bool autoRecycle = true;
-        //是否已回收
+
         public bool IsRecycled { get; private set; }
-        /// <summary>
-        /// 播放进度
-        /// </summary>
+
         public float Progress { get; set; }
-        /// <summary>
-        /// 是否暂停
-        /// </summary>
+
         public bool IsPaused
         {
             get
@@ -95,9 +32,7 @@ namespace SK.Framework.Audios
                 else source.UnPause();
             }
         }
-        /// <summary>
-        /// 音量
-        /// </summary>
+
         public float Volume
         {
             get
@@ -105,9 +40,7 @@ namespace SK.Framework.Audios
                 return source.volume;
             }
         }
-        /// <summary>
-        /// 是否正在播放
-        /// </summary>
+
         public bool IsPlaying
         {
             get
@@ -131,9 +64,7 @@ namespace SK.Framework.Audios
                 Stop();
             }
         }
-        /// <summary>
-        /// 停止播放
-        /// </summary>
+
         public void Stop()
         {
             source.Stop();
@@ -142,9 +73,7 @@ namespace SK.Framework.Audios
                 Recycle(this);
             }
         }
-        /// <summary>
-        /// 回收事件
-        /// </summary>
+
         public void OnRecycle()
         {
             name = "AudioHandler(Cache)";
@@ -165,7 +94,7 @@ namespace SK.Framework.Audios
 
         public AudioHandler Play()
         {
-            name = $"AudioHandler - {(source.clip ? source.clip.name : "null")}";
+            name = source.clip ? source.clip.name : "Null";
             source.Play();
             return this;
         }
@@ -250,11 +179,45 @@ namespace SK.Framework.Audios
             return this;
         }
 
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
+        #region >> ObjectPool
+        private readonly static Stack<AudioHandler> pool = new Stack<AudioHandler>();
+        public static int CacheCount
         {
-            UnityEditor.Handles.Label(transform.position, name);
+            get
+            {
+                return pool.Count;
+            }
         }
-#endif
+        public static AudioHandler Allocate()
+        {
+            AudioHandler retHandler;
+            if (pool.Count > 0)
+            {
+                retHandler = pool.Pop();
+                retHandler.IsRecycled = false;
+                retHandler.gameObject.SetActive(true);
+            }
+            else
+            {
+                retHandler = new GameObject("[AudioHandler]").AddComponent<AudioHandler>();
+                retHandler.SetSource(retHandler.gameObject.AddComponent<AudioSource>());
+            }
+            return retHandler;
+        }
+        public static void Recycle(AudioHandler handler)
+        {
+            handler.OnRecycle();
+            handler.IsRecycled = true;
+            pool.Push(handler);
+        }
+        public static void Release()
+        {
+            foreach (var handler in pool)
+            {
+                Destroy(handler.gameObject);
+            }
+            pool.Clear();
+        }
+        #endregion
     }
 }

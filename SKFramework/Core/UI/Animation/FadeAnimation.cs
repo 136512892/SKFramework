@@ -15,6 +15,15 @@ namespace SK.Framework.UI
 
         public float endValue = 1f;
 
+        public Tween Play(CanvasGroup target, bool instant = false)
+        {
+            if (isCustom)
+            {
+                target.alpha = startValue;
+            }
+            return target.DOFade(endValue, instant ? 0f : duration).SetDelay(instant ? 0f : delay).SetEase(ease);
+        }
+
         public Tween Play(Graphic target, bool instant = false)
         {
             if (isCustom)

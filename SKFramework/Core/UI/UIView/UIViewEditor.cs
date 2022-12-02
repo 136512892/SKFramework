@@ -91,21 +91,24 @@ namespace SK.Framework.UI
                 iRotateAnimBool = new AnimBool(onInvisible.animation.animations.rotate.toggle, Repaint);
                 iScaleAnimBool = new AnimBool(onInvisible.animation.animations.scale.toggle, Repaint);
                 iFadeAnimBool = new AnimBool(onInvisible.animation.animations.fade.toggle, Repaint);
+
+                onVisible.animation.animations.move.moveMode = MoveAnimation.MoveMode.MoveIn;
+                onInvisible.animation.animations.move.moveMode = MoveAnimation.MoveMode.MoveOut;
             }
 
             DrawEvent(onVisibleContent, onVisible, ref onVisibleMenu, visibleAnimBool, visibleKey,
                 onVisibleBeganEvent, onVisibleEndEvent, onVisibleBeganSound, onVisibleEndSound,
-                vMoveAnimBool, vRotateAnimBool, vScaleAnimBool, vFadeAnimBool);
+                vMoveAnimBool, vRotateAnimBool, vScaleAnimBool, vFadeAnimBool, true);
 
             DrawEvent(onInvisibleContent, onInvisible, ref onInvisibleMenu, invisibleAnimBool, invisibleKey,
                 onInvisibleBeganEvent, onInvisibleEndEvent, onInvisibleBeganSound, onInvisibleEndSound,
-                iMoveAnimBool, iRotateAnimBool, iScaleAnimBool, iFadeAnimBool);
+                iMoveAnimBool, iRotateAnimBool, iScaleAnimBool, iFadeAnimBool, false);
         }
 
         private void DrawEvent(GUIContent content, ViewAnimationEvent e, ref Menu menu, AnimBool animBool, string prefsKey,
             SerializedProperty onBeganEvent, SerializedProperty onEndEvent,
             SerializedProperty onBeganSound, SerializedProperty onEndSound,
-            AnimBool mAnimBool, AnimBool rAnimBool, AnimBool sAnimBool, AnimBool fAnimBool)
+            AnimBool mAnimBool, AnimBool rAnimBool, AnimBool sAnimBool, AnimBool fAnimBool, bool visiable)
         {
             bool newValue = EditorGUILayout.Foldout(animBool.target, content, true);
             if (newValue != animBool.target) 
@@ -144,7 +147,7 @@ namespace SK.Framework.UI
                         switch (viewAnimation.type)
                         {
                             case AnimationType.Tween:
-                                DrawAnimation(viewAnimation.animations, mAnimBool, rAnimBool, sAnimBool, fAnimBool);
+                                DrawAnimation(viewAnimation.animations, mAnimBool, rAnimBool, sAnimBool, fAnimBool, visiable);
                                 break;
                             case AnimationType.Animator:
                                 GUILayout.BeginHorizontal();
@@ -181,7 +184,7 @@ namespace SK.Framework.UI
         }
 
         private void DrawAnimation(TweenAnimations animations, 
-            AnimBool mAnimBool, AnimBool rAnimBool, AnimBool sAnimBool, AnimBool fAnimBool)
+            AnimBool mAnimBool, AnimBool rAnimBool, AnimBool sAnimBool, AnimBool fAnimBool, bool visiable)
         {
             GUILayout.Space(5f);
             //Move、Rotate、Scale、Fade
@@ -195,7 +198,7 @@ namespace SK.Framework.UI
             }
             GUILayout.EndHorizontal();
             //MoveAnimation
-            AnimationsDrawer.DrawMove(animations.move, mAnimBool, target);
+            AnimationsDrawer.DrawMove(animations.move, mAnimBool, target, visiable);
             GUILayout.Space(3f);
             //RotateAnimation
             AnimationsDrawer.DrawRotate(animations.rotate, rAnimBool, target);

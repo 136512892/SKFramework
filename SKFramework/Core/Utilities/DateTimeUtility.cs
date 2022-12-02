@@ -4,21 +4,11 @@ namespace SK.Framework.Utility
 {
     public class DateTimeUtility
     {
-        /// <summary>
-        /// 获取时间戳
-        /// </summary>
-        /// <returns>时间戳</returns>
         public static double GetTimeStamp(DateTime dateTime)
         {
-            //计算机元年 1970年1月1日0时0分0秒
             return (dateTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalMilliseconds;
         }
 
-        /// <summary>
-        /// 转换为中文
-        /// </summary>
-        /// <param name="prefix">前缀 周/星期</param>
-        /// <returns></returns>
         public static string ToChinese(DayOfWeek dayOfWeek, string prefix)
         {
             switch (dayOfWeek)
@@ -34,6 +24,6 @@ namespace SK.Framework.Utility
             }
         }
 
-        // yyyy/MM/dd HH:mm:ss:fff
+        //yyyy/MM/dd HH:mm:ss:fff
     }
 }

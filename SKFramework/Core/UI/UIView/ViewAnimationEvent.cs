@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine.Events;
-using SK.Framework.Audios;
+using SK.Framework.Audio;
 
 namespace SK.Framework.UI
 {

@@ -33,14 +33,27 @@ namespace SK.Framework.UI
             }
         }
 
-        public IActionChain Play(MonoBehaviour behaviour, RectTransform rectTransform, bool instant = false, UnityAction callback = null)
+        public IActionChain Play(MonoBehaviour behaviour, RectTransform rectTransform, CanvasGroup canvasGroup, bool instant = false, UnityAction callback = null)
         {
             var concurrent = new ConcurrentActionChain();
             if (move.toggle) concurrent.Tween(() => move.Play(rectTransform, instant));
             if (rotate.toggle) concurrent.Tween(() => rotate.Play(rectTransform, instant));
             if (scale.toggle) concurrent.Tween(() => scale.Play(rectTransform, instant));
-            if (fade.toggle) concurrent.Tween(() => fade.Play(rectTransform.GetComponent<Graphic>(), instant));
-            return behaviour.Sequence()
+            if (fade.toggle) concurrent.Tween(() => fade.Play(canvasGroup, instant));
+            return Main.Actions.Sequence(behaviour)
+                .Append(concurrent)
+                .Event(() => callback?.Invoke())
+                .Begin();
+        }
+
+        public IActionChain Play(MonoBehaviour behaviour, RectTransform rectTransform, Graphic graphic, bool instant = false, UnityAction callback = null)
+        {
+            var concurrent = new ConcurrentActionChain();
+            if (move.toggle) concurrent.Tween(() => move.Play(rectTransform, instant));
+            if (rotate.toggle) concurrent.Tween(() => rotate.Play(rectTransform, instant));
+            if (scale.toggle) concurrent.Tween(() => scale.Play(rectTransform, instant));
+            if (fade.toggle) concurrent.Tween(() => fade.Play(graphic, instant));
+            return Main.Actions.Sequence(behaviour)
                 .Append(concurrent)
                 .Event(() => callback?.Invoke())
                 .Begin();

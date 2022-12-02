@@ -86,7 +86,7 @@ namespace SK.Framework.UI
             GUI.color = cacheColor;
         }
 
-        public static void DrawMove(MoveAnimation moveAnimation, AnimBool animBool, Object target)
+        public static void DrawMove(MoveAnimation moveAnimation, AnimBool animBool, Object target, bool visiable)
         {
             if (EditorGUILayout.BeginFadeGroup(animBool.faded))
             {
@@ -124,26 +124,69 @@ namespace SK.Framework.UI
                         }
                         GUILayout.EndHorizontal();
 
-                        //Is Custom
-                        GUILayout.BeginHorizontal();
+                        if (visiable)
                         {
-                            GUILayout.Label(from, GUILayout.Width(labelWidth - 2f));
-                            if (GUILayout.Button(moveAnimation.isCustom ? customPosition : direction, "DropDownButton"))
+                            //Is Custom
+                            GUILayout.BeginHorizontal();
                             {
-                                GenericMenu gm = new GenericMenu();
-                                gm.AddItem(direction, !moveAnimation.isCustom, () => { moveAnimation.isCustom = false; EditorUtility.SetDirty(target); });
-                                gm.AddItem(customPosition, moveAnimation.isCustom, () => { moveAnimation.isCustom = true; EditorUtility.SetDirty(target); });
-                                gm.ShowAsContext();
+                                GUILayout.Label(from, GUILayout.Width(labelWidth - 2f));
+                                if (GUILayout.Button(moveAnimation.isCustom ? customPosition : direction, "DropDownButton"))
+                                {
+                                    GenericMenu gm = new GenericMenu();
+                                    gm.AddItem(direction, !moveAnimation.isCustom, () => { moveAnimation.isCustom = false; EditorUtility.SetDirty(target); });
+                                    gm.AddItem(customPosition, moveAnimation.isCustom, () => { moveAnimation.isCustom = true; EditorUtility.SetDirty(target); });
+                                    gm.ShowAsContext();
+                                }
                             }
-                        }
-                        GUILayout.EndHorizontal();
+                            GUILayout.EndHorizontal();
 
-                        //From
-                        GUILayout.BeginHorizontal();
-                        {
-                            GUILayout.Label(GUIContent.none, GUILayout.Width(labelWidth));
-                            if (moveAnimation.isCustom)
+                            //From
+                            GUILayout.BeginHorizontal();
                             {
+                                GUILayout.Label(GUIContent.none, GUILayout.Width(labelWidth));
+                                if (moveAnimation.isCustom)
+                                {
+                                    Vector3 newStartValue = EditorGUILayout.Vector3Field(GUIContent.none, moveAnimation.startValue);
+                                    if (newStartValue != moveAnimation.startValue)
+                                    {
+                                        Undo.RecordObject(target, "Move From");
+                                        moveAnimation.startValue = newStartValue;
+                                        EditorUtility.SetDirty(target);
+                                    }
+                                }
+                                else
+                                {
+                                    var newMoveDirection = (Direction)EditorGUILayout.EnumPopup(moveAnimation.direction);
+                                    if (newMoveDirection != moveAnimation.direction)
+                                    {
+                                        Undo.RecordObject(target, "Move Direction");
+                                        moveAnimation.direction = newMoveDirection;
+                                        EditorUtility.SetDirty(target);
+                                    }
+                                }
+                            }
+                            GUILayout.EndHorizontal();
+
+                            //To
+                            GUILayout.BeginHorizontal();
+                            {
+                                GUILayout.Label(to, GUILayout.Width(labelWidth));
+                                Vector3 newEndValue = EditorGUILayout.Vector3Field(GUIContent.none, moveAnimation.endValue);
+                                if (newEndValue != moveAnimation.endValue)
+                                {
+                                    Undo.RecordObject(target, "Move To");
+                                    moveAnimation.endValue = newEndValue;
+                                    EditorUtility.SetDirty(target);
+                                }
+                            }
+                            GUILayout.EndHorizontal();
+                        }
+                        else
+                        {
+                            //From
+                            GUILayout.BeginHorizontal();
+                            {
+                                GUILayout.Label(from, GUILayout.Width(labelWidth - 2f));
                                 Vector3 newStartValue = EditorGUILayout.Vector3Field(GUIContent.none, moveAnimation.startValue);
                                 if (newStartValue != moveAnimation.startValue)
                                 {
@@ -152,32 +195,50 @@ namespace SK.Framework.UI
                                     EditorUtility.SetDirty(target);
                                 }
                             }
-                            else
+                            GUILayout.EndHorizontal();
+
+                            //Is Custom
+                            GUILayout.BeginHorizontal();
                             {
-                                var newMoveDirection = (Direction)EditorGUILayout.EnumPopup(moveAnimation.direction);
-                                if (newMoveDirection != moveAnimation.direction)
+                                GUILayout.Label(to, GUILayout.Width(labelWidth - 2f));
+                                if (GUILayout.Button(moveAnimation.isCustom ? customPosition : direction, "DropDownButton"))
                                 {
-                                    Undo.RecordObject(target, "Move Direction");
-                                    moveAnimation.direction = newMoveDirection;
-                                    EditorUtility.SetDirty(target);
+                                    GenericMenu gm = new GenericMenu();
+                                    gm.AddItem(direction, !moveAnimation.isCustom, () => { moveAnimation.isCustom = false; EditorUtility.SetDirty(target); });
+                                    gm.AddItem(customPosition, moveAnimation.isCustom, () => { moveAnimation.isCustom = true; EditorUtility.SetDirty(target); });
+                                    gm.ShowAsContext();
                                 }
                             }
-                        }
-                        GUILayout.EndHorizontal();
+                            GUILayout.EndHorizontal();
 
-                        //To
-                        GUILayout.BeginHorizontal();
-                        {
-                            GUILayout.Label(to, GUILayout.Width(labelWidth));
-                            Vector3 newEndValue = EditorGUILayout.Vector3Field(GUIContent.none, moveAnimation.endValue);
-                            if (newEndValue != moveAnimation.endValue)
+                            //To
+                            GUILayout.BeginHorizontal();
                             {
-                                Undo.RecordObject(target, "Move To");
-                                moveAnimation.endValue = newEndValue;
-                                EditorUtility.SetDirty(target);
+                                GUILayout.Label(GUIContent.none, GUILayout.Width(labelWidth));
+
+                                if (moveAnimation.isCustom)
+                                {
+                                    Vector3 newEndValue = EditorGUILayout.Vector3Field(GUIContent.none, moveAnimation.endValue);
+                                    if (newEndValue != moveAnimation.endValue)
+                                    {
+                                        Undo.RecordObject(target, "Move To");
+                                        moveAnimation.endValue = newEndValue;
+                                        EditorUtility.SetDirty(target);
+                                    }
+                                }
+                                else
+                                {
+                                    var newMoveDirection = (Direction)EditorGUILayout.EnumPopup(moveAnimation.direction);
+                                    if (newMoveDirection != moveAnimation.direction)
+                                    {
+                                        Undo.RecordObject(target, "Move Direction");
+                                        moveAnimation.direction = newMoveDirection;
+                                        EditorUtility.SetDirty(target);
+                                    }
+                                }
                             }
+                            GUILayout.EndHorizontal();
                         }
-                        GUILayout.EndHorizontal();
 
                         //Ease
                         GUILayout.BeginHorizontal();

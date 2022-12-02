@@ -73,7 +73,7 @@ namespace SK.Framework.Timer
         {
             beginFrame = Time.frameCount;
             onLaunch?.Invoke();
-            this.Begin(executer != null ? executer : Timer.Instance);
+            this.Begin(executer != null ? executer : Main.Timer);
         }
 
         public void Pause()

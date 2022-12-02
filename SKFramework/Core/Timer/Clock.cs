@@ -4,9 +4,6 @@ using UnityEngine.Events;
 
 namespace SK.Framework.Timer
 {
-    /// <summary>
-    /// 时钟/计时器
-    /// </summary>
     public sealed class Clock : ITimer
     {
         private float beginTime;
@@ -24,9 +21,6 @@ namespace SK.Framework.Timer
         private UnityAction onStop;
         private Func<bool> stopWhen;
 
-        /// <summary>
-        /// 已经计时
-        /// </summary>
         public float ElapsedTime { get; private set; }
        
         public bool IsCompleted { get; private set; }
@@ -74,7 +68,7 @@ namespace SK.Framework.Timer
         {
             beginTime = isIgnoreTimeScale ? Time.realtimeSinceStartup : Time.time;
             onLaunch?.Invoke();
-            this.Begin(executer != null ? executer : Timer.Instance);
+            this.Begin(executer != null ? executer : Main.Timer);
         }
 
         public void Pause()

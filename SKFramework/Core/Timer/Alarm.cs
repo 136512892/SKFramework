@@ -4,9 +4,6 @@ using UnityEngine.Events;
 
 namespace SK.Framework.Timer
 {
-    /// <summary>
-    /// 闹钟
-    /// </summary>
     public sealed class Alarm : ITimer
     {
         private readonly int hour = -1;
@@ -39,7 +36,7 @@ namespace SK.Framework.Timer
 
         public void Launch()
         {
-            this.Begin(executer != null ? executer : Timer.Instance);
+            this.Begin(executer != null ? executer : Main.Timer);
         }
 
         public void Pause()

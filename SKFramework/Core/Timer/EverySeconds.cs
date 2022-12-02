@@ -76,7 +76,7 @@ namespace SK.Framework.Timer
         {
             beginTime = isIgnoreTimeScale ? Time.realtimeSinceStartup : Time.time;
             onLaunch?.Invoke();
-            this.Begin(executer != null ? executer : Timer.Instance);
+            this.Begin(executer != null ? executer : Main.Timer);
         }
 
         public void Pause()

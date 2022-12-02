@@ -1,19 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Audio;
 
-namespace SK.Framework.Audios
+namespace SK.Framework.Audio
 {
-    /// <summary>
-    /// 背景音乐控制器
-    /// </summary>
-    public class BGMController
+    [DisallowMultipleComponent]
+    public class BGMController : MonoBehaviour
     {
-        #region Private Variables
-        private readonly AudioSource source;
-        private bool isPaused;
-        #endregion
+        [SerializeField] private AudioSource source;
 
-        #region Public Properties
+        private bool isPaused;
+
         public float Volume
         {
             get
@@ -145,15 +141,7 @@ namespace SK.Framework.Audios
                 source.outputAudioMixerGroup = value;
             }
         }
-        #endregion
 
-        #region Public Methods
-        public BGMController()
-        {
-            source = new GameObject("[BGM]").AddComponent<AudioSource>();
-            source.loop = true;
-            source.transform.SetParent(Audio.Instance.transform);
-        }
         public void Play(AudioClip bgm)
         {
             if (source.isPlaying)
@@ -164,10 +152,13 @@ namespace SK.Framework.Audios
             source.Play();
             isPaused = false;
         }
+
         public void Stop()
         {
-            source.Stop();
+            if (source.isPlaying)
+            {
+                source.Stop();
+            }
         }
-        #endregion
     }
 }

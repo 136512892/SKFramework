@@ -5,10 +5,6 @@ namespace SK.Framework
 {
     public static class DictionaryExtension
     {
-        /// <summary>
-        /// 遍历字典
-        /// </summary>
-        /// <param name="action">遍历事件</param>
         public static Dictionary<K, V> ForEach<K, V>(this Dictionary<K, V> self, Action<K, V> action)
         {
             using(var dicE = self.GetEnumerator())
@@ -20,12 +16,6 @@ namespace SK.Framework
             }
             return self;
         }
-        /// <summary>
-        /// 合并字典
-        /// </summary>
-        /// <param name="target">被合并的字典</param>
-        /// <param name="isOverride">若存在相同键，是否覆盖对应值</param>
-        /// <returns>合并后的字典</returns>
         public static Dictionary<K, V> AddRange<K, V>(this Dictionary<K, V> self, Dictionary<K, V> target, bool isOverride = false)
         {
             using(var dicE = target.GetEnumerator())
@@ -46,12 +36,6 @@ namespace SK.Framework
             }
             return self;
         }
-        /// <summary>
-        /// 尝试添加
-        /// </summary>
-        /// <param name="k">键</param>
-        /// <param name="v">值</param>
-        /// <returns></returns>
         public static Dictionary<K, V> TryAdd<K, V>(this Dictionary<K, V> self, K k, V v)
         {
             if (!self.ContainsKey(k))

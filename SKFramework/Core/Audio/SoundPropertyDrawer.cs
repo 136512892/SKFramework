@@ -1,15 +1,14 @@
 #if UNITY_EDITOR
-using System;
 using UnityEditor;
 using UnityEngine;
-using System.Linq;
 
-namespace SK.Framework.Audios
+namespace SK.Framework.Audio
 {
     [CustomPropertyDrawer(typeof(Sound))]
     public class SoundPropertyDrawer : PropertyDrawer
     {
-        private AudioDatabase[] databases;
+        private static readonly GUIContent database = new GUIContent("Database");
+        private static readonly GUIContent clip = new GUIContent("Clip");
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -19,7 +18,7 @@ namespace SK.Framework.Audios
             EditorGUI.indentLevel++;
 
             Rect sourceLabelRect = new Rect(position.x, position.y + position.height * .5f, position.width * .15f, position.height * .5f);
-            EditorGUI.LabelField(sourceLabelRect, "From");
+            EditorGUI.LabelField(sourceLabelRect, "Source");
 
             var source = property.FindPropertyRelative("source");
             Rect sourceValueRect = new Rect(position.x + position.width * .15f, position.y + position.height * .5f + 3f, position.width * .3f, position.height * .5f);
@@ -37,44 +36,12 @@ namespace SK.Framework.Audios
                     EditorGUI.PropertyField(audioClipRect, audioClip, GUIContent.none);
                     break;
                 case 1:
-                    if (databases == null)
-                    {
-                        string[] guids = AssetDatabase.FindAssets("t:AudioDatabase");
-                        databases = new AudioDatabase[guids.Length];
-                        for (int i = 0; i < guids.Length; i++)
-                        {
-                            string path = AssetDatabase.GUIDToAssetPath(guids[i]);
-                            databases[i] = AssetDatabase.LoadAssetAtPath<AudioDatabase>(path);
-                        }
-                    }
                     var databaseName = property.FindPropertyRelative("databaseName");
-                    var audioDataName = property.FindPropertyRelative("audioDataName");
-                    string[] databaseNames = databases.Select(m => m.databaseName).ToArray();
-                    int index = Array.FindIndex(databaseNames, m => m == databaseName.stringValue);
+                    var clipName = property.FindPropertyRelative("clipName");
                     Rect databaseNameRect = new Rect(position.x + position.width * .45f, position.y + position.height * .5f + 3f, position.width * .3f, position.height * .5f - 4f);
-                    int newIndex = EditorGUI.Popup(databaseNameRect, index, databaseNames);
-                    if (index != newIndex)
-                    {
-                        databaseName.stringValue = databaseNames[newIndex];
-                    }
-
+                    databaseName.stringValue = EditorGUI.TextField(databaseNameRect, databaseName.stringValue);
                     Rect dataRect = new Rect(position.x + position.width * .75f, position.y + position.height * .5f + 3f, position.width * .25f, position.height * .5f - 4f);
-                    if (index != -1)
-                    {
-                        AudioData[] audioDatas = databases[newIndex].datasets.ToArray();
-                        string[] audioDataNames = audioDatas.Select(m => m.name).ToArray();
-                        int dataIndex = Array.FindIndex(audioDataNames, m => m == audioDataName.stringValue);
-                        int newDataIndex = EditorGUI.Popup(dataRect, dataIndex, audioDataNames);
-                        if (newDataIndex != dataIndex)
-                        {
-                            audioDataName.stringValue = audioDataNames[newDataIndex];
-                        }
-                    }
-                    else
-                    {
-                        string[] audioDataNames = new string[0];
-                        EditorGUI.Popup(dataRect, -1, audioDataNames);
-                    }
+                    clipName.stringValue = EditorGUI.TextField(dataRect, clipName.stringValue);
                     break;
                 default: break;
             }
