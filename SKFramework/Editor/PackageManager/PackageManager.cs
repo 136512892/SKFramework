@@ -8,7 +8,8 @@ using System.Collections.Generic;
 
 using UnityEditor;
 using UnityEngine;
-using Newtonsoft.Json;
+
+using LitJson;
 
 namespace SK.Framework
 {
@@ -415,7 +416,7 @@ namespace SK.Framework
                 }
             }
             //反序列化
-            packages = JsonConvert.DeserializeObject<List<PackageInfoDetail>>(content);
+            packages = JsonMapper.ToObject<List<PackageInfoDetail>>(content);
             //初始化字典
             dic = new Dictionary<string, List<PackageInfoDetail>>();
             foldout = new Dictionary<string, bool>();
