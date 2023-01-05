@@ -11,7 +11,7 @@ namespace SK.Framework.Events
         private readonly Dictionary<int, List<Delegate>> fireDic = new Dictionary<int, List<Delegate>>();
         private readonly Dictionary<int, EventArgsPack> packDic = new Dictionary<int, EventArgsPack>();
 
-        public void Subscribe(int eventId, Delegate callback)
+        private void SubscribeInternal(int eventId, Delegate callback)
         {
             if (!fireDic.ContainsKey(eventId))
             {
@@ -20,7 +20,7 @@ namespace SK.Framework.Events
             fireDic[eventId].Add(callback);
         }
 
-        public bool Unsubscribe(int eventId, Delegate callback)
+        private bool UnsubscribeInternal(int eventId, Delegate callback)
         {
             if (fireDic.TryGetValue(eventId, out List<Delegate> list))
             {
@@ -137,6 +137,76 @@ namespace SK.Framework.Events
                     }
                 }
             }
+        }
+
+        public void Subscribe(int subject, Action callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public void Subscribe<T>(int subject, Action<T> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public void Subscribe<T1, T2>(int subject, Action<T1, T2> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public void Subscribe<T1, T2, T3>(int subject, Action<T1, T2, T3> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public void Subscribe<T1, T2, T3, T4>(int subject, Action<T1, T2, T3, T4> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+ 
+        public void Subscribe<T1, T2, T3, T4, T5>(int subject, Action<T1, T2, T3, T4, T5> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public void Subscribe<T1, T2, T3, T4, T5, T6>(int subject, Action<T1, T2, T3, T4, T5, T6> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe(int subject, Action callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T>(int subject, Action<T> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2>(int subject, Action<T1, T2> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2, T3>(int subject, Action<T1, T2, T3> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2, T3, T4>(int subject, Action<T1, T2, T3, T4> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2, T3, T4, T5>(int subject, Action<T1, T2, T3, T4, T5> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6>(int subject, Action<T1, T2, T3, T4, T5, T6> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
         }
 
         public bool Pack<T>(int packId, T pack) where T : EventArgsPack
