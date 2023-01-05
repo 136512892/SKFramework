@@ -40,9 +40,8 @@ namespace SK.Framework.Events
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i] is Action)
+                    if (list[i] is Action action)
                     {
-                        Action action = list[i] as Action;
                         action.Invoke();
                     }
                 }
@@ -55,9 +54,8 @@ namespace SK.Framework.Events
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i] is Action<T>)
+                    if (list[i] is Action<T> action)
                     {
-                        Action<T> action = list[i] as Action<T>;
                         action.Invoke(arg);
                     }
                 }
@@ -70,9 +68,8 @@ namespace SK.Framework.Events
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i] is Action<T1, T2>)
+                    if (list[i] is Action<T1, T2> action)
                     {
-                        Action<T1, T2> action = list[i] as Action<T1, T2>;
                         action.Invoke(arg1, arg2);
                     }
                 }
@@ -85,9 +82,8 @@ namespace SK.Framework.Events
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i] is Action<T1, T2, T3>)
+                    if (list[i] is Action<T1, T2, T3> action)
                     {
-                        Action<T1, T2, T3> action = list[i] as Action<T1, T2, T3>;
                         action.Invoke(arg1, arg2, arg3);
                     }
                 }
@@ -100,9 +96,8 @@ namespace SK.Framework.Events
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i] is Action<T1, T2, T3, T4>)
+                    if (list[i] is Action<T1, T2, T3, T4> action)
                     {
-                        Action<T1, T2, T3, T4> action = list[i] as Action<T1, T2, T3, T4>;
                         action.Invoke(arg1, arg2, arg3, arg4);
                     }
                 }
@@ -115,9 +110,8 @@ namespace SK.Framework.Events
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i] is Action<T1, T2, T3, T4, T5>)
+                    if (list[i] is Action<T1, T2, T3, T4, T5> action)
                     {
-                        Action<T1, T2, T3, T4, T5> action = list[i] as Action<T1, T2, T3, T4, T5>;
                         action.Invoke(arg1, arg2, arg3, arg4, arg5);
                     }
                 }
@@ -130,10 +124,65 @@ namespace SK.Framework.Events
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    if (list[i] is Action<T1, T2, T3, T4, T5, T6>)
+                    if (list[i] is Action<T1, T2, T3, T4, T5, T6> action)
                     {
-                        Action<T1, T2, T3, T4, T5, T6> action = list[i] as Action<T1, T2, T3, T4, T5, T6>;
                         action.Invoke(arg1, arg2, arg3, arg4, arg5, arg6);
+                    }
+                }
+            }
+        }
+
+        public void Publish<T1, T2, T3, T4, T5, T6, T7>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
+        {
+            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i] is Action<T1, T2, T3, T4, T5, T6, T7> action)
+                    {
+                        action.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+                    }
+                }
+            }
+        }
+
+        public void Publish<T1, T2, T3, T4, T5, T6, T7, T8>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
+        {
+            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i] is Action<T1, T2, T3, T4, T5, T6, T7, T8> action)
+                    {
+                        action.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+                    }
+                }
+            }
+        }
+
+        public void Publish<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
+        {
+            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i] is Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> action)
+                    {
+                        action.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+                    }
+                }
+            }
+        }
+
+        public void Publish<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
+        {
+            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i] is Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> action)
+                    {
+                        action.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
                     }
                 }
             }
@@ -174,6 +223,26 @@ namespace SK.Framework.Events
             SubscribeInternal(subject, callback);
         }
 
+        public void Subscribe<T1, T2, T3, T4, T5, T6, T7>(int subject, Action<T1, T2, T3, T4, T5, T6, T7> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
+        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> callback)
+        {
+            SubscribeInternal(subject, callback);
+        }
+
         public bool Unsubscribe(int subject, Action callback)
         {
             return UnsubscribeInternal(subject, callback);
@@ -205,6 +274,26 @@ namespace SK.Framework.Events
         }
 
         public bool Unsubscribe<T1, T2, T3, T4, T5, T6>(int subject, Action<T1, T2, T3, T4, T5, T6> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7>(int subject, Action<T1, T2, T3, T4, T5, T6, T7> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> callback)
+        {
+            return UnsubscribeInternal(subject, callback);
+        }
+
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> callback)
         {
             return UnsubscribeInternal(subject, callback);
         }
