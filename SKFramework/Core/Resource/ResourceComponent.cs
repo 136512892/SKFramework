@@ -26,6 +26,8 @@ namespace SK.Framework.Resource
 
         private AssetBundleManifest assetBundleManifest;
 
+        private bool isAssetBundleManifestLoading;
+
         private readonly Dictionary<string, AssetBundle> assetBundlesDic = new Dictionary<string, AssetBundle>();
 
         private readonly Dictionary<string, Scene> sceneDic = new Dictionary<string, Scene>();
@@ -53,6 +55,7 @@ namespace SK.Framework.Resource
                     if (ab != null)
                     {
                         assetBundleManifest = ab.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                        isAssetBundleManifestLoading = false;
                     }
                     else
                     {
@@ -114,7 +117,15 @@ namespace SK.Framework.Resource
         {
             if (assetBundleManifest == null)
             {
-                yield return LoadAssetBundleManifestAsync();
+                if (isAssetBundleManifestLoading)
+                {
+                    yield return new WaitUntil(() => assetBundleManifest != null);
+                }
+                else
+                {
+                    isAssetBundleManifestLoading = true;
+                    yield return LoadAssetBundleManifestAsync();
+                }
             }
 
             string[] dependencies = assetBundleManifest.GetAllDependencies(assetBundleName);
@@ -249,30 +260,30 @@ namespace SK.Framework.Resource
 
         public Coroutine LoadAssetAsync<T>(AssetInfo assetInfo, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : Object
         {
-            return StartCoroutine(LoadAssetAsyncCoroutine(assetInfo.assetName, assetInfo.assetPath, assetInfo.assetBundleName, onLoading, onCompleted));
+            return StartCoroutine(LoadAssetAsyncCoroutine(assetInfo.AssetName, assetInfo.AssetPath, assetInfo.AssetBundleName, onLoading, onCompleted));
         }
 
         public Coroutine LoadAssetAsync<T>(MonoBehaviour executer, AssetInfo assetInfo, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : Object
         {
-            return executer.StartCoroutine(LoadAssetAsyncCoroutine(assetInfo.assetName, assetInfo.assetPath, assetInfo.assetBundleName, onLoading, onCompleted));
+            return executer.StartCoroutine(LoadAssetAsyncCoroutine(assetInfo.AssetName, assetInfo.AssetPath, assetInfo.AssetBundleName, onLoading, onCompleted));
         }
 
         public Coroutine LoadSceneAsync(SceneInfo sceneInfo, Action<float> onLoading = null, Action onCompleted = null)
         {
-            return StartCoroutine(LoadSceneAsyncCoroutine(sceneInfo.sceneName, sceneInfo.assetPath, sceneInfo.assetBundleName, onLoading, onCompleted));
+            return StartCoroutine(LoadSceneAsyncCoroutine(sceneInfo.SceneName, sceneInfo.AssetPath, sceneInfo.AssetBundleName, onLoading, onCompleted));
         }
 
         public Coroutine LoadSceneAsync(MonoBehaviour executer, SceneInfo sceneInfo, Action<float> onLoading = null, Action onCompleted = null)
         {
-            return executer.StartCoroutine(LoadSceneAsyncCoroutine(sceneInfo.sceneName, sceneInfo.assetPath, sceneInfo.assetBundleName, onLoading, onCompleted));
+            return executer.StartCoroutine(LoadSceneAsyncCoroutine(sceneInfo.SceneName, sceneInfo.AssetPath, sceneInfo.AssetBundleName, onLoading, onCompleted));
         }
 
         public void UnloadAsset(AssetInfo assetInfo, bool unloadAllLoadedObjects = false)
         {
-            if (assetBundlesDic.ContainsKey(assetInfo.assetBundleName))
+            if (assetBundlesDic.ContainsKey(assetInfo.AssetBundleName))
             {
-                assetBundlesDic[assetInfo.assetBundleName].Unload(unloadAllLoadedObjects);
-                assetBundlesDic.Remove(assetInfo.assetBundleName);
+                assetBundlesDic[assetInfo.AssetBundleName].Unload(unloadAllLoadedObjects);
+                assetBundlesDic.Remove(assetInfo.AssetBundleName);
             }
         }
 
@@ -286,15 +297,15 @@ namespace SK.Framework.Resource
             AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
         }
 
-        public void UnloadScene(SceneInfo sceneInfo)
+        public bool UnloadScene(SceneInfo sceneInfo)
         {
-            if (!sceneDic.ContainsKey(sceneInfo.sceneName))
+            if (sceneDic.ContainsKey(sceneInfo.SceneName))
             {
-                Main.Log.Warning("卸载场景{0}失败：未加载", sceneInfo.sceneName);
-                return;
+                sceneDic.Remove(sceneInfo.SceneName);
+                SceneManager.UnloadSceneAsync(sceneInfo.SceneName);
+                return true;
             }
-            sceneDic.Remove(sceneInfo.sceneName);
-            SceneManager.UnloadSceneAsync(sceneInfo.sceneName);
+            return false;
         }
     }
 }

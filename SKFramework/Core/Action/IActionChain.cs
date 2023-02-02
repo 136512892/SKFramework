@@ -1,4 +1,5 @@
-﻿using UnityEngine.Events;
+﻿using System;
+using UnityEngine.Events;
 
 namespace SK.Framework.Actions
 {
@@ -16,7 +17,7 @@ namespace SK.Framework.Actions
 
         bool IsPaused { get; }
 
-        IActionChain StopWhen(System.Func<bool> predicate);
+        IActionChain StopWhen(Func<bool> predicate);
 
         IActionChain OnStop(UnityAction action);
 

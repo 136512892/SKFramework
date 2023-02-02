@@ -5,11 +5,11 @@ namespace SK.Framework.Resource
         /// <summary>
         /// Assets路径
         /// </summary>
-        public readonly string assetPath;
+        public string AssetPath { get; private set; }
         /// <summary>
         /// AssetBundle名称
         /// </summary>
-        public readonly string assetBundleName;
+        public string AssetBundleName { get; private set; }
   
         /// <summary>
         /// 构造函数
@@ -18,8 +18,8 @@ namespace SK.Framework.Resource
         /// <param name="assetPath">Asset路径</param>
         public ResourceInfo(string assetBundleName, string assetPath)
         {
-            this.assetBundleName = assetBundleName;
-            this.assetPath = assetPath;
+            AssetBundleName = assetBundleName;
+            AssetPath = assetPath;
         }
     }
 }

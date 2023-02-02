@@ -32,5 +32,10 @@ namespace SK.Framework.ObjectPool
         {
             ObjectPool<T>.Instance.MaxCacheCount = maxCacheCount;
         }
+
+        public int GetCurrentCacheCount<T>() where T : IPoolable, new()
+        {
+            return ObjectPool<T>.Instance.CurrentCacheCount;
+        }
     }
 }

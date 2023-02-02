@@ -10,35 +10,35 @@ namespace SK.Framework.FSM
         /// <summary>
         /// 状态名称
         /// </summary>
-        public string name;
+        public string Name { get; set; }
         /// <summary>
         /// 是否可切换至自身
         /// </summary>
-        public bool canSwitch2Self;
+        public bool CanSwitch2Self { get; set; }
         /// <summary>
         /// 所属状态机
         /// </summary>
-        public StateMachine machine;
+        public StateMachine Machine { get; internal set; }
         /// <summary>
         /// 状态初始化事件
         /// </summary>
-        public Action onInitialization;
+        internal Action onInitialization;
         /// <summary>
         /// 状态进入事件
         /// </summary>
-        public Action onEnter;
+        internal Action onEnter;
         /// <summary>
         /// 状态停留事件
         /// </summary>
-        public Action onStay;
+        internal Action onStay;
         /// <summary>
         /// 状态退出事件
         /// </summary>
-        public Action onExit;
+        internal Action onExit;
         /// <summary>
         /// 状态终止事件
         /// </summary>
-        public Action onTermination;
+        internal Action onTermination;
 
         /// <summary>
         /// 状态初始化事件
@@ -82,7 +82,7 @@ namespace SK.Framework.FSM
         /// <param name="targetStateName">目标状态名称</param>
         public void SwitchWhen(Func<bool> predicate, string targetStateName)
         {
-            machine.SwitchWhen(predicate, name, targetStateName);
+            Machine.SwitchWhen(predicate, Name, targetStateName);
         }
     }
 }

@@ -22,6 +22,8 @@ namespace SK.Framework
 
         public static AudioComponent Audio { get; private set; }
 
+        public static CustomComponent Custom { get; private set; }
+
         public static DebuggerComponent Debugger { get; private set; }
 
         public static EventComponent Events { get; private set; }
@@ -46,6 +48,7 @@ namespace SK.Framework
 
             Actions = GetComponentInChildren<ActionsComponent>();
             Audio = GetComponentInChildren<AudioComponent>();
+            Custom = GetComponentInChildren<CustomComponent>();
             Debugger = GetComponentInChildren<DebuggerComponent>();
             Events = GetComponentInChildren<EventComponent>();
             Timer = GetComponentInChildren<TimerComponent>();
@@ -61,6 +64,7 @@ namespace SK.Framework
         {
             Actions = null;
             Audio = null;
+            Custom = null;
             Debugger = null;
             Events = null;
             Timer = null;

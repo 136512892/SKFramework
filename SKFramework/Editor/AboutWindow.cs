@@ -38,7 +38,7 @@ namespace SK.Framework
         {
             GUILayout.Label("SKFramework", new GUIStyle(GUI.skin.label) { fontSize = 50, fontStyle = FontStyle.Bold});
 
-            GUILayout.Label("Version: 1.1.0");
+            GUILayout.Label("Version: 1.1.1");
             GUILayout.Label("本框架开发所用环境: Unity2020.3.16");
             GUILayout.Label("请将SKFramework直接放在Assets根目录下使用");
 

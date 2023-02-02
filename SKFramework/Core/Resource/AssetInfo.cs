@@ -5,13 +5,13 @@ namespace SK.Framework.Resource
         /// <summary>
         /// 资源名称
         /// </summary>
-        public readonly string assetName;
+        public string AssetName { get; private set; }
 
         public AssetInfo(string assetBundleName, string assetPath) : base(assetBundleName, assetPath)
         {
             int startIndex = assetPath.LastIndexOf('/') + 1;
             int endIndex = assetPath.LastIndexOf('.');
-            assetName = assetPath.Substring(startIndex, endIndex - startIndex);
+            AssetName = assetPath.Substring(startIndex, endIndex - startIndex);
         }
     }
 }

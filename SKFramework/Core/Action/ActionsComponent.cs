@@ -25,11 +25,11 @@ namespace SK.Framework.Actions
             return new ConcurrentActionChain(executer);
         }
 
-        public IActionChain Timeline()
+        public TimelineActionChain Timeline()
         {
             return new TimelineActionChain(this);
         }
-        public IActionChain Timeline(MonoBehaviour executer)
+        public TimelineActionChain Timeline(MonoBehaviour executer)
         {
             return new TimelineActionChain(executer);
         }

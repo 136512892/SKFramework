@@ -8,26 +8,25 @@ namespace SK.Framework.Events
     [AddComponentMenu("SKFramework/Event")]
     public class EventComponent : MonoBehaviour
     {
-        private readonly Dictionary<int, List<Delegate>> fireDic = new Dictionary<int, List<Delegate>>();
-        private readonly Dictionary<int, EventArgsPack> packDic = new Dictionary<int, EventArgsPack>();
+        private readonly Dictionary<int, List<Delegate>> dic = new Dictionary<int, List<Delegate>>();
 
         private void SubscribeInternal(int eventId, Delegate callback)
         {
-            if (!fireDic.ContainsKey(eventId))
+            if (!dic.ContainsKey(eventId))
             {
-                fireDic.Add(eventId, new List<Delegate>());
+                dic.Add(eventId, new List<Delegate>());
             }
-            fireDic[eventId].Add(callback);
+            dic[eventId].Add(callback);
         }
 
         private bool UnsubscribeInternal(int eventId, Delegate callback)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 list.Remove(callback);
                 if (list.Count == 0)
                 {
-                    fireDic.Remove(eventId);
+                    dic.Remove(eventId);
                 }
                 return true;
             }
@@ -36,7 +35,7 @@ namespace SK.Framework.Events
 
         public void Publish(int eventId)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -50,7 +49,7 @@ namespace SK.Framework.Events
 
         public void Publish<T>(int eventId, T arg)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -64,7 +63,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2>(int eventId, T1 arg1, T2 arg2)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -78,7 +77,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2, T3>(int eventId, T1 arg1, T2 arg2, T3 arg3)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -92,7 +91,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2, T3, T4>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -106,7 +105,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2, T3, T4, T5>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -120,7 +119,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2, T3, T4, T5, T6>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -134,7 +133,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2, T3, T4, T5, T6, T7>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -148,7 +147,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2, T3, T4, T5, T6, T7, T8>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -162,7 +161,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -176,7 +175,7 @@ namespace SK.Framework.Events
 
         public void Publish<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(int eventId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
         {
-            if (fireDic.TryGetValue(eventId, out List<Delegate> list))
+            if (dic.TryGetValue(eventId, out List<Delegate> list))
             {
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -188,134 +187,114 @@ namespace SK.Framework.Events
             }
         }
 
-        public void Subscribe(int subject, Action callback)
+        public void Subscribe(int eventId, Action callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T>(int subject, Action<T> callback)
+        public void Subscribe<T>(int eventId, Action<T> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T1, T2>(int subject, Action<T1, T2> callback)
+        public void Subscribe<T1, T2>(int eventId, Action<T1, T2> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T1, T2, T3>(int subject, Action<T1, T2, T3> callback)
+        public void Subscribe<T1, T2, T3>(int eventId, Action<T1, T2, T3> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T1, T2, T3, T4>(int subject, Action<T1, T2, T3, T4> callback)
+        public void Subscribe<T1, T2, T3, T4>(int eventId, Action<T1, T2, T3, T4> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
  
-        public void Subscribe<T1, T2, T3, T4, T5>(int subject, Action<T1, T2, T3, T4, T5> callback)
+        public void Subscribe<T1, T2, T3, T4, T5>(int eventId, Action<T1, T2, T3, T4, T5> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T1, T2, T3, T4, T5, T6>(int subject, Action<T1, T2, T3, T4, T5, T6> callback)
+        public void Subscribe<T1, T2, T3, T4, T5, T6>(int eventId, Action<T1, T2, T3, T4, T5, T6> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T1, T2, T3, T4, T5, T6, T7>(int subject, Action<T1, T2, T3, T4, T5, T6, T7> callback)
+        public void Subscribe<T1, T2, T3, T4, T5, T6, T7>(int eventId, Action<T1, T2, T3, T4, T5, T6, T7> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8>(int eventId, Action<T1, T2, T3, T4, T5, T6, T7, T8> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> callback)
+        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int eventId, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> callback)
+        public void Subscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(int eventId, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> callback)
         {
-            SubscribeInternal(subject, callback);
+            SubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe(int subject, Action callback)
+        public bool Unsubscribe(int eventId, Action callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T>(int subject, Action<T> callback)
+        public bool Unsubscribe<T>(int eventId, Action<T> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2>(int subject, Action<T1, T2> callback)
+        public bool Unsubscribe<T1, T2>(int eventId, Action<T1, T2> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2, T3>(int subject, Action<T1, T2, T3> callback)
+        public bool Unsubscribe<T1, T2, T3>(int eventId, Action<T1, T2, T3> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2, T3, T4>(int subject, Action<T1, T2, T3, T4> callback)
+        public bool Unsubscribe<T1, T2, T3, T4>(int eventId, Action<T1, T2, T3, T4> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2, T3, T4, T5>(int subject, Action<T1, T2, T3, T4, T5> callback)
+        public bool Unsubscribe<T1, T2, T3, T4, T5>(int eventId, Action<T1, T2, T3, T4, T5> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2, T3, T4, T5, T6>(int subject, Action<T1, T2, T3, T4, T5, T6> callback)
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6>(int eventId, Action<T1, T2, T3, T4, T5, T6> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7>(int subject, Action<T1, T2, T3, T4, T5, T6, T7> callback)
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7>(int eventId, Action<T1, T2, T3, T4, T5, T6, T7> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8> callback)
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8>(int eventId, Action<T1, T2, T3, T4, T5, T6, T7, T8> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> callback)
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9>(int eventId, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9> callback)
         {
-            return UnsubscribeInternal(subject, callback);
+            return UnsubscribeInternal(eventId, callback);
         }
 
-        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(int subject, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> callback)
+        public bool Unsubscribe<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(int eventId, Action<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> callback)
         {
-            return UnsubscribeInternal(subject, callback);
-        }
-
-        public bool Pack<T>(int packId, T pack) where T : EventArgsPack
-        {
-            if (!packDic.ContainsKey(packId))
-            {
-                packDic.Add(packId, pack);
-                return true;
-            }
-            return false;
-        }
-
-        public bool Unpack<T>(int packId, Action<T> callback) where T : EventArgsPack
-        {
-            if (packDic.TryGetValue(packId, out EventArgsPack pack))
-            {
-                callback.Invoke(pack as T);
-                return true;
-            }
-            return false;
+            return UnsubscribeInternal(eventId, callback);
         }
     }
 }

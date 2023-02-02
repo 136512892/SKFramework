@@ -10,12 +10,12 @@ namespace SK.Framework.Networking
     [AddComponentMenu("SKFramework/Web Request")]
     public class WebRequestComponent : MonoBehaviour
     {
-        public void Send(string url, WebRequestData data, Action<bool, DownloadHandler> callback, MonoBehaviour sender = null)
+        public void Send(string url, WebRequestData data, Action<DownloadHandler> onSuccess, Action<string> onFailure = null, MonoBehaviour sender = null)
         {
-            (sender != null ? sender : this).StartCoroutine(SendWebRequestCoroutine(url, data, callback));
+            (sender != null ? sender : this).StartCoroutine(SendWebRequestCoroutine(url, data, onSuccess, onFailure));
         }
 
-        private IEnumerator SendWebRequestCoroutine(string url, WebRequestData data, Action<bool, DownloadHandler> callback)
+        private IEnumerator SendWebRequestCoroutine(string url, WebRequestData data, Action<DownloadHandler> onSuccess, Action<string> onFailure = null)
         {
             using (UnityWebRequest request = data.RequestType == WebRequestType.GET
                 ? UnityWebRequest.Get(url)
@@ -28,9 +28,9 @@ namespace SK.Framework.Networking
                     request.uploadHandler = new UploadHandlerRaw(data.PostData);
                     request.downloadHandler = new DownloadHandlerBuffer();
                 }
-                if (data.headers != null && data.headers.Count > 0)
+                if (data.Headers != null && data.Headers.Count > 0)
                 {
-                    foreach (var kv in data.headers)
+                    foreach (var kv in data.Headers)
                     {
                         request.SetRequestHeader(kv.Key, kv.Value);
                     }
@@ -48,7 +48,14 @@ namespace SK.Framework.Networking
 #else
                 flag = !request.isError;
 #endif
-                callback?.Invoke(flag, request.downloadHandler);
+                if (flag)
+                {
+                    onSuccess?.Invoke(request.downloadHandler);
+                }
+                else
+                {
+                    onFailure?.Invoke(request.error);
+                }
             }
         }
     }

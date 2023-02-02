@@ -42,9 +42,9 @@ namespace SK.Framework.Actions
         {
             return chain.Append(new AnimateAction(animator, stateName, layerIndex));
         }
-        public static IActionChain Append(this TimelineActionChain chain, float beginTime, float duration, UnityAction<float> playAction)
+        public static TimelineActionChain Append(this TimelineActionChain chain, float beginTime, float duration, UnityAction<float> playAction)
         {
-            return chain.Append(new TimelineAction(beginTime, duration, playAction));
+            return chain.Append(new TimelineAction(beginTime, duration, playAction)) as TimelineActionChain;
         }
     }
 }

@@ -27,6 +27,11 @@ namespace SK.Framework.ObjectPool
             MonoObjectPool<T>.Instance.MaxCacheCount = maxCacheCount;
         }
 
+        public int GetCurrentCacheCount<T>() where T : MonoBehaviour, IPoolable
+        {
+            return MonoObjectPool<T>.Instance.CurrentCacheCount;
+        }
+
         public void CreateBy<T>(Func<T> createMethod) where T : MonoBehaviour, IPoolable
         {
             MonoObjectPool<T>.Instance.CreateBy(createMethod);

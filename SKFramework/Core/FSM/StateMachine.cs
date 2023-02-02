@@ -33,14 +33,14 @@ namespace SK.Framework.FSM
             if (!states.Contains(state))
             {
                 //判断是否存在同名状态
-                if (states.Find(m => m.name == state.name) == null)
+                if (states.Find(m => m.Name == state.Name) == null)
                 {
                     //存储到列表
                     states.Add(state);
                     //执行状态初始化事件
                     state.OnInitialization();
                     //设置状态所属的状态机
-                    state.machine = this;
+                    state.Machine = this;
                     return 0;
                 }
                 return -2;
@@ -57,7 +57,7 @@ namespace SK.Framework.FSM
         {
             Type type = typeof(T);
             T t = (T)Activator.CreateInstance(type);
-            t.name = string.IsNullOrEmpty(stateName) ? type.Name : stateName;
+            t.Name = string.IsNullOrEmpty(stateName) ? type.Name : stateName;
             return Add(t);
         }
 
@@ -69,7 +69,7 @@ namespace SK.Framework.FSM
         public bool Remove(string stateName)
         {
             //根据状态名称查找目标状态
-            var target = states.Find(m => m.name == stateName);
+            var target = states.Find(m => m.Name == stateName);
             if (target != null)
             {
                 //如果要移除的状态为当前状态 首先执行当前状态退出事件
@@ -93,7 +93,7 @@ namespace SK.Framework.FSM
         /// <returns>true：移除成功； false：状态不存在，移除失败</returns>
         public bool Remove(State state)
         {
-            return Remove(state.name);
+            return Remove(state.Name);
         }
         /// <summary>
         /// 移除状态
@@ -113,10 +113,10 @@ namespace SK.Framework.FSM
         public int Switch(string stateName)
         {
             //根据状态名称在列表中查询
-            var target = states.Find(m => m.name == stateName);
+            var target = states.Find(m => m.Name == stateName);
             if (target == null) return -1;
             //如果当前状态已经是切换的目标状态 并且该状态不可切换至自身 无需切换 返回false
-            if (CurrentState == target && !target.canSwitch2Self) return -2;
+            if (CurrentState == target && !target.CanSwitch2Self) return -2;
             //当前状态不为空则执行状态退出事件
             CurrentState?.OnExit();
             //更新当前状态
@@ -132,7 +132,7 @@ namespace SK.Framework.FSM
         /// <returns>0：切换成功； -1：状态不存在； -2：当前状态已经是切换的目标状态，并且该状态不可切换至自身</returns>
         public int Switch(State state)
         {
-            return Switch(state.name);
+            return Switch(state.Name);
         }
         /// <summary>
         /// 切换状态
@@ -179,7 +179,7 @@ namespace SK.Framework.FSM
         /// 切换至上一状态
         /// </summary>
         /// <returns>true：切换成功； false：状态机中不存在任何状态，切换失败</returns>
-        public void Switch2Last()
+        public bool Switch2Last()
         {
             if (states.Count != 0)
             {
@@ -202,7 +202,9 @@ namespace SK.Framework.FSM
                 }
                 //执行状态进入事件
                 CurrentState.OnEnter();
+                return true;
             }
+            return false;
         }
         /// <summary>
         /// 切换至空状态（退出当前状态）
@@ -224,7 +226,7 @@ namespace SK.Framework.FSM
         /// <returns>状态</returns>
         public T GetState<T>(string stateName) where T : State
         {
-            var target = states.Find(m => m.name == stateName);
+            var target = states.Find(m => m.Name == stateName);
             return target != null ? target as T : null;
         }
         /// <summary>
@@ -267,7 +269,7 @@ namespace SK.Framework.FSM
                     else
                     {
                         //首先判断当前的状态是否为指定的状态
-                        if (CurrentState.name == condition.sourceStateName)
+                        if (CurrentState.Name == condition.sourceStateName)
                         {
                             Switch(condition.targetStateName);
                         }
@@ -297,11 +299,11 @@ namespace SK.Framework.FSM
         {
             Type type = typeof(T);
             string name = string.IsNullOrEmpty(stateName) ? type.Name : stateName;
-            if (states.Find(m => m.name == name) == null)
+            if (states.Find(m => m.Name == name) == null)
             {
                 T state = Activator.CreateInstance(type) as T;
-                state.name = name;
-                state.machine = this;
+                state.Name = name;
+                state.Machine = this;
                 states.Add(state);
                 return new StateBuilder<T>(state, this);
             }

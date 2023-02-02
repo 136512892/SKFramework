@@ -9,22 +9,29 @@ namespace SK.Framework.Networking
 
         public WWWForm WWWForm { get; private set; }
 
-        public Dictionary<string, string> headers;
+        public Dictionary<string, string> Headers { get; private set; }
 
         public byte[] PostData { get; private set; }
 
-        public static WebRequestData Allocate(WebRequestType requestType, ContentType contentType, Dictionary<string, string> headers)
+        public static WebRequestData Allocate(WebRequestType requestType)
         {
             WebRequestData data = new WebRequestData();
             data.RequestType = requestType;
-            data.headers = headers == null ? new Dictionary<string, string>() : headers;
+            return data;
+        }
+
+        public static WebRequestData Allocate(WebRequestType requestType, ContentType contentType, Dictionary<string, string> headers = null)
+        {
+            WebRequestData data = new WebRequestData();
+            data.RequestType = requestType;
+            data.Headers = headers == null ? new Dictionary<string, string>() : headers;
             switch (contentType)
             {
                 case ContentType.JSON:
-                    data.headers.Add("Content-Type", "application/json");
+                    data.Headers.Add("Content-Type", "application/json");
                     break;
                 case ContentType.X_WWW_FORM_URLENCODED:
-                    data.headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                    data.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
                     break;
                 default:
                     break;
@@ -32,19 +39,19 @@ namespace SK.Framework.Networking
             return data;
         }
 
-        public static WebRequestData Allocate(WebRequestType requestType, byte[] postData, ContentType contentType, Dictionary<string, string> headers)
+        public static WebRequestData Allocate(WebRequestType requestType, byte[] postData, ContentType contentType, Dictionary<string, string> headers = null)
         {
             WebRequestData data = new WebRequestData();
             data.RequestType = requestType;
             data.PostData = postData;
-            data.headers = headers == null ? new Dictionary<string, string>() : headers;
+            data.Headers = headers == null ? new Dictionary<string, string>() : headers;
             switch (contentType)
             {
                 case ContentType.JSON:
-                    data.headers.Add("Content-Type", "application/json");
+                    data.Headers.Add("Content-Type", "application/json");
                     break;
                 case ContentType.X_WWW_FORM_URLENCODED:
-                    data.headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                    data.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
                     break;
                 default:
                     break;
@@ -52,19 +59,19 @@ namespace SK.Framework.Networking
             return data;
         }
 
-        public static WebRequestData Allocate(WebRequestType requestType, WWWForm form, ContentType contentType, Dictionary<string, string> headers)
+        public static WebRequestData Allocate(WebRequestType requestType, WWWForm form, ContentType contentType, Dictionary<string, string> headers = null)
         {
             WebRequestData data = new WebRequestData();
             data.RequestType = requestType;
             data.WWWForm = form;
-            data.headers = headers == null ? new Dictionary<string, string>() : headers;
+            data.Headers = headers == null ? new Dictionary<string, string>() : headers;
             switch (contentType)
             {
                 case ContentType.JSON:
-                    data.headers.Add("Content-Type", "application/json");
+                    data.Headers.Add("Content-Type", "application/json");
                     break;
                 case ContentType.X_WWW_FORM_URLENCODED:
-                    data.headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                    data.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
                     break;
                 default:
                     break;
