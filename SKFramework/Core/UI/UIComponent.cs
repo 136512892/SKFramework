@@ -245,7 +245,6 @@ namespace SK.Framework.UI
         {
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
-                viewDic.Remove(viewName);
                 view.Unload(instant);
                 return true;
             }
