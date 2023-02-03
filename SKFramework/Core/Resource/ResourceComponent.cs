@@ -32,6 +32,8 @@ namespace SK.Framework.Resource
 
         private readonly Dictionary<string, Scene> sceneDic = new Dictionary<string, Scene>();
 
+        private readonly Dictionary<string, UnityWebRequest> loadingDic = new Dictionary<string, UnityWebRequest>();
+
         private IEnumerator LoadAssetBundleManifestAsync()
         {
             using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(assetBundleUrl + "/" + assetBundleManifestName))
@@ -72,43 +74,59 @@ namespace SK.Framework.Resource
         private IEnumerator LoadAssetBundleAsync(string assetBundleName, Action<float> onLoading = null)
         {
             DateTime beginTime = DateTime.Now;
-            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(assetBundleUrl + "/" + assetBundleName))
+
+            if (loadingDic.ContainsKey(assetBundleName))
             {
-#if UNITY_2017_2_OR_NEWER
-                yield return request.SendWebRequest();
-#else
-                yield return request.Send();
-#endif
+                UnityWebRequest request = loadingDic[assetBundleName];
                 while (!request.isDone)
                 {
                     onLoading?.Invoke(request.downloadProgress);
                     yield return null;
                 }
+                yield return new WaitUntil(() => !loadingDic.ContainsKey(assetBundleName));
+            }
+            else
+            {
+                using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(assetBundleUrl + "/" + assetBundleName))
+                {
+                    loadingDic.Add(assetBundleName, request);
+#if UNITY_2017_2_OR_NEWER
+                    yield return request.SendWebRequest();
+#else
+                yield return request.Send();
+#endif
+                    while (!request.isDone)
+                    {
+                        onLoading?.Invoke(request.downloadProgress);
+                        yield return null;
+                    }
 
-                bool flag = false;
+                    bool flag = false;
 #if UNITY_2020_2_OR_NEWER
-                flag = request.result == UnityWebRequest.Result.Success;
+                    flag = request.result == UnityWebRequest.Result.Success;
 #elif UNITY_2017_1_OR_NEWER
                 flag = !(request.isNetworkError || request.isHttpError);
 #else
                 flag = !request.isError;
 #endif
-                if (flag)
-                {
-                    AssetBundle ab = DownloadHandlerAssetBundle.GetContent(request);
-                    if (ab != null)
+                    if (flag)
                     {
-                        assetBundlesDic.Add(assetBundleName, ab);
-                        Main.Log.Info("于{0}发起下载AssetBundle请求 {1} 于{2}下载完成 耗时{3}毫秒", beginTime.ToString("hh:mm:fff"), request.url, DateTime.Now.ToString("hh:mm:fff"), (DateTime.Now - beginTime).TotalMilliseconds);
+                        AssetBundle ab = DownloadHandlerAssetBundle.GetContent(request);
+                        if (ab != null)
+                        {
+                            assetBundlesDic.Add(assetBundleName, ab);
+                            Main.Log.Info("于{0}发起下载AssetBundle请求 {1} 于{2}下载完成 耗时{3}毫秒", beginTime.ToString("hh:mm:fff"), request.url, DateTime.Now.ToString("hh:mm:fff"), (DateTime.Now - beginTime).TotalMilliseconds);
+                        }
+                        else
+                        {
+                            Main.Log.Error("下载AssetBundle失败：{0}", request.url);
+                        }
                     }
                     else
                     {
-                        Main.Log.Error("下载AssetBundle失败：{0}", request.url);
+                        Main.Log.Error("请求下载AssetBundle失败：{0} {1}", request.url, request.error);
                     }
-                }
-                else
-                {
-                    Main.Log.Error("请求下载AssetBundle失败：{0} {1}", request.url, request.error);
+                    loadingDic.Remove(assetBundleName);
                 }
             }
         }
