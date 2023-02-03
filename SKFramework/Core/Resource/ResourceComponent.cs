@@ -115,7 +115,7 @@ namespace SK.Framework.Resource
                         if (ab != null)
                         {
                             assetBundlesDic.Add(assetBundleName, ab);
-                            Main.Log.Info("于{0}发起下载AssetBundle请求 {1} 于{2}下载完成 耗时{3}毫秒", beginTime.ToString("hh:mm:fff"), request.url, DateTime.Now.ToString("hh:mm:fff"), (DateTime.Now - beginTime).TotalMilliseconds);
+                            Main.Log.Info("于{0}发起下载AssetBundle请求 {1} 于{2}下载完成 耗时{3}毫秒（{4}秒）", beginTime.ToString("T"), request.url, DateTime.Now.ToString("T"), (DateTime.Now - beginTime).TotalMilliseconds, (DateTime.Now - beginTime).TotalSeconds);
                         }
                         else
                         {
