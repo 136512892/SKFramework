@@ -507,7 +507,8 @@ namespace SK.Framework
                 for (int i = 0; i < package.dependencies.Length; i++)
                 {
                     var dp = package.dependencies[i];
-                    InstallPackage(dp.name, dp.version);
+                    if (!dp.isInstalled)
+                        InstallPackage(dp.name, dp.version);
                 }
             }
         }
