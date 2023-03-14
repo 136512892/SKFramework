@@ -379,16 +379,18 @@ namespace SK.Framework
                         {
                             if (package.referencies != null && package.referencies.Length > 0)
                             {
-                                bool confirm = EditorUtility.DisplayDialog("提醒", "有其他工具包依赖于该项，是否确认将其移除？", "确认", "取消");
-                                if (confirm)
+                                if (package.referencies.Any(m => m.isInstalled))
                                 {
-                                    RemovePackage(package);
+                                    if (EditorUtility.DisplayDialog("提醒", "有其他工具包依赖于该项，是否确认将其移除？", "确认", "取消"))
+                                    {
+                                        RemovePackage(package);
+                                    }
                                 }
+                                else RemovePackage(package);
                             }
                             else
                             {
                                 RemovePackage(package);
-
                             }
                         }
                     }
@@ -507,7 +509,7 @@ namespace SK.Framework
                 for (int i = 0; i < package.dependencies.Length; i++)
                 {
                     var dp = package.dependencies[i];
-                    if (!dp.isInstalled)
+                    if(!dp.isInstalled)
                         InstallPackage(dp.name, dp.version);
                 }
             }
@@ -537,7 +539,7 @@ namespace SK.Framework
                             totalDownloadBytes += size;
                             fs.Write(bytes, 0, size);
                             size = stream.Read(bytes, 0, bytes.Length);
-                            loadingDic[name].progress = Mathf.Round(totalDownloadBytes / contentLength * 100);
+                            loadingDic[name].progress = Mathf.Round(totalDownloadBytes / contentLength * 100f);
                             //Debug.Log(string.Format("{0}-{1} 下载进度：{2}%", name, version, loadingDic[name].progress));
                         }
                     }
