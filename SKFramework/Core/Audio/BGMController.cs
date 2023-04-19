@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using System.Collections;
 
 namespace SK.Framework.Audio
 {
@@ -7,20 +8,31 @@ namespace SK.Framework.Audio
     public class BGMController : MonoBehaviour
     {
         [SerializeField] private AudioSource source;
+        private Coroutine pauseCoroutine;
 
-        private bool isPaused;
+        private float volume = 1f;
+        private bool isPaused = false;
+        private bool isPausing = false;
 
+        private void Start()
+        {
+            volume = source.volume;
+        }
         public float Volume
         {
             get
             {
-                return source.volume;
+                return volume;
             }
             set
             {
-                if (source.volume != value)
+                if (volume != value)
                 {
-                    source.volume = value;
+                    volume = value;
+                    if (!isPausing)
+                    {
+                        source.volume = volume;
+                    }
                 }
             }
         }
@@ -159,6 +171,41 @@ namespace SK.Framework.Audio
             {
                 source.Stop();
             }
+        }
+
+        public void Pause()
+        {
+            if (isPaused) return;
+            if (pauseCoroutine != null)
+                StopCoroutine(pauseCoroutine);
+            pauseCoroutine = StartCoroutine(PauseCoroutine(false));
+        }
+
+        public void Unpause()
+        {
+            if (!isPaused) return;
+            if (pauseCoroutine != null)
+                StopCoroutine(pauseCoroutine);
+            pauseCoroutine = StartCoroutine(PauseCoroutine(true));
+        }
+
+        private IEnumerator PauseCoroutine(bool unpause)
+        {
+            isPaused = !unpause;
+            isPausing = true;
+            float duration = .5f;
+            float beginTime = UnityEngine.Time.time;
+            if (!unpause) source.UnPause();
+            for (; UnityEngine.Time.time - beginTime <= duration; )
+            {
+                float t = (UnityEngine.Time.time - beginTime) / duration;
+                source.volume = Mathf.Lerp(unpause ? 0f : volume, unpause ? volume : 0f, t);
+                yield return null;
+            }
+            source.volume = unpause ? volume : 0f;
+            if (unpause) source.UnPause();
+            pauseCoroutine = null;
+            isPausing = false;
         }
     }
 }

@@ -2,14 +2,12 @@
 using System.IO;
 using System.Net;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using UnityEditor;
 using UnityEngine;
-
-using LitJson;
 
 namespace SK.Framework
 {
@@ -30,7 +28,7 @@ namespace SK.Framework
         //服务器IP地址
         private const string ipAddress = "http://1.13.194.97:80";
         //manifest.json文件
-        private const string manifest = "Library/manifest.json";
+        private const string manifest = "Library/manifest.dat";
         //资源包列表
         private List<PackageInfoDetail> packages;
         //资源包字典
@@ -46,7 +44,7 @@ namespace SK.Framework
         //右侧内容滚动
         private Vector2 rightScroll;
         //左侧内容宽度
-        private const float leftWidth = 250f;
+        private float leftWidth = 280f;
         //搜索栏宽度
         private const float searchFieldWidth = 200f;
         //最新更新时间
@@ -76,6 +74,9 @@ namespace SK.Framework
         //下载中集合
         private readonly Dictionary<string, DownloadInfo> loadingDic = new Dictionary<string, DownloadInfo>();
 
+        private Rect splitterRect;
+        private bool isDragging;
+
         private void OnEnable()
         {
             //如果不存在manifest.json文件
@@ -86,12 +87,7 @@ namespace SK.Framework
             }
             else
             {
-                //读取manifest.json文件内容
-                using (StreamReader sr = new StreamReader(manifest))
-                {
-                    string content = sr.ReadToEnd();
-                    Build(content);
-                }
+                Build();
             }
             //获取最新更新时间
             lastUpdateTime = EditorPrefs.GetString(lastUpdateTimeKey);
@@ -109,9 +105,10 @@ namespace SK.Framework
                 GUILayout.EndVertical();
 
                 //分割线
-                GUILayout.BeginVertical(GUILayout.ExpandHeight(true), GUILayout.MaxWidth(1f));
+                GUILayout.BeginVertical(GUILayout.ExpandHeight(true), GUILayout.MaxWidth(5f));
                 GUILayout.Box(string.Empty, "EyeDropperVerticalLine", GUILayout.ExpandHeight(true));
                 GUILayout.EndVertical();
+                splitterRect = GUILayoutUtility.GetLastRect();
 
                 //右侧
                 GUILayout.BeginVertical(GUILayout.ExpandWidth(true));
@@ -119,6 +116,33 @@ namespace SK.Framework
                 GUILayout.EndVertical();
             }
             GUILayout.EndHorizontal();
+
+            if (Event.current != null)
+            {
+                //光标
+                EditorGUIUtility.AddCursorRect(splitterRect, MouseCursor.ResizeHorizontal);
+                switch (Event.current.rawType)
+                {
+                    //开始拖拽分割线
+                    case EventType.MouseDown:
+                        isDragging = splitterRect.Contains(Event.current.mousePosition);
+                        break;
+                    case EventType.MouseDrag:
+                        if (isDragging)
+                        {
+                            leftWidth += Event.current.delta.x;
+                            //限制其最大最小值
+                            leftWidth = Mathf.Clamp(leftWidth, position.width * .3f, position.width * .8f);
+                            Repaint();
+                        }
+                        break;
+                    //结束拖拽分割线
+                    case EventType.MouseUp:
+                        if (isDragging)
+                            isDragging = false;
+                        break;
+                }
+            }
         }
 
         //样式初始化
@@ -399,7 +423,7 @@ namespace SK.Framework
             GUILayout.EndHorizontal();
         }
 
-        private void Build(string content)
+        private void Build()
         {
             //获取所有类型 遍历判断是否包含PackageAttribute属性
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -417,8 +441,15 @@ namespace SK.Framework
                     }
                 }
             }
-            //反序列化
-            packages = JsonMapper.ToObject<List<PackageInfoDetail>>(content);
+            //打开文件
+            using (FileStream fs = File.Open(manifest, FileMode.Open))
+            {
+                //反序列化
+                BinaryFormatter bf = new BinaryFormatter();
+                var deserialize = bf.Deserialize(fs);
+                if (deserialize != null)
+                    packages = deserialize as List<PackageInfoDetail>;
+            }
             //初始化字典
             dic = new Dictionary<string, List<PackageInfoDetail>>();
             foldout = new Dictionary<string, bool>();
@@ -471,30 +502,32 @@ namespace SK.Framework
         private void UpdatePackagesInfo()
         {
             //URL
-            string url = string.Format("{0}/{1}", ipAddress, "manifest.json");
+            string url = string.Format("{0}/PackageManager/manifest.dat", ipAddress);
             //发起网络请求
             System.Net.WebRequest request = WebRequest.Create(url);
             WebResponse webResponse = request.GetResponse();
             using (Stream stream = webResponse.GetResponseStream())
             {
-                //读取流
-                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                try
                 {
-                    //读取内容
-                    string content = reader.ReadToEnd();
-                    //写入manifest.json文件
-                    using (FileStream fs = new FileStream(manifest, FileMode.Create))
+                    using (FileStream fs = new FileStream(manifest, FileMode.Create, FileAccess.Write))
                     {
-                        byte[] bytes = Encoding.UTF8.GetBytes(content);
-                        fs.Write(bytes, 0, bytes.Length);
+                        byte[] buffer = new byte[1024];
+                        int count = 0;
+                        while ((count = stream.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            fs.Write(buffer, 0, count);
+                        }
+                        //刷新最新更新时间并存储
+                        lastUpdateTime = string.Format("Last Update {0}", DateTime.Now);
+                        EditorPrefs.SetString(lastUpdateTimeKey, lastUpdateTime);
+                        //重置
+                        selectedPackage = null;
                     }
-                    //刷新最新更新时间并存储
-                    lastUpdateTime = string.Format("Last Update {0}", DateTime.Now);
-                    EditorPrefs.SetString(lastUpdateTimeKey, lastUpdateTime);
-                    //重置
-                    selectedPackage = null;
-
-                    Build(content);
+                }
+                finally
+                {
+                    Build();
                 }
             }
         }
@@ -518,7 +551,7 @@ namespace SK.Framework
         private void InstallPackage(string name, string version)
         {
             //URL拼接
-            string url = string.Format("{0}/Packages/{1}/{2}.unitypackage", ipAddress, name, version);
+            string url = string.Format("{0}/PackageManager/Packages/{1}/{2}.unitypackage", ipAddress, name, version);
             //下载路径
             string path = string.Format("{0}/{1}-{2}.unitypackage", Application.dataPath, name, version);
             WebRequest request = WebRequest.Create(url);

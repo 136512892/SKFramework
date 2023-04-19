@@ -6,7 +6,7 @@ namespace SK.Framework.UI
     /// <summary>
     /// UI视图基类
     /// </summary>
-    [RequireComponent(typeof(RectTransform), typeof(CanvasGroup))]
+    [RequireComponent(typeof(RectTransform), typeof(Canvas), typeof(CanvasGroup))]
     public class UIView : MonoBehaviour, IUIView
     {
         private CanvasGroup canvasGroup;
@@ -164,10 +164,20 @@ namespace SK.Framework.UI
                 Destroy(gameObject);
             });
         }
+        /// <summary>
+        /// 设置SortOrder
+        /// </summary>
+        /// <param name="sortOrder"></param>
+        public void SetSortOrder(int sortOrder)
+        {
+            GetComponent<Canvas>().sortingOrder = sortOrder;
+            OnSortOrderChanged();
+        }
 
         protected virtual void OnInit(IViewData data) { }
         protected virtual void OnShow(IViewData data) { }
         protected virtual void OnHide() { }
         protected virtual void OnUnload() { }
+        protected virtual void OnSortOrderChanged() { }
     }
 }

@@ -23,6 +23,11 @@ namespace SK.Framework.FSM
         public State CurrentState { get; protected set; }
 
         /// <summary>
+        /// 状态机初始化事件
+        /// </summary>
+        public virtual void OnInitialization() { }
+
+        /// <summary>
         /// 添加状态
         /// </summary>
         /// <param name="state">状态</param>

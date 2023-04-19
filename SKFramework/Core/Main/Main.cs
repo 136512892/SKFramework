@@ -5,6 +5,7 @@ using SK.Framework.Log;
 using SK.Framework.FSM;
 using SK.Framework.Audio;
 using SK.Framework.Timer;
+using SK.Framework.Refer;
 using SK.Framework.Events;
 using SK.Framework.Actions;
 using SK.Framework.Debugger;
@@ -36,6 +37,8 @@ namespace SK.Framework
 
         public static ObjectPoolComponent ObjectPool { get; private set; }
 
+        public static ReferComponent Refer { get; private set; }
+
         public static ResourceComponent Resource { get; private set; }
 
         public static UIComponent UI { get; private set; }
@@ -55,6 +58,7 @@ namespace SK.Framework
             FSM = GetComponentInChildren<FSMComponent>();
             Log = GetComponentInChildren<LogComponent>();
             ObjectPool = GetComponentInChildren<ObjectPoolComponent>();
+            Refer = GetComponentInChildren<ReferComponent>();
             Resource = GetComponentInChildren<ResourceComponent>();
             UI = GetComponentInChildren<UIComponent>();
             WebRequest = GetComponentInChildren<WebRequestComponent>();
@@ -71,6 +75,7 @@ namespace SK.Framework
             FSM = null;
             Log = null;
             ObjectPool = null;
+            Refer = null;
             Resource = null;
             UI = null;
             WebRequest = null;

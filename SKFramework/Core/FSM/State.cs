@@ -14,7 +14,7 @@ namespace SK.Framework.FSM
         /// <summary>
         /// 是否可切换至自身
         /// </summary>
-        public bool CanSwitch2Self { get; set; }
+        public virtual bool CanSwitch2Self { get; set; }
         /// <summary>
         /// 所属状态机
         /// </summary>

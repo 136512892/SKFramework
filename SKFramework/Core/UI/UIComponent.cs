@@ -1,7 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
-using SK.Framework.Resource;
 using System.Collections.Generic;
 
 namespace SK.Framework.UI
@@ -10,26 +8,9 @@ namespace SK.Framework.UI
     [AddComponentMenu("SKFramework/UI")]
     public class UIComponent : MonoBehaviour
     {
-        [SerializeField] private Canvas canvas;
-        [SerializeField] private CanvasScaler scaler;
+        [SerializeField] private Vector2 resolution = new Vector2(1920f, 1080f);
 
         private Dictionary<string, IUIView> viewDic;
-
-        public Canvas Canvas
-        {
-            get
-            {
-                return canvas;
-            }
-        }
-
-        public Vector2 Resolution
-        {
-            get
-            {
-                return scaler.referenceResolution;
-            }
-        }
 
         private void Awake()
         {
@@ -41,9 +22,8 @@ namespace SK.Framework.UI
                 string levelName = levelNames[i];
                 var levelInstance = new GameObject(levelName);
                 levelInstance.layer = LayerMask.NameToLayer("UI");
-                levelInstance.transform.SetParent(canvas.transform, false);
                 RectTransform rectTransform = levelInstance.AddComponent<RectTransform>();
-                rectTransform.sizeDelta = scaler.referenceResolution;
+                rectTransform.sizeDelta = resolution;
                 rectTransform.anchorMin = Vector2.zero;
                 rectTransform.anchorMax = Vector2.one;
                 rectTransform.offsetMin = rectTransform.offsetMax = Vector2.zero;
@@ -71,7 +51,7 @@ namespace SK.Framework.UI
                 else
                 {
                     var instance = Instantiate(viewPrefab);
-                    instance.transform.SetParent(canvas.transform.GetChild((int)level), false);
+                    instance.transform.SetParent(transform.GetChild((int)level), false);
                     instance.name = viewName;
 
                     view = instance.GetComponent<IUIView>();
@@ -127,22 +107,22 @@ namespace SK.Framework.UI
         /// </summary>
         /// <typeparam name="T">视图类型</typeparam>
         /// <param name="viewName">视图命名</param>
-        /// <param name="assetInfo">视图资源信息</param>
+        /// <param name="assetPath">视图资源路径</param>
         /// <param name="level">视图层级</param>
         /// <param name="data">视图数据</param>
         /// <param name="instant">是否立即显示</param>
         /// <param name="onLoading">加载中事件</param>
         /// <param name="onCompleted">加载完成事件</param>
-        public void LoadViewAsync<T>(string viewName, AssetInfo assetInfo, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : UIView
+        public void LoadViewAsync<T>(string viewName, string assetPath, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : UIView
         {
             if (!viewDic.ContainsKey(viewName))
             {
-                Main.Resource.LoadAssetAsync<GameObject>(assetInfo, onLoading, (success, obj) =>
+                Main.Resource.LoadAssetAsync<GameObject>(assetPath, onLoading, (success, obj) =>
                 {
                     if (success)
                     {
                         var instance = Instantiate(obj);
-                        instance.transform.SetParent(canvas.transform.GetChild((int)level), false);
+                        instance.transform.SetParent(transform.GetChild((int)level), false);
                         instance.name = viewName;
 
                         T view = instance.GetComponent<T>();
@@ -167,15 +147,15 @@ namespace SK.Framework.UI
         /// 异步加载视图
         /// </summary>
         /// <typeparam name="T">视图类型</typeparam>
-        /// <param name="assetInfo">视图资源信息</param>
+        /// <param name="assetPath">视图资源路径</param>
         /// <param name="level">视图层级</param>
         /// <param name="data">视图数据</param>
         /// <param name="instant">是否立即显示</param>
         /// <param name="onLoading">加载中事件</param>
         /// <param name="onCompleted">加载完成事件</param>
-        public void LoadViewAsync<T>(AssetInfo assetInfo, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : UIView
+        public void LoadViewAsync<T>(string assetPath, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : UIView
         {
-            LoadViewAsync(typeof(T).Name, assetInfo, level, data, instant, onLoading, onCompleted);
+            LoadViewAsync(typeof(T).Name, assetPath, level, data, instant, onLoading, onCompleted);
         }
         #endregion
 
