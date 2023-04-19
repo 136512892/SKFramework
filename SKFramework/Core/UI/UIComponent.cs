@@ -21,6 +21,7 @@ namespace SK.Framework.UI
             {
                 string levelName = levelNames[i];
                 var levelInstance = new GameObject(levelName);
+				levelInstance.transform.SetParent(transform, false);
                 levelInstance.layer = LayerMask.NameToLayer("UI");
                 RectTransform rectTransform = levelInstance.AddComponent<RectTransform>();
                 rectTransform.sizeDelta = resolution;

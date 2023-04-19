@@ -504,7 +504,7 @@ namespace SK.Framework
             //URL
             string url = string.Format("{0}/PackageManager/manifest.dat", ipAddress);
             //发起网络请求
-            System.Net.WebRequest request = WebRequest.Create(url);
+            WebRequest request = WebRequest.Create(url);
             WebResponse webResponse = request.GetResponse();
             using (Stream stream = webResponse.GetResponseStream())
             {
