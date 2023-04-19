@@ -77,24 +77,26 @@ namespace SK.Framework.Audio
             }
         }
 
-        public AudioHandler Play(AudioClip clip)
+        public AudioHandler Play(AudioClip clip, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
                 .SetClip(clip)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, AudioMixerGroup output)
+        public AudioHandler Play(AudioClip clip, AudioMixerGroup output, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
                 .SetClip(clip)
                 .SetOutput(output)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, Vector3 position)
+        public AudioHandler Play(AudioClip clip, Vector3 position, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -102,9 +104,10 @@ namespace SK.Framework.Audio
                 .SetClip(clip)
                 .SetPoint(position)
                 .SetSpatialBlend(1f)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, Vector3 position, AudioMixerGroup output)
+        public AudioHandler Play(AudioClip clip, Vector3 position, AudioMixerGroup output, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -113,9 +116,10 @@ namespace SK.Framework.Audio
                 .SetPoint(position)
                 .SetSpatialBlend(1f)
                 .SetOutput(output)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, Transform followTarget)
+        public AudioHandler Play(AudioClip clip, Transform followTarget, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -123,9 +127,10 @@ namespace SK.Framework.Audio
                 .SetClip(clip)
                 .SetFollowTarget(followTarget)
                 .SetSpatialBlend(1f)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, Transform followTarget, AudioMixerGroup output)
+        public AudioHandler Play(AudioClip clip, Transform followTarget, AudioMixerGroup output, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -134,18 +139,20 @@ namespace SK.Framework.Audio
                 .SetFollowTarget(followTarget)
                 .SetSpatialBlend(1f)
                 .SetOutput(output)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, float volume)
+        public AudioHandler Play(AudioClip clip, float volume, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
                 .SetPause(isPaused)
                 .SetClip(clip)
                 .SetVolume(volume)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, float volume, Vector3 position)
+        public AudioHandler Play(AudioClip clip, float volume, Vector3 position, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -154,9 +161,10 @@ namespace SK.Framework.Audio
                 .SetVolume(volume)
                 .SetPoint(position)
                 .SetSpatialBlend(1f)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, float volume, Transform followTarget)
+        public AudioHandler Play(AudioClip clip, float volume, Transform followTarget, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -165,9 +173,10 @@ namespace SK.Framework.Audio
                 .SetVolume(volume)
                 .SetFollowTarget(followTarget)
                 .SetSpatialBlend(1f)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, float volume, float pitch, Vector3 position)
+        public AudioHandler Play(AudioClip clip, float volume, float pitch, Vector3 position, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -177,9 +186,10 @@ namespace SK.Framework.Audio
                 .SetPitch(pitch)
                 .SetPoint(position)
                 .SetSpatialBlend(1f)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, float volume, float pitch, Transform followTarget)
+        public AudioHandler Play(AudioClip clip, float volume, float pitch, Transform followTarget, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -189,33 +199,10 @@ namespace SK.Framework.Audio
                 .SetPitch(pitch)
                 .SetFollowTarget(followTarget)
                 .SetSpatialBlend(1f)
+                .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, float volume, Vector3 position, float minDistance, float maxDistance)
-        {
-            return GetHandler()
-                .SetMute(isMuted)
-                .SetPause(isPaused)
-                .SetClip(clip)
-                .SetVolume(volume)
-                .SetPoint(position)
-                .SetMinDistance(minDistance)
-                .SetMaxDistance(maxDistance)
-                .Play();
-        }
-        public AudioHandler Play(AudioClip clip, float volume, Transform followTarget, float minDistance, float maxDistance)
-        {
-            return GetHandler()
-                .SetMute(isMuted)
-                .SetPause(isPaused)
-                .SetClip(clip)
-                .SetVolume(volume)
-                .SetFollowTarget(followTarget)
-                .SetMinDistance(minDistance)
-                .SetMaxDistance(maxDistance)
-                .Play();
-        }
-        public AudioHandler Play(AudioClip clip, float volume, Vector3 position, float minDistance, float maxDistance, bool autoRecycle)
+        public AudioHandler Play(AudioClip clip, float volume, Vector3 position, float minDistance, float maxDistance, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)
@@ -228,7 +215,7 @@ namespace SK.Framework.Audio
                 .SetAutoRecycle(autoRecycle)
                 .Play();
         }
-        public AudioHandler Play(AudioClip clip, float volume, Transform followTarget, float minDistance, float maxDistance, bool autoRecycle)
+        public AudioHandler Play(AudioClip clip, float volume, Transform followTarget, float minDistance, float maxDistance, bool autoRecycle = true)
         {
             return GetHandler()
                 .SetMute(isMuted)

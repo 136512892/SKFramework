@@ -26,7 +26,7 @@ namespace SK.Framework.FSM
         /// <typeparam name="T">状态机类型</typeparam>
         /// <param name="stateMachineName">状态机名称</param>
         /// <returns>状态机</returns>
-        public T Create<T>(string stateMachineName) where T : StateMachine, new()
+        public T Create<T>(string stateMachineName = null) where T : StateMachine, new()
         {
             Type type = typeof(T);
             stateMachineName = string.IsNullOrEmpty(stateMachineName) ? type.Name : stateMachineName;
@@ -34,6 +34,7 @@ namespace SK.Framework.FSM
             {
                 T machine = (T)Activator.CreateInstance(type);
                 machine.Name = stateMachineName;
+                machine.OnInitialization();
                 machines.Add(machine);
                 return machine;
             }
@@ -77,9 +78,11 @@ namespace SK.Framework.FSM
         /// <typeparam name="T">状态机类型</typeparam>
         /// <param name="stateMachineName">状态机名称</param>
         /// <returns>状态机</returns>
-        public T GetMachine<T>(string stateMachineName) where T : StateMachine
+        public T GetMachine<T>(string stateMachineName = null) where T : StateMachine, new()
         {
-            return (T)machines.Find(m => m.Name == stateMachineName);
+            stateMachineName = string.IsNullOrEmpty(stateMachineName) ? typeof(T).Name : stateMachineName;
+            var target = machines.Find(m => m.Name == stateMachineName);
+            return target != null ? target as T : null;
         }
     }
 }

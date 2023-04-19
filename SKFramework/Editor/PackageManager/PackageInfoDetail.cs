@@ -1,8 +1,11 @@
-﻿namespace SK.Framework
+﻿using System;
+
+namespace SK.Framework
 {
     /// <summary>
     /// 资源包详细信息
     /// </summary>
+    [Serializable]
     public class PackageInfoDetail : PackageInfoBrief
     {
         /// <summary>

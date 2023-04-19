@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using System.Collections.Generic;
 
 namespace SK.Framework.Audio
@@ -35,6 +36,18 @@ namespace SK.Framework.Audio
         {
             AudioDatabase database = databases.Find(m => m.name == databaseName);
             return database != null ? database[clipName] : null;
+        }
+
+        public AudioClip FromDatabase(string databaseName, string clipName, out AudioMixerGroup outputAudioMixerGroup)
+        {
+            outputAudioMixerGroup = null;
+            AudioDatabase database = databases.Find(m => m.name == databaseName);
+            if (database != null)
+            {
+                outputAudioMixerGroup = database.outputAudioMixerGroup;
+                return database[clipName];
+            }
+            return null;
         }
     }
 }
