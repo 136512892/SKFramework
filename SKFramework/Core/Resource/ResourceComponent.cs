@@ -325,19 +325,19 @@ namespace SK.Framework.Resource
             }
         }
 
-        private IEnumerator LoadSceneAsyncCoroutine(string sceneAssetPath, Action<float> onLoading, Action onCompleted)
+        private IEnumerator LoadSceneAsyncCoroutine(string sceneAssetPath, Action<float> onLoading, Action<bool> onCompleted)
         {
             if (sceneDic.ContainsKey(sceneAssetPath))
             {
                 Main.Log.Warning("加载场景{0}失败：已加载", sceneAssetPath);
+                onCompleted?.Invoke(false);
                 yield break;
             }
 
 #if UNITY_EDITOR
             if (isEditorMode)
             {
-                Scene scene = SceneManager.GetSceneByPath(sceneAssetPath);
-                sceneDic.Add(sceneAssetPath, scene);
+                sceneDic.Add(sceneAssetPath, new Scene());
                 AsyncOperation asyncOperation = EditorSceneManager.LoadSceneAsyncInPlayMode(sceneAssetPath, new LoadSceneParameters()
                 {
                     loadSceneMode = LoadSceneMode.Additive,
@@ -349,6 +349,8 @@ namespace SK.Framework.Resource
                     yield return null;
                 }
                 onLoading?.Invoke(1f);
+                Scene scene = EditorSceneManager.GetSceneByPath(sceneAssetPath);
+                sceneDic[sceneAssetPath] = scene;
             }
             else
             {
@@ -397,7 +399,7 @@ namespace SK.Framework.Resource
             }
             onLoading?.Invoke(1f);
 #endif
-            onCompleted?.Invoke();
+            onCompleted?.Invoke(true);
         }
 
         public void LoadAssetAsync<T>(string assetPath, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : Object
@@ -410,12 +412,12 @@ namespace SK.Framework.Resource
             executer.StartCoroutine(LoadAssetAsyncCoroutine(assetPath, onLoading, onCompleted));
         }
 
-        public void LoadSceneAsync(string sceneAssetPath, Action<float> onLoading = null, Action onCompleted = null)
+        public void LoadSceneAsync(string sceneAssetPath, Action<float> onLoading = null, Action<bool> onCompleted = null)
         {
             StartCoroutine(LoadSceneAsyncCoroutine(sceneAssetPath, onLoading, onCompleted));
         }
 
-        public void LoadSceneAsync(MonoBehaviour executer, string sceneAssetPath, Action<float> onLoading = null, Action onCompleted = null)
+        public void LoadSceneAsync(MonoBehaviour executer, string sceneAssetPath, Action<float> onLoading = null, Action<bool> onCompleted = null)
         {
             executer.StartCoroutine(LoadSceneAsyncCoroutine(sceneAssetPath, onLoading, onCompleted));
         }
@@ -444,16 +446,45 @@ namespace SK.Framework.Resource
 
         public bool UnloadScene(string sceneAssetPath)
         {
-            if (map.TryGetValue(sceneAssetPath, out var assetInfo))
+#if UNITY_EDITOR
+            if (isEditorMode)
             {
-                if (sceneDic.ContainsKey(assetInfo.name))
+                if (sceneDic.TryGetValue(sceneAssetPath, out Scene scene))
                 {
-                    sceneDic.Remove(assetInfo.name);
-                    SceneManager.UnloadSceneAsync(assetInfo.name);
+                    sceneDic.Remove(sceneAssetPath);
+                    EditorSceneManager.UnloadSceneAsync(scene);
                     return true;
                 }
+                return false;
             }
-            return false;
+            else
+            {
+                if (map.TryGetValue(sceneAssetPath, out var assetInfo))
+                {
+                    if (sceneDic.ContainsKey(assetInfo.name))
+                    {
+                        sceneDic.Remove(assetInfo.name);
+                        SceneManager.UnloadSceneAsync(assetInfo.name);
+                        return true;
+                    }
+                }
+                return false;
+            }
+#else
+            else
+            {
+                if (map.TryGetValue(sceneAssetPath, out var assetInfo))
+                {
+                    if (sceneDic.ContainsKey(assetInfo.name))
+                    {
+                        sceneDic.Remove(assetInfo.name);
+                        SceneManager.UnloadSceneAsync(assetInfo.name);
+                        return true;
+                    }
+                }
+                return false;
+            }
+#endif
         }
 
         /// <summary>
