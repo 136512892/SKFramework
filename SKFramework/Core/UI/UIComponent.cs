@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 namespace SK.Framework.UI
@@ -8,12 +9,17 @@ namespace SK.Framework.UI
     [AddComponentMenu("SKFramework/UI")]
     public class UIComponent : MonoBehaviour
     {
-        [SerializeField] private Vector2 resolution = new Vector2(1920f, 1080f);
-
         private Dictionary<string, IUIView> viewDic;
+
+        public Canvas Canvas { get; private set; }
+
+        public Vector2 Resolution { get; private set; }
 
         private void Awake()
         {
+            Canvas = GetComponent<Canvas>();
+            Resolution = GetComponent<CanvasScaler>().referenceResolution;
+
             viewDic = new Dictionary<string, IUIView>();
 
             string[] levelNames = Enum.GetNames(typeof(ViewLevel));
@@ -24,7 +30,7 @@ namespace SK.Framework.UI
                 levelInstance.transform.SetParent(transform, false);
                 levelInstance.layer = LayerMask.NameToLayer("UI");
                 RectTransform rectTransform = levelInstance.AddComponent<RectTransform>();
-                rectTransform.sizeDelta = resolution;
+                rectTransform.sizeDelta = Resolution;
                 rectTransform.anchorMin = Vector2.zero;
                 rectTransform.anchorMax = Vector2.one;
                 rectTransform.offsetMin = rectTransform.offsetMax = Vector2.zero;
