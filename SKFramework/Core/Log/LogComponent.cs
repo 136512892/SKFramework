@@ -14,8 +14,8 @@ namespace SK.Framework.Log
         [SerializeField] private string errorColor = "#FF0000";
 
         private readonly string format_Info = "<color={0}><b>[SKFramework.Info]</b> {1}</color>";
-        private readonly string format_Warning = "<color={0}><b>[SKFramework.Warning]</b> {1}</color>";
-        private readonly string format_Error = "<color={0}><b>[SKFramework.Error]</b> {1}</color>";
+        private readonly string format_Warning = "<color={0}><b>[SKFramework.Warning]</b></color> {1}";
+        private readonly string format_Error = "<color={0}><b>[SKFramework.Error]</b></color> {1}";
 
         private void Awake()
         {
