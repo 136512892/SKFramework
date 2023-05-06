@@ -8,6 +8,7 @@ namespace SK.Framework.Events
     [AddComponentMenu("SKFramework/Event")]
     public class EventComponent : MonoBehaviour
     {
+        #region >> 立即执行 - 事件可能是主线程之外的线程抛出的
         private readonly Dictionary<int, List<Delegate>> dic = new Dictionary<int, List<Delegate>>();
 
         private void SubscribeInternal(int eventId, Delegate callback)
@@ -296,5 +297,59 @@ namespace SK.Framework.Events
         {
             return UnsubscribeInternal(eventId, callback);
         }
+        #endregion
+
+        #region >> 下帧执行 - 确保事件在主线程中抛出
+        private readonly Queue<EventArgs> queue = new Queue<EventArgs>();
+        private readonly Dictionary<int, List<Action<EventArgs>>> dic2 = new Dictionary<int, List<Action<EventArgs>>>();
+
+        private void Update()
+        {
+            while (queue.Count > 0)
+            {
+                var e = queue.Dequeue();
+                if (dic2.TryGetValue(e.ID, out List<Action<EventArgs>> list))
+                {
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        list[i].Invoke(e);
+                    }
+                }
+            }
+        }
+
+        public void Publish<T>(T e) where T : EventArgs
+        {
+            queue.Enqueue(e);
+        }
+        
+        public void Subscribe(int eventId, Action<EventArgs> callback)
+        {
+            if (!dic2.ContainsKey(eventId))
+            {
+                dic2.Add(eventId, new List<Action<EventArgs>>());
+            }
+            dic2[eventId].Add(callback);
+        }
+
+        public bool Unsubscribe(int eventId, Action<EventArgs> callback)
+        {
+            if (dic2.TryGetValue(eventId, out List<Action<EventArgs>> list))
+            {
+                list.Remove(callback);
+                if (list.Count == 0)
+                {
+                    dic2.Remove(eventId);
+                }
+                return true;
+            }
+            return false;
+        }
+        #endregion
+    }
+
+    public abstract class EventArgs
+    {
+        public abstract int ID { get; }
     }
 }

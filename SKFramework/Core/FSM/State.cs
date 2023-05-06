@@ -50,7 +50,7 @@ namespace SK.Framework.FSM
         /// <summary>
         /// 状态进入事件
         /// </summary>
-        public virtual void OnEnter()
+        public virtual void OnEnter(IStateData data = null)
         {
             onEnter?.Invoke();
         }
