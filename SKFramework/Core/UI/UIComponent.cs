@@ -147,7 +147,7 @@ namespace SK.Framework.UI
             }
             else
             {
-                Main.Log.Warning("视图{0}已加载", viewName);
+                Main.Log.Info("视图{0}已加载", viewName);
             }
         }
         /// <summary>
@@ -295,6 +295,27 @@ namespace SK.Framework.UI
         {
             T view = GetView<T>() ?? LoadView<T>();
             return view;
+        }
+        
+        /// <summary>
+        /// 显示或加载视图
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="level"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public T ShowOrLoadView<T>(ViewLevel level, IViewData data = null) where T : UIView
+        {
+            string viewName = typeof(T).Name;
+            if (viewDic.TryGetValue(viewName, out IUIView view))
+            {
+                view.Show(data);
+            }
+            else
+            {
+                view = LoadView<T>(level, data);
+            }
+            return view as T;
         }
 
         /// <summary>
