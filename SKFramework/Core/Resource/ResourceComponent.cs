@@ -332,7 +332,7 @@ namespace SK.Framework.Resource
             {
                 if (sceneDic.ContainsKey(sceneAssetPath))
                 {
-                    Main.Log.Warning("加载场景{0}失败：已加载", sceneAssetPath);
+                    Main.Log.Warning("场景{0}已加载", sceneAssetPath);
                     onCompleted?.Invoke(false);
                     yield break;
                 }
@@ -365,7 +365,7 @@ namespace SK.Framework.Resource
                 }
                 if (sceneDic.ContainsKey(assetInfo.name))
                 {
-                    Main.Log.Warning("加载场景{0}失败：已加载", sceneAssetPath);
+                    Main.Log.Warning("场景{0}已加载", sceneAssetPath);
                     onCompleted?.Invoke(false);
                     yield break;
                 }
@@ -398,7 +398,7 @@ namespace SK.Framework.Resource
             }
             if (sceneDic.ContainsKey(assetInfo.name))
             {
-                Main.Log.Warning("加载场景{0}失败：已加载", sceneAssetPath);
+                Main.Log.Warning("场景{0}已加载", sceneAssetPath);
                 onCompleted?.Invoke(false);
                 yield break;
             }

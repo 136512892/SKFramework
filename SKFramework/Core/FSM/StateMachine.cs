@@ -114,8 +114,9 @@ namespace SK.Framework.FSM
         /// 切换状态
         /// </summary>
         /// <param name="stateName">状态名称</param>
+        /// <param name="data">数据</param>
         /// <returns>0：切换成功； -1：状态不存在； -2：当前状态已经是切换的目标状态，并且该状态不可切换至自身</returns>
-        public int Switch(string stateName)
+        public int Switch(string stateName, IStateData data = null)
         {
             //根据状态名称在列表中查询
             var target = states.Find(m => m.Name == stateName);
@@ -127,7 +128,7 @@ namespace SK.Framework.FSM
             //更新当前状态
             CurrentState = target;
             //更新后 执行状态进入事件
-            CurrentState.OnEnter();
+            CurrentState.OnEnter(data);
             return 0;
         }
         /// <summary>
@@ -143,10 +144,11 @@ namespace SK.Framework.FSM
         /// 切换状态
         /// </summary>
         /// <typeparam name="T">状态类型</typeparam>
+        /// <typeparam name="data">数据</typeparam>
         /// <returns>0：切换成功； -1：状态不存在； -2：当前状态已经是切换的目标状态，并且该状态不可切换至自身</returns>
-        public int Switch<T>() where T : State
+        public int Switch<T>(IStateData data = null) where T : State
         {
-            return Switch(typeof(T).Name);
+            return Switch(typeof(T).Name, data);
         }
 
         /// <summary>
