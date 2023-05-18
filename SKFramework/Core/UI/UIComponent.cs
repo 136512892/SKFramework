@@ -166,6 +166,7 @@ namespace SK.Framework.UI
         }
         #endregion
 
+        #region >> 显示 & 隐藏 & 卸载
         /// <summary>
         /// 显示视图
         /// </summary>
@@ -265,7 +266,9 @@ namespace SK.Framework.UI
             }
             viewDic.Clear();
         }
+        #endregion
 
+        #region >> 获取或加载 & 显示或加载
         /// <summary>
         /// 获取视图
         /// </summary>
@@ -317,6 +320,35 @@ namespace SK.Framework.UI
             }
             return view as T;
         }
+
+        /// <summary>
+        /// 显示或异步加载视图
+        /// </summary>
+        /// <typeparam name="T">视图类型</typeparam>
+        /// <param name="assetPath">视图资产路径</param>
+        /// <param name="level">视图层级</param>
+        /// <param name="data">视图数据</param>
+        /// <param name="callback">回调事件</param>
+        public void ShowOrLoadViewAsync<T>(string assetPath, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false, Action<T> callback = null) where T : UIView
+        {
+            string viewName = typeof(T).Name;
+            if (viewDic.TryGetValue(viewName, out IUIView view))
+            {
+                view.Show(data, instant);
+                callback?.Invoke(view as T);
+            }
+            else
+            {
+                LoadViewAsync<T>(assetPath, level, data, instant, onCompleted : (success, view) =>
+                {
+                    if (success)
+                    {
+                        callback?.Invoke(view);
+                    }
+                });
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 从字典中移除

@@ -43,8 +43,12 @@ namespace SK.Framework.Resource
 
         private void Start()
         {
+#if UNITY_EDITOR
             if (!isEditorMode)
                 StartCoroutine(LoadAssetsMapAsync());
+#else
+            StartCoroutine(LoadAssetsMapAsync());
+#endif
         }
 
         private IEnumerator LoadAssetsMapAsync()
