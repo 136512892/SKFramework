@@ -7,9 +7,10 @@ namespace SK.Framework.UI
 {
     [DisallowMultipleComponent]
     [AddComponentMenu("SKFramework/UI")]
-    public class UIComponent : MonoBehaviour
+    public class UIComponent : MonoBehaviour, IUIComponent
     {
-        private Dictionary<string, IUIView> viewDic;
+        //字典存储已经加载的视图
+        private readonly Dictionary<string, IUIView> viewDic = new Dictionary<string, IUIView>();
 
         public Canvas Canvas { get; private set; }
 
@@ -19,8 +20,6 @@ namespace SK.Framework.UI
         {
             Canvas = GetComponent<Canvas>();
             Resolution = GetComponent<CanvasScaler>().referenceResolution;
-
-            viewDic = new Dictionary<string, IUIView>();
 
             string[] levelNames = Enum.GetNames(typeof(ViewLevel));
             for (int i = levelNames.Length - 1; i >= 0; i--)
@@ -38,328 +37,337 @@ namespace SK.Framework.UI
             }
         }
 
-        #region >> Resources模式加载视图
         /// <summary>
-        /// 加载视图
+        /// 加载视图（Resources加载方式）
         /// </summary>
+        /// <typeparam name="T">视图类型</typeparam>
         /// <param name="viewName">视图命名</param>
-        /// <param name="viewResourcePath">视图资源路径</param>
-        /// <param name="level">视图层级</param>
-        /// <param name="view">视图</param>
+        /// <param name="resourcesPath">Resources资源路径</param>
+        /// <param name="viewLevel">视图层级</param>
         /// <param name="data">视图数据</param>
-        /// <param name="instant">是否立即显示</param>
-        /// <returns>0：加载成功  -1：视图已存在，无需重复加载  -2：加载失败，请检查资源路径</returns>
-        public int LoadView(string viewName, string viewResourcePath, ViewLevel level, out IUIView view, IViewData data = null, bool instant = false)
+        /// <returns>视图</returns>
+        public T LoadView<T>(string viewName, string resourcesPath, ViewLevel viewLevel = ViewLevel.COMMON, object data = null) where T : MonoBehaviour, IUIView
         {
-            if (!viewDic.TryGetValue(viewName, out view))
+            //该视图尚未加载
+            if (!viewDic.ContainsKey(viewName))
             {
-                GameObject viewPrefab = Resources.Load<GameObject>(viewResourcePath);
-                if (viewPrefab == null) return -2;
-                else
+                //加载视图资产
+                GameObject viewPrefab = Resources.Load<GameObject>(resourcesPath);
+                if (viewPrefab != null)
                 {
-                    var instance = Instantiate(viewPrefab);
-                    instance.transform.SetParent(transform.GetChild((int)level), false);
+                    //实例化
+                    GameObject instance = Instantiate(viewPrefab);
+                    //设置层级
+                    instance.transform.SetParent(transform.GetChild((int)viewLevel), false);
+                    //设置名称
                     instance.name = viewName;
-
-                    view = instance.GetComponent<IUIView>();
+                    //获取视图组件
+                    IUIView view = instance.GetComponent<IUIView>();
+                    //为视图命名
                     view.Name = viewName;
-                    view.Init(data, instant);
-
+                    //调用其初始化事件
+                    view.OnInit(data);
+                    //添加到视图字典
                     viewDic.Add(viewName, view);
-                    return 0;
+                    return view as T;
                 }
             }
-            return -1;
-        }
-        /// <summary>
-        /// 加载视图
-        /// </summary>
-        /// <typeparam name="T">视图类型</typeparam>
-        /// <param name="viewName">视图命名</param>
-        /// <param name="viewResourcePath">视图资源路径</param>
-        /// <param name="level">视图层级</param>
-        /// <param name="data">视图数据</param>
-        /// <param name="instant">是否立即显示</param>
-        /// <returns>加载成功返回视图，否则返回null</returns>
-        public T LoadView<T>(string viewName, string viewResourcePath, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false) where T : UIView
-        {
-            if (LoadView(viewName, viewResourcePath, level, out IUIView view, data, instant) == 0)
-            {
-                return view as T;
-            }
             return null;
         }
-        /// <summary>
-        /// 加载视图
-        /// </summary>
-        /// <typeparam name="T">视图类型</typeparam>
-        /// <param name="level">视图层级</param>
-        /// <param name="data">视图数据</param>
-        /// <param name="instant">是否立即显示</param>
-        /// <returns>加载成功返回视图，否则返回null</returns>
-        public T LoadView<T>(ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false) where T : UIView
+        public T LoadView<T>(string resourcesPath, ViewLevel viewLevel = ViewLevel.COMMON, object data = null) where T : MonoBehaviour, IUIView
         {
-            string viewName = typeof(T).Name;
-            if (LoadView(viewName, viewName, level, out IUIView view, data, instant) == 0)
-            {
-                return view as T;
-            }
-            return null;
+            return LoadView<T>(typeof(T).Name, resourcesPath, viewLevel, data);
         }
-        #endregion
+        public T LoadView<T>(ViewLevel viewLevel = ViewLevel.COMMON, object data = null) where T: MonoBehaviour, IUIView
+        {
+            return LoadView<T>(typeof(T).Name, typeof(T).Name, viewLevel, data);
+        }
 
-        #region >> AssetBundle模式加载视图
         /// <summary>
         /// 异步加载视图
         /// </summary>
         /// <typeparam name="T">视图类型</typeparam>
         /// <param name="viewName">视图命名</param>
-        /// <param name="assetPath">视图资源路径</param>
-        /// <param name="level">视图层级</param>
+        /// <param name="assetPath">资产路径</param>
+        /// <param name="viewLevel">视图层级</param>
         /// <param name="data">视图数据</param>
-        /// <param name="instant">是否立即显示</param>
-        /// <param name="onLoading">加载中事件</param>
-        /// <param name="onCompleted">加载完成事件</param>
-        public void LoadViewAsync<T>(string viewName, string assetPath, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : UIView
+        /// <param name="onCompleted">加载的回调事件</param>
+        public void LoadViewAsync<T>(string viewName, string assetPath, ViewLevel viewLevel = ViewLevel.COMMON, object data = null, Action<bool, T> onCompleted = null) where T : MonoBehaviour, IUIView
         {
+            //该视图尚未加载
             if (!viewDic.ContainsKey(viewName))
             {
-                Main.Resource.LoadAssetAsync<GameObject>(assetPath, onLoading, (success, obj) =>
+                //异步加载资产
+                Main.Resource.LoadAssetAsync<GameObject>(assetPath, onCompleted: (success, obj) =>
                 {
+                    //资产加载成功
                     if (success)
                     {
-                        var instance = Instantiate(obj);
-                        instance.transform.SetParent(transform.GetChild((int)level), false);
+                        //实例化
+                        GameObject instance = Instantiate(obj);
+                        //设置层级
+                        instance.transform.SetParent(transform.GetChild((int)viewLevel), false);
+                        //设置名称
                         instance.name = viewName;
-
-                        T view = instance.GetComponent<T>();
+                        //获取视图组件
+                        IUIView view = instance.GetComponent<IUIView>();
+                        //为视图命名
                         view.Name = viewName;
-                        view.Init(data, instant);
+                        //调用其初始化事件
+                        view.OnInit(data);
+                        //添加到视图字典
                         viewDic.Add(viewName, view);
-
-                        onCompleted?.Invoke(true, view);
+                        //执行回调
+                        onCompleted?.Invoke(true, view as T);
                     }
+                    //资产加载失败
                     else
                     {
+                        //执行回调
+                        onCompleted?.Invoke(false, null);
+                    }
+                });
+            }
+        }
+        public void LoadViewAsync<T>(string assetPath, ViewLevel viewLevel = ViewLevel.COMMON, object data = null, Action<bool, T> onCompleted = null) where T : MonoBehaviour, IUIView
+        {
+            LoadViewAsync(typeof(T).Name, assetPath, viewLevel, data, onCompleted);
+        }
+
+        /// <summary>
+        /// 打开视图（如果视图尚未加载，会通过Resources方式进行加载）
+        /// </summary>
+        /// <typeparam name="T">视图类型</typeparam>
+        /// <param name="viewName">视图命名或视图名称</param>
+        /// <param name="resourcesPath">Resources资源路径</param>
+        /// <param name="viewLevel">视图层级</param>
+        /// <param name="instant">是否立即显示</param>
+        /// <param name="data">视图数据</param>
+        /// <returns>视图</returns>
+        public T OpenView<T>(string viewName, string resourcesPath, ViewLevel viewLevel = ViewLevel.COMMON, bool instant = false, object data = null) where T : MonoBehaviour, IUIView
+        {
+            //打开视图时 首先判断该视图是否已加载
+            if (!viewDic.TryGetValue(viewName, out IUIView view))
+            {
+                //加载视图资产
+                GameObject viewPrefab = Resources.Load<GameObject>(resourcesPath);
+                if (viewPrefab != null)
+                {
+                    //实例化
+                    GameObject instance = Instantiate(viewPrefab);
+                    //设置层级
+                    instance.transform.SetParent(transform.GetChild((int)viewLevel), false);
+                    //设置名称
+                    instance.name = viewName;
+                    //获取视图组件
+                    view = instance.GetComponent<IUIView>();
+                    //为视图命名
+                    view.Name = viewName;
+                    //调用其初始化事件
+                    view.OnInit(data);
+                    //添加到视图字典
+                    viewDic.Add(viewName, view);
+                }
+            }
+            //从字典获取到或者已经执行过加载后 判断非空
+            if (view != null)
+            {
+                //执行视图的打开事件
+                view.OnOpen(instant, data);
+                return view as T;
+            }
+            return null;
+        }
+        public T OpenView<T>(string resourcesPath, ViewLevel viewLevel = ViewLevel.COMMON, bool instant = false, object data = null) where T : MonoBehaviour, IUIView
+        {
+            return OpenView<T>(typeof(T).Name, resourcesPath, viewLevel, instant, data);
+        }
+        public T OpenView<T>(ViewLevel viewLevel = ViewLevel.COMMON, bool instant = false, object data = null) where T : MonoBehaviour, IUIView
+        {
+            return OpenView<T>(typeof(T).Name, typeof(T).Name, viewLevel, instant, data);
+        }
+
+        /// <summary>
+        /// 异步打开视图（如果视图尚未加载，会通过异步方式进行加载）
+        /// </summary>
+        /// <typeparam name="T">视图类型</typeparam>
+        /// <param name="viewName">视图命名或视图名称</param>
+        /// <param name="assetPath">资产路径</param>
+        /// <param name="viewLevel">视图层级</param>
+        /// <param name="instant">是否立即显示</param>
+        /// <param name="data">视图数据</param>
+        /// <param name="onCompleted">加载的回调事件 如果未执行加载过程不执行</param>
+        public void OpenViewAsync<T>(string viewName, string assetPath, ViewLevel viewLevel = ViewLevel.COMMON, bool instant = false, object data = null, Action<bool, T> onCompleted = null) where T : MonoBehaviour, IUIView
+        {
+            //该视图尚未加载
+            if (!viewDic.TryGetValue(viewName, out IUIView view))
+            {
+                //异步加载资产
+                Main.Resource.LoadAssetAsync<GameObject>(assetPath, onCompleted: (success, obj) =>
+                {
+                    //资产加载成功
+                    if (success)
+                    {
+                        //实例化
+                        GameObject instance = Instantiate(obj);
+                        //设置层级
+                        instance.transform.SetParent(transform.GetChild((int)viewLevel), false);
+                        //设置名称
+                        instance.name = viewName;
+                        //获取视图组件
+                        view = instance.GetComponent<IUIView>();
+                        //为视图命名
+                        view.Name = viewName;
+                        //调用其初始化事件
+                        view.OnInit(data);
+                        //添加到视图字典
+                        viewDic.Add(viewName, view);
+                        //执行回调
+                        onCompleted?.Invoke(true, view as T);
+
+                        //执行视图的打开事件
+                        view.OnOpen(instant, data);
+                    }
+                    //资产加载失败
+                    else
+                    {
+                        //执行回调
                         onCompleted?.Invoke(false, null);
                     }
                 });
             }
             else
             {
-                Main.Log.Info("视图{0}已加载", viewName);
+                //执行视图的打开事件
+                view.OnOpen(instant, data);
             }
         }
+        public void OpenViewAsync<T>(string assetPath, ViewLevel viewLevel = ViewLevel.COMMON, bool instant = false, object data = null, Action<bool, T> onCompleted = null) where T : MonoBehaviour, IUIView
+        {
+            OpenViewAsync(typeof(T).Name, assetPath, viewLevel, instant, data, onCompleted);
+        }
+
         /// <summary>
-        /// 异步加载视图
+        /// 尝试打开视图（如果视图已经加载，将其打开）
         /// </summary>
         /// <typeparam name="T">视图类型</typeparam>
-        /// <param name="assetPath">视图资源路径</param>
-        /// <param name="level">视图层级</param>
-        /// <param name="data">视图数据</param>
-        /// <param name="instant">是否立即显示</param>
-        /// <param name="onLoading">加载中事件</param>
-        /// <param name="onCompleted">加载完成事件</param>
-        public void LoadViewAsync<T>(string assetPath, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : UIView
-        {
-            LoadViewAsync(typeof(T).Name, assetPath, level, data, instant, onLoading, onCompleted);
-        }
-        #endregion
-
-        #region >> 显示 & 隐藏 & 卸载
-        /// <summary>
-        /// 显示视图
-        /// </summary>
         /// <param name="viewName">视图名称</param>
-        /// <param name="data">视图数据</param>
         /// <param name="instant">是否立即显示</param>
+        /// <param name="data">视图数据</param>
         /// <returns>视图</returns>
-        public IUIView ShowView(string viewName, IViewData data = null, bool instant = false)
+        public T TryOpenView<T>(string viewName, bool instant = false, object data = null) where T : MonoBehaviour, IUIView
         {
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
-                view.Show(data, instant);
-                return view;
+                //执行视图的打开事件
+                view.OnOpen(instant, data);
+                return view as T;
             }
             return null;
         }
-        /// <summary>
-        /// 显示视图
-        /// </summary>
-        /// <typeparam name="T">视图类型</typeparam>
-        /// <param name="data">视图数据</param>
-        /// <param name="instant">是否立即显示</param>
-        /// <returns>视图</returns>
-        public T ShowView<T>(IViewData data = null, bool instant = false) where T : UIView
+        public T TryOpenView<T>(bool instant = false, object data = null) where T : MonoBehaviour, IUIView
         {
-            IUIView view = ShowView(typeof(T).Name, data, instant);
-            return view != null ? view as T : null;
+            return TryOpenView<T>(typeof(T).Name, instant, data);
         }
 
         /// <summary>
-        /// 隐藏视图
+        /// 关闭视图
         /// </summary>
         /// <param name="viewName">视图名称</param>
-        /// <param name="instant">是否立即隐藏</param>
-        /// <returns>视图</returns>
-        public IUIView HideView(string viewName, bool instant = false)
+        /// <param name="instant">是否立即关闭</param>
+        /// <returns></returns>
+        public bool CloseView(string viewName, bool instant = false)
         {
+            //从字典中获取视图
             if (viewDic.TryGetValue(viewName, out IUIView view))
             {
-                view.Hide(instant);
-                return view;
-            }
-            return null;
-        }
-        /// <summary>
-        /// 隐藏视图
-        /// </summary>
-        /// <typeparam name="T">视图类型</typeparam>
-        /// <param name="instant">是否立即隐藏</param>
-        /// <returns>视图</returns>
-        public T HideView<T>(bool instant = false) where T : UIView
-        {
-            IUIView view = HideView(typeof(T).Name, instant);
-            return view != null ? view as T : null;
-        }
-
-        /// <summary>
-        /// 卸载视图
-        /// </summary>
-        /// <param name="viewName">视图名称</param>
-        /// <param name="instant">是否立即卸载</param>
-        /// <returns>成功卸载返回true 否则返回false</returns>
-        public bool UnloadView(string viewName, bool instant = false)
-        {
-            if (viewDic.TryGetValue(viewName, out IUIView view))
-            {
-                view.Unload(instant);
+                //调用其关闭事件
+                view.OnClose(instant);
                 return true;
             }
             return false;
         }
-        /// <summary>
-        /// 卸载视图
-        /// </summary>
-        /// <typeparam name="T">视图类型</typeparam>
-        /// <param name="instant">是否立即卸载</param>
-        /// <returns>成功卸载返回true 否则返回false</returns>
-        public bool UnloadView<T>(bool instant = false) where T : UIView
+        public bool CloseView<T>(bool instant = false) where T : IUIView
         {
-            return UnloadView(typeof(T).Name, instant);
+            return CloseView(typeof(T).Name, instant);
         }
-        /// <summary>
-        /// 卸载所有视图
-        /// </summary>
-        public void UnloadAll()
-        {
-            List<IUIView> views = new List<IUIView>();
-            foreach (var kv in viewDic)
-            {
-                views.Add(kv.Value);
-            }
-            for (int i = 0; i < views.Count; i++)
-            {
-                views[i].Unload(true);
-                views.RemoveAt(i);
-                i--;
-            }
-            viewDic.Clear();
-        }
-        #endregion
 
-        #region >> 获取或加载 & 显示或加载
+        /// <summary>
+        /// 是否存在视图
+        /// </summary>
+        /// <param name="viewName">视图名称</param>
+        /// <returns>true：存在  false：不存在</returns>
+        public bool HasView(string viewName)
+        {
+            return viewDic.ContainsKey(viewName);
+        } 
+        public bool HasView<T>() where T : MonoBehaviour, IUIView
+        {
+            return HasView(typeof(T).Name);
+        }
+
         /// <summary>
         /// 获取视图
         /// </summary>
+        /// <typeparam name="T">视图类型</typeparam>
         /// <param name="viewName">视图名称</param>
         /// <returns>视图</returns>
-        public IUIView GetView(string viewName)
-        {
-            viewDic.TryGetValue(viewName, out IUIView view);
-            return view;
-        }
-        /// <summary>
-        /// 获取视图 
-        /// </summary>
-        /// <typeparam name="T">视图类型</typeparam>
-        /// <returns>视图</returns>
-        public T GetView<T>() where T : UIView
-        {
-            IUIView view = GetView(typeof(T).Name);
-            return view != null ? view as T : null;
-        }
-        /// <summary>
-        /// 获取或加载视图
-        /// </summary>
-        /// <typeparam name="T">视图类型</typeparam>
-        /// <returns>视图</returns>
-        public T GetOrLoadView<T>() where T : UIView
-        {
-            T view = GetView<T>() ?? LoadView<T>();
-            return view;
-        }
-        
-        /// <summary>
-        /// 显示或加载视图
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="level"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public T ShowOrLoadView<T>(ViewLevel level, IViewData data = null) where T : UIView
-        {
-            string viewName = typeof(T).Name;
-            if (viewDic.TryGetValue(viewName, out IUIView view))
-            {
-                view.Show(data);
-            }
-            else
-            {
-                view = LoadView<T>(level, data);
-            }
-            return view as T;
-        }
-
-        /// <summary>
-        /// 显示或异步加载视图
-        /// </summary>
-        /// <typeparam name="T">视图类型</typeparam>
-        /// <param name="assetPath">视图资产路径</param>
-        /// <param name="level">视图层级</param>
-        /// <param name="data">视图数据</param>
-        /// <param name="callback">回调事件</param>
-        public void ShowOrLoadViewAsync<T>(string assetPath, ViewLevel level = ViewLevel.COMMON, IViewData data = null, bool instant = false, Action<T> callback = null) where T : UIView
-        {
-            string viewName = typeof(T).Name;
-            if (viewDic.TryGetValue(viewName, out IUIView view))
-            {
-                view.Show(data, instant);
-                callback?.Invoke(view as T);
-            }
-            else
-            {
-                LoadViewAsync<T>(assetPath, level, data, instant, onCompleted : (success, view) =>
-                {
-                    if (success)
-                    {
-                        callback?.Invoke(view);
-                    }
-                });
-            }
-        }
-        #endregion
-
-        /// <summary>
-        /// 从字典中移除
-        /// </summary>
-        /// <param name="viewName">视图名称</param>
-        internal void Remove(string viewName)
+        public T GetView<T>(string viewName) where T : IUIView
         {
             if (viewDic.ContainsKey(viewName))
             {
-                viewDic.Remove(viewName);
+                return (T)viewDic[viewName];
             }
+            return default;
+        }
+        public T GetView<T>() where T : MonoBehaviour, IUIView
+        {
+            return GetView<T>(typeof(T).Name);
+        }
+
+        /// <summary>
+        /// 卸载视图
+        /// </summary>
+        /// <param name="viewName">视图名称</param>
+        /// <returns>true：卸载成功  false：视图不存在 卸载失败</returns>
+        public bool UnloadView(string viewName) 
+        {
+            if (viewDic.TryGetValue(viewName, out var view))
+            {
+                view.OnUnload();
+                Destroy((view as MonoBehaviour).gameObject);
+                viewDic.Remove(viewName);
+                return true;
+            }
+            return false;
+        }
+        public bool UnloadView<T>() where T : IUIView
+        {
+            return UnloadView(typeof (T).Name);
+        }
+
+        /// <summary>
+        /// 关闭所有视图
+        /// </summary>
+        /// <param name="unload">是否卸载</param>
+        public void CloseAllView(bool unload)
+        {
+            foreach (var view in viewDic.Values)
+            {
+                //调用其关闭事件
+                view.OnClose(true);
+
+                //卸载
+                if (unload)
+                {
+                    //首先调用其卸载事件
+                    view.OnUnload();
+                    //再销毁其物体
+                    Destroy((view as MonoBehaviour).gameObject);
+                }
+            }
+            if (unload)
+                viewDic.Clear();
         }
     }
 }

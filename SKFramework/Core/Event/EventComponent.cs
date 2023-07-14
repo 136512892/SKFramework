@@ -6,7 +6,7 @@ namespace SK.Framework.Events
 {
     [DisallowMultipleComponent]
     [AddComponentMenu("SKFramework/Event")]
-    public class EventComponent : MonoBehaviour
+    public class EventComponent : MonoBehaviour, IEventComponent
     {
         #region >> 立即执行 - 事件可能是主线程之外的线程抛出的
         private readonly Dictionary<int, List<Delegate>> dic = new Dictionary<int, List<Delegate>>();
@@ -347,12 +347,5 @@ namespace SK.Framework.Events
             return false;
         }
         #endregion
-    }
-
-    public abstract class EventArgs
-    {
-        public abstract int ID { get; }
-
-        public virtual void OnInvoke() { }
     }
 }

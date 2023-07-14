@@ -19,9 +19,16 @@ namespace SK.Framework.Resource
 {
     [DisallowMultipleComponent]
     [AddComponentMenu("SKFramework/Resource")]
-    public class ResourceComponent : MonoBehaviour
+    public class ResourceComponent : MonoBehaviour, IResouceComponent
     {
-        [SerializeField] private bool isEditorMode;
+        public enum MODE
+        {
+            EDITOR, //编辑器模式
+            SIMULATIVE, //模拟模式（StreamingAssets）
+            REALITY, //真实环境
+        }
+
+        [SerializeField] private MODE mode = MODE.EDITOR;
 
         [SerializeField] private string assetBundleUrl = Application.streamingAssetsPath;
 
@@ -44,7 +51,7 @@ namespace SK.Framework.Resource
         private void Start()
         {
 #if UNITY_EDITOR
-            if (!isEditorMode)
+            if (mode != MODE.EDITOR)
                 StartCoroutine(LoadAssetsMapAsync());
 #else
             StartCoroutine(LoadAssetsMapAsync());
@@ -53,7 +60,7 @@ namespace SK.Framework.Resource
 
         private IEnumerator LoadAssetsMapAsync()
         {
-            string url = assetBundleUrl + "/map.dat";
+            string url = (mode == MODE.REALITY ? assetBundleUrl : Application.streamingAssetsPath) + "/map.dat";
             //Main.Log.Info("资源下载路径：{0}", url);
             using (UnityWebRequest request = UnityWebRequest.Get(url))
             {
@@ -116,7 +123,7 @@ namespace SK.Framework.Resource
 
         private IEnumerator LoadAssetBundleManifestAsync()
         {
-            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(assetBundleUrl + "/" + assetBundleManifestName))
+            using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle((mode == MODE.REALITY ? assetBundleUrl : Application.streamingAssetsPath) + "/" + assetBundleManifestName))
             {
 #if UNITY_2017_2_OR_NEWER
                 yield return request.SendWebRequest();
@@ -170,7 +177,7 @@ namespace SK.Framework.Resource
             }
             else
             {
-                using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle(assetBundleUrl + "/" + assetBundleName))
+                using (UnityWebRequest request = UnityWebRequestAssetBundle.GetAssetBundle((mode == MODE.REALITY ? assetBundleUrl : Application.streamingAssetsPath) + "/" + assetBundleName))
                 {
                     loadingDic.Add(assetBundleName, request);
 #if UNITY_2017_2_OR_NEWER
@@ -243,12 +250,12 @@ namespace SK.Framework.Resource
             }
         }
 
-        private IEnumerator LoadAssetAsyncCoroutine<T>(string assetPath, Action<float> onLoading, Action<bool, T> onCompleted) where T : Object
+        private IEnumerator LoadAssetAsyncCoroutine<T>(string assetPath, Action<bool, T> onCompleted, Action<float> onLoading) where T : Object
         {
             Object asset = null;
 
 #if UNITY_EDITOR
-            if (isEditorMode)
+            if (mode == MODE.EDITOR)
             {
                 onLoading?.Invoke(1);
                 yield return null;
@@ -329,10 +336,10 @@ namespace SK.Framework.Resource
             }
         }
 
-        private IEnumerator LoadSceneAsyncCoroutine(string sceneAssetPath, Action<float> onLoading, Action<bool> onCompleted)
+        private IEnumerator LoadSceneAsyncCoroutine(string sceneAssetPath, Action<bool> onCompleted, Action<float> onLoading)
         {
 #if UNITY_EDITOR
-            if (isEditorMode)
+            if (mode == MODE.EDITOR)
             {
                 if (sceneDic.ContainsKey(sceneAssetPath))
                 {
@@ -426,26 +433,34 @@ namespace SK.Framework.Resource
             onCompleted?.Invoke(true);
         }
 
-        public void LoadAssetAsync<T>(string assetPath, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : Object
+        /// <summary>
+        /// 异步加载资产
+        /// </summary>
+        /// <typeparam name="T">资产类型</typeparam>
+        /// <param name="assetPath">资产路径</param>
+        /// <param name="onCompleted">加载完成回调事件</param>
+        /// <param name="onLoading">加载进度回调事件</param>
+        public void LoadAssetAsync<T>(string assetPath, Action<bool, T> onCompleted = null, Action<float> onLoading = null) where T : Object
         {
-            StartCoroutine(LoadAssetAsyncCoroutine(assetPath, onLoading, onCompleted));
+            StartCoroutine(LoadAssetAsyncCoroutine(assetPath, onCompleted, onLoading));
         }
 
-        public void LoadAssetAsync<T>(MonoBehaviour executer, string assetPath, Action<float> onLoading = null, Action<bool, T> onCompleted = null) where T : Object
+        /// <summary>
+        /// 异步加载场景
+        /// </summary>
+        /// <param name="sceneAssetPath">场景资产路径</param>
+        /// <param name="onCompleted">加载完成回调事件</param>
+        /// <param name="onLoading">加载过程回调事件</param>
+        public void LoadSceneAsync(string sceneAssetPath, Action<bool> onCompleted = null, Action<float> onLoading = null)
         {
-            executer.StartCoroutine(LoadAssetAsyncCoroutine(assetPath, onLoading, onCompleted));
+            StartCoroutine(LoadSceneAsyncCoroutine(sceneAssetPath, onCompleted, onLoading));
         }
 
-        public void LoadSceneAsync(string sceneAssetPath, Action<float> onLoading = null, Action<bool> onCompleted = null)
-        {
-            StartCoroutine(LoadSceneAsyncCoroutine(sceneAssetPath, onLoading, onCompleted));
-        }
-
-        public void LoadSceneAsync(MonoBehaviour executer, string sceneAssetPath, Action<float> onLoading = null, Action<bool> onCompleted = null)
-        {
-            executer.StartCoroutine(LoadSceneAsyncCoroutine(sceneAssetPath, onLoading, onCompleted));
-        }
-
+        /// <summary>
+        /// 卸载资产
+        /// </summary>
+        /// <param name="assetPath">资产路径</param>
+        /// <param name="unloadAllLoadedObjects">是否卸载相关实例化对象</param>
         public void UnloadAsset(string assetPath, bool unloadAllLoadedObjects = false)
         {
             if (map.TryGetValue(assetPath, out var assetInfo))
@@ -458,6 +473,10 @@ namespace SK.Framework.Resource
             }
         }
 
+        /// <summary>
+        /// 卸载所有资产
+        /// </summary>
+        /// <param name="unloadAllLoadedObjects">是否卸载相关实例化对象</param>
         public void UnloadAllAsset(bool unloadAllLoadedObjects = false)
         {
             foreach (var kv in assetBundlesDic)
@@ -468,10 +487,15 @@ namespace SK.Framework.Resource
             AssetBundle.UnloadAllAssetBundles(unloadAllLoadedObjects);
         }
 
+        /// <summary>
+        /// 卸载场景
+        /// </summary>
+        /// <param name="sceneAssetPath">场景资产路径</param>
+        /// <returns>true：卸载成功  false：卸载失败</returns>
         public bool UnloadScene(string sceneAssetPath)
         {
 #if UNITY_EDITOR
-            if (isEditorMode)
+            if (mode == MODE.EDITOR)
             {
                 if (sceneDic.TryGetValue(sceneAssetPath, out Scene scene))
                 {
@@ -509,35 +533,34 @@ namespace SK.Framework.Resource
         }
 
         /// <summary>
-        /// Asset资产信息
+        /// 异步实例化
         /// </summary>
-        [Serializable]
-        public class AssetInfo
+        /// <typeparam name="T">资产类型</typeparam>
+        /// <param name="assetPath">资产路径</param>
+        /// <param name="onCompleted">结果回调事件</param>
+        /// <param name="onProgress">进度回调事件</param>
+        public void InstantiateAsync<T>(string assetPath, Action<bool, T> onCompleted = null, Action<float> onProgress = null) where T : Object
         {
-            /// <summary>
-            /// Asset资产名称
-            /// </summary>
-            public string name;
-
-            /// <summary>
-            /// 资源路径
-            /// </summary>
-            public string path;
-
-            /// <summary>
-            /// AssetBundle包名称
-            /// </summary>
-            public string abName;
-
-            public override string ToString()
+            //异步加载资产
+            StartCoroutine(LoadAssetAsyncCoroutine<T>(assetPath, (success, asset) =>
             {
-                return string.Format("AssetName:{0}  AssetBundleName:{1}  Path:{2}", name, abName, path);
-            }
-        }
-        [Serializable]
-        public class AssetsInfo
-        {
-            public List<AssetInfo> list = new List<AssetInfo>();
+                //资产加载成功
+                if (success)
+                {
+                    //实例化
+                    T t = Instantiate(asset);
+                    //获取或创建引用 并申请引用
+                    Main.Refer.GetOrCreate<ResourceReference>(assetPath).Apply(t);
+                    //执行回调
+                    onCompleted?.Invoke(true, t);
+                }
+                //资产加载失败
+                else
+                {
+                    //执行回调
+                    onCompleted?.Invoke(false, null);
+                }
+            }, onProgress));
         }
     }
 }

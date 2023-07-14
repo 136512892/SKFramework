@@ -5,7 +5,7 @@ namespace SK.Framework.FSM
     /// <summary>
     /// 抽象状态类
     /// </summary>
-    public class State
+    public class State : IState
     {
         /// <summary>
         /// 状态名称
@@ -18,7 +18,7 @@ namespace SK.Framework.FSM
         /// <summary>
         /// 所属状态机
         /// </summary>
-        public StateMachine Machine { get; internal set; }
+        public IStateMachine Machine { get; set; }
         /// <summary>
         /// 状态初始化事件
         /// </summary>
@@ -50,7 +50,7 @@ namespace SK.Framework.FSM
         /// <summary>
         /// 状态进入事件
         /// </summary>
-        public virtual void OnEnter(IStateData data = null)
+        public virtual void OnEnter(object data = null)
         {
             onEnter?.Invoke();
         }

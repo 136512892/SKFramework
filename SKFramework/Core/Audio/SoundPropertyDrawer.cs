@@ -7,9 +7,6 @@ namespace SK.Framework.Audio
     [CustomPropertyDrawer(typeof(Sound))]
     public class SoundPropertyDrawer : PropertyDrawer
     {
-        private static readonly GUIContent database = new GUIContent("Database");
-        private static readonly GUIContent clip = new GUIContent("Clip");
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             Rect labelRect = new Rect(position.x, position.y, position.width, position.height * .5f);

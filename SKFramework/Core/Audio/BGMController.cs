@@ -5,19 +5,15 @@ using System.Collections;
 namespace SK.Framework.Audio
 {
     [DisallowMultipleComponent]
-    public class BGMController : MonoBehaviour
+    public class BGMController : MonoBehaviour, IBGMController
     {
-        [SerializeField] private AudioSource source;
+        private AudioSource source;
         private Coroutine pauseCoroutine;
 
         private float volume = 1f;
         private bool isPaused = false;
         private bool isPausing = false;
 
-        private void Start()
-        {
-            volume = source.volume;
-        }
         public float Volume
         {
             get
@@ -135,13 +131,6 @@ namespace SK.Framework.Audio
                 return source.time;
             }
         }
-        public AudioClip Clip
-        {
-            get
-            {
-                return source.clip;
-            }
-        }
         public AudioMixerGroup Output
         {
             get
@@ -152,6 +141,13 @@ namespace SK.Framework.Audio
             {
                 source.outputAudioMixerGroup = value;
             }
+        }
+
+        private void Start()
+        {
+            source = gameObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            volume = source.volume;
         }
 
         public void Play(AudioClip bgm)
@@ -189,6 +185,7 @@ namespace SK.Framework.Audio
             pauseCoroutine = StartCoroutine(PauseCoroutine(true));
         }
 
+        //暂停协程 用于声音暂停/恢复时音量渐小渐大效果
         private IEnumerator PauseCoroutine(bool unpause)
         {
             isPaused = !unpause;
@@ -196,7 +193,7 @@ namespace SK.Framework.Audio
             float duration = .5f;
             float beginTime = UnityEngine.Time.time;
             if (!unpause) source.UnPause();
-            for (; UnityEngine.Time.time - beginTime <= duration; )
+            for (; UnityEngine.Time.time - beginTime <= duration;)
             {
                 float t = (UnityEngine.Time.time - beginTime) / duration;
                 source.volume = Mathf.Lerp(unpause ? 0f : volume, unpause ? volume : 0f, t);

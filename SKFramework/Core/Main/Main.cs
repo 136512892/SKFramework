@@ -4,7 +4,6 @@ using SK.Framework.UI;
 using SK.Framework.Log;
 using SK.Framework.FSM;
 using SK.Framework.Audio;
-using SK.Framework.Timer;
 using SK.Framework.Refer;
 using SK.Framework.Events;
 using SK.Framework.Actions;
@@ -29,8 +28,6 @@ namespace SK.Framework
 
         public static EventComponent Events { get; private set; }
 
-        public static TimerComponent Timer { get; private set; }
-
         public static FSMComponent FSM { get; private set; }
 
         public static LogComponent Log { get; private set; }
@@ -54,7 +51,6 @@ namespace SK.Framework
             Custom = GetComponentInChildren<CustomComponent>();
             Debugger = GetComponentInChildren<DebuggerComponent>();
             Events = GetComponentInChildren<EventComponent>();
-            Timer = GetComponentInChildren<TimerComponent>();
             FSM = GetComponentInChildren<FSMComponent>();
             Log = GetComponentInChildren<LogComponent>();
             ObjectPool = GetComponentInChildren<ObjectPoolComponent>();
@@ -71,7 +67,6 @@ namespace SK.Framework
             Custom = null;
             Debugger = null;
             Events = null;
-            Timer = null;
             FSM = null;
             Log = null;
             ObjectPool = null;

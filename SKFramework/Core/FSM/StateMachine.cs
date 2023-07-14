@@ -6,33 +6,28 @@ namespace SK.Framework.FSM
     /// <summary>
     /// 状态机
     /// </summary>
-    public class StateMachine
+    public class StateMachine : IStateMachine
     {
         //状态列表 存储状态机内所有状态
-        private readonly List<State> states = new List<State>();
+        private readonly List<IState> states = new List<IState>();
         //状态切换条件列表
         private readonly List<StateSwitchCondition> conditions = new List<StateSwitchCondition>();
 
         /// <summary>
         /// 状态机名称
         /// </summary>
-        public string Name { get; internal set; }
+        public string Name { get; set; }
         /// <summary>
         /// 当前状态
         /// </summary>
-        public State CurrentState { get; protected set; }
-
-        /// <summary>
-        /// 状态机初始化事件
-        /// </summary>
-        public virtual void OnInitialization() { }
+        public IState CurrentState { get; protected set; }
 
         /// <summary>
         /// 添加状态
         /// </summary>
         /// <param name="state">状态</param>
         /// <returns>0：添加成功； -1：状态已存在,无需重复添加； -2：存在同名状态，添加失败</returns>
-        public int Add(State state)
+        public int Add(IState state)
         {
             //判断是否已经存在
             if (!states.Contains(state))
@@ -58,7 +53,7 @@ namespace SK.Framework.FSM
         /// <typeparam name="T">状态类型</typeparam>
         /// <param name="stateName">状态命名</param>
         /// <returns>0：添加成功； -1：状态已存在,无需重复添加； -2：存在同名状态，添加失败</returns>
-        public int Add<T>(string stateName = null) where T : State, new()
+        public int Add<T>(string stateName = null) where T : IState, new()
         {
             Type type = typeof(T);
             T t = (T)Activator.CreateInstance(type);
@@ -96,7 +91,7 @@ namespace SK.Framework.FSM
         /// </summary>
         /// <param name="state">状态</param>
         /// <returns>true：移除成功； false：状态不存在，移除失败</returns>
-        public bool Remove(State state)
+        public bool Remove(IState state)
         {
             return Remove(state.Name);
         }
@@ -105,9 +100,72 @@ namespace SK.Framework.FSM
         /// </summary>
         /// <typeparam name="T">状态类型</typeparam>
         /// <returns>true：移除成功； false：状态不存在，移除失败</returns>
-        public bool Remove<T>() where T : State
+        public bool Remove<T>() where T : IState
         {
             return Remove(typeof(T).Name);
+        }
+
+        /// <summary>
+        /// 状态是否存在
+        /// </summary>
+        /// <param name="stateName">状态名称</param>
+        /// <returns>true：存在  false：不存在</returns>
+        public bool IsExists(string stateName)
+        {
+            return states.FindIndex(m => m.Name == stateName) != -1;
+        }
+        /// <summary>
+        /// 状态是否存在
+        /// </summary>
+        /// <returns>true：存在  false：不存在</returns>
+        public bool IsExists<T>()
+        {
+            return IsExists(typeof(T).Name);
+        }
+
+        /// <summary>
+        /// 获取状态
+        /// </summary>
+        /// <typeparam name="T">状态类型</typeparam>
+        /// <param name="stateName">状态名称</param>
+        /// <returns>状态</returns>
+        public T Get<T>(string stateName) where T : IState, new()
+        {
+            var target = states.Find(m => m.Name == stateName);
+            return target != null ? (T)target : default;
+        }
+        /// <summary>
+        /// 获取状态
+        /// </summary>
+        /// <typeparam name="T">状态类型</typeparam>
+        /// <returns>状态</returns>
+        public T Get<T>() where T : IState, new()
+        {
+            return Get<T>(typeof(T).Name);
+        }
+
+        /// <summary>
+        /// 尝试获取状态
+        /// </summary>
+        /// <typeparam name="T">状态类型</typeparam>
+        /// <param name="stateName">状态名称</param>
+        /// <param name="state">状态</param>
+        /// <returns>true：获取成功  false：获取失败</returns>
+        public bool TryGet<T>(string stateName, out T state) where T : IState, new()
+        {
+            int index = states.FindIndex(m => m.Name == stateName);
+            state = index != -1 ? (T)states[index] : default;
+            return index != -1;
+        }
+        /// <summary>
+        /// 尝试获取状态
+        /// </summary>
+        /// <typeparam name="T">状态类型</typeparam>
+        /// <param name="state">状态</param>
+        /// <returns>true：获取成功  false：获取失败</returns>
+        public bool TryGet<T>(out T state) where T : IState, new()
+        {
+            return TryGet(typeof(T).Name, out state);
         }
 
         /// <summary>
@@ -116,7 +174,7 @@ namespace SK.Framework.FSM
         /// <param name="stateName">状态名称</param>
         /// <param name="data">数据</param>
         /// <returns>0：切换成功； -1：状态不存在； -2：当前状态已经是切换的目标状态，并且该状态不可切换至自身</returns>
-        public int Switch(string stateName, IStateData data = null)
+        public int Switch(string stateName, object data = null)
         {
             //根据状态名称在列表中查询
             var target = states.Find(m => m.Name == stateName);
@@ -134,19 +192,10 @@ namespace SK.Framework.FSM
         /// <summary>
         /// 切换状态
         /// </summary>
-        /// <param name="state">状态</param>
-        /// <returns>0：切换成功； -1：状态不存在； -2：当前状态已经是切换的目标状态，并且该状态不可切换至自身</returns>
-        public int Switch(State state)
-        {
-            return Switch(state.Name);
-        }
-        /// <summary>
-        /// 切换状态
-        /// </summary>
         /// <typeparam name="T">状态类型</typeparam>
         /// <typeparam name="data">数据</typeparam>
         /// <returns>0：切换成功； -1：状态不存在； -2：当前状态已经是切换的目标状态，并且该状态不可切换至自身</returns>
-        public int Switch<T>(IStateData data = null) where T : State
+        public int Switch<T>(object data = null) where T : IState
         {
             return Switch(typeof(T).Name, data);
         }
@@ -166,7 +215,7 @@ namespace SK.Framework.FSM
                     //当前状态的索引值+1后若小于列表中的数量 则下一状态的索引为index+1
                     //否则表示当前状态已经是列表中的最后一个 下一状态则回到列表中的第一个状态 索引为0
                     index = index + 1 < states.Count ? index + 1 : 0;
-                    State targetState = states[index];
+                    IState targetState = states[index];
                     //首先执行当前状态的退出事件 再更新到目标状态
                     CurrentState.OnExit();
                     CurrentState = targetState;
@@ -197,7 +246,7 @@ namespace SK.Framework.FSM
                     //当前状态的索引值-1后若大等于0 则下一状态的索引为index-1
                     //否则表示当前状态是列表中的第一个 上一状态则回到列表中的最后一个状态
                     index = index - 1 >= 0 ? index - 1 : states.Count - 1;
-                    State targetState = states[index];
+                    IState targetState = states[index];
                     //首先执行当前状态的退出事件 再更新到目标状态
                     CurrentState.OnExit();
                     CurrentState = targetState;
@@ -226,37 +275,14 @@ namespace SK.Framework.FSM
         }
 
         /// <summary>
-        /// 获取状态
+        /// 状态机初始化事件
         /// </summary>
-        /// <typeparam name="T">状态类型</typeparam>
-        /// <param name="stateName">状态名称</param>
-        /// <returns>状态</returns>
-        public T GetState<T>(string stateName) where T : State
-        {
-            var target = states.Find(m => m.Name == stateName);
-            return target != null ? target as T : null;
-        }
-        /// <summary>
-        /// 获取状态
-        /// </summary>
-        /// <typeparam name="T">状态类型</typeparam>
-        /// <returns>状态</returns>
-        public T GetState<T>() where T : State
-        {
-            return GetState<T>(typeof(T).Name);
-        }
+        public virtual void OnInitialization() { }
 
-        /// <summary>
-        /// 销毁状态机
-        /// </summary>
-        public void Destroy()
-        {
-            Main.FSM.Destroy(this);
-        }
         /// <summary>
         /// 状态机刷新事件
         /// </summary>
-        internal void OnUpdate()
+        public virtual void OnUpdate()
         {
             //若当前状态不为空 执行状态停留事件
             CurrentState?.OnStay();
@@ -284,10 +310,11 @@ namespace SK.Framework.FSM
                 }
             }
         }
+
         /// <summary>
-        /// 状态机销毁事件
+        /// 状态机终止事件
         /// </summary>
-        internal void OnDestroy()
+        public virtual void OnTermination()
         {
             //执行状态机内所有状态的状态终止事件
             for (int i = 0; i < states.Count; i++)
@@ -295,6 +322,32 @@ namespace SK.Framework.FSM
                 states[i].OnTermination();
             }
         }
+
+        /// <summary>
+        /// 设置状态切换条件
+        /// </summary>
+        /// <param name="predicate">切换条件</param>
+        /// <param name="targetStateName">目标状态名称</param>
+        /// <returns>状态机</returns>
+        public IStateMachine SwitchWhen(Func<bool> predicate, string targetStateName)
+        {
+            conditions.Add(new StateSwitchCondition(predicate, null, targetStateName));
+            return this;
+        }
+
+        /// <summary>
+        /// 设置状态切换条件
+        /// </summary>
+        /// <param name="predicate">切换条件</param>
+        /// <param name="sourceStateName">源状态名称</param>
+        /// <param name="targetStateName">目标状态名称</param>
+        /// <returns></returns>
+        public IStateMachine SwitchWhen(Func<bool> predicate, string sourceStateName, string targetStateName)
+        {
+            conditions.Add(new StateSwitchCondition(predicate, sourceStateName, targetStateName));
+            return this;
+        }
+
 
         /// <summary>
         /// 构建状态
@@ -308,36 +361,13 @@ namespace SK.Framework.FSM
             string name = string.IsNullOrEmpty(stateName) ? type.Name : stateName;
             if (states.Find(m => m.Name == name) == null)
             {
-                T state = Activator.CreateInstance(type) as T;
+                T state = (T)Activator.CreateInstance(type);
                 state.Name = name;
                 state.Machine = this;
                 states.Add(state);
                 return new StateBuilder<T>(state, this);
             }
             return null;
-        }
-        /// <summary>
-        /// 设置状态切换条件
-        /// </summary>
-        /// <param name="predicate">切换条件</param>
-        /// <param name="targetStateName">目标状态名称</param>
-        /// <returns>状态机</returns>
-        public StateMachine SwitchWhen(Func<bool> predicate, string targetStateName)
-        {
-            conditions.Add(new StateSwitchCondition(predicate, null, targetStateName));
-            return this;
-        }
-        /// <summary>
-        /// 设置状态切换条件
-        /// </summary>
-        /// <param name="predicate">切换条件</param>
-        /// <param name="sourceStateName">源状态名称</param>
-        /// <param name="targetStateName">目标状态名称</param>
-        /// <returns></returns>
-        public StateMachine SwitchWhen(Func<bool> predicate, string sourceStateName, string targetStateName)
-        {
-            conditions.Add(new StateSwitchCondition(predicate, sourceStateName, targetStateName));
-            return this;
         }
     }
 }

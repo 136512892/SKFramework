@@ -26,7 +26,7 @@ namespace SK.Framework
         }
 
         //服务器IP地址
-        private const string ipAddress = "http://1.13.194.97:80";
+        private const string ipAddress = "http://139.224.100.175:80";
         //manifest.json文件
         private const string manifest = "Library/manifest.dat";
         //资源包列表
