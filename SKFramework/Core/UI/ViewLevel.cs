@@ -1,18 +1,17 @@
-﻿namespace SK.Framework.UI
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+namespace SK.Framework.UI
 {
-    /// <summary>
-    /// 视图层级
-    /// </summary>
     public enum ViewLevel
     {
         BOTTOM = 0,
-
-        COMMON = 1,
-
-        POP = 2,
-
-        CONST = 3,
-
-        TOP = 4,
+        COMMON = 100,
+        CONST = 200,
+        POP = 300,
+        TOP = 400,
     }
 }

@@ -1,153 +1,175 @@
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
 using System;
-using UnityEngine;
 using System.Reflection;
 using System.Collections.Generic;
 
+using UnityEngine;
+
 namespace SK.Framework.ObjectPool
 {
-    internal class ObjectPool<T> : IObjectPool<T> where T : IPoolable
+    public class ObjectPool : ModuleBase
     {
-        private static ObjectPool<T> instance;
+        public bool IsExists<T>() where T : IPoolable
+        {
+            return ObjectPool<T>.IsExists;
+        }
 
-        //最大缓存数量
-        private int maxCacheCount = 9;
+        public T Allocate<T>() where T : IPoolable
+        {
+            return ObjectPool<T>.Instance.Allocate();
+        }
 
-        //对象池容器
-        private readonly Stack<T> pool = new Stack<T>();
+        public int GetCurrentCacheCount<T>() where T : IPoolable
+        {
+            return ObjectPool<T>.Instance.currentCacheCount;
+        }
 
-        //对象创建方法
-        private Func<T> createMethod;
+        public void SetMaxCacheCount<T>(int maxCacheCount) where T : IPoolable
+        {
+            ObjectPool<T>.Instance.maxCacheCount = maxCacheCount;
+        }
+
+        public void CreateBy<T>(Func<T> createMethod) where T : IPoolable
+        {
+            ObjectPool<T>.Instance.CreateBy(createMethod);
+        }
+
+        public bool Recycle<T>(T obj) where T : IPoolable
+        {
+            return ObjectPool<T>.Instance.Recycle(obj);
+        }
+
+        public void Release<T>() where T : IPoolable
+        {
+            if (ObjectPool<T>.IsExists)
+                ObjectPool<T>.Instance.Release();
+        }
+    }
+
+    public class ObjectPool<T> : IObjectPool<T> where T : IPoolable
+    {
+        private static ObjectPool<T> m_Instance;
 
         public static ObjectPool<T> Instance
         {
             get
             {
-                if (null == instance)
+                if (m_Instance == null)
                 {
-                    //Mono类型的对象
                     if (typeof(T).IsSubclassOf(typeof(MonoBehaviour)))
                     {
-                        instance = Activator.CreateInstance<ObjectPool<T>>();
-                        instance.createMethod = () => (T)(new GameObject(typeof(T).Name).AddComponent(typeof(T)) as object);
+                        m_Instance = Activator.CreateInstance<ObjectPool<T>>();
+                        m_Instance.m_CreateMethod = () => (T)(new GameObject(typeof(T).Name)
+                            .AddComponent(typeof(T)) as object);
                     }
                     else
                     {
-                        var ctors = typeof(T).GetConstructors(BindingFlags.Instance | BindingFlags.Public);
-                        //是否有无参构造函数
+                        ConstructorInfo[] ctors = typeof(T).GetConstructors(
+                            BindingFlags.Instance| BindingFlags.Public);
                         if (Array.FindIndex(ctors, m => m.GetParameters().Length == 0) != -1)
                         {
-                            instance = Activator.CreateInstance<ObjectPool<T>>();
-                            instance.createMethod = () => Activator.CreateInstance<T>();
+                            m_Instance = Activator.CreateInstance<ObjectPool<T>>();
+                            m_Instance.m_CreateMethod = () => Activator.CreateInstance<T>();
                         }
-                        else Debug.LogError(string.Format("[{0}]类型不具有无参构造函数", typeof(T).Name));
+                        else throw new ArgumentException();
                     }
                 }
-                return instance;
+                return m_Instance;
             }
         }
 
-        /// <summary>
-        /// 对象池中当前的缓存数量
-        /// </summary>
-        public int CurrentCacheCount
+        public static bool IsExists
         {
             get
             {
-                return pool.Count;
+                return m_Instance != null;
             }
         }
-        
-        /// <summary>
-        /// 对象池的最大缓存数量
-        /// </summary>
-        public int MaxCacheCount
+
+        private Func<T> m_CreateMethod;
+
+        private readonly Stack<T> m_Pool = new Stack<T>();
+
+        public int currentCacheCount
         {
             get
             {
-                return maxCacheCount;
+                return m_Pool.Count;
+            }
+        }
+
+        public int m_MaxCacheCount = 9;
+
+        public int maxCacheCount
+        {
+            get
+            {
+                return m_MaxCacheCount;
             }
             set
             {
-                if (maxCacheCount != value)
+                if (m_MaxCacheCount != value)
                 {
-                    maxCacheCount = value;
-                    if (maxCacheCount > 0 && maxCacheCount < pool.Count)
+                    m_MaxCacheCount = value;
+                    if (m_MaxCacheCount > 0 && m_MaxCacheCount < m_Pool.Count)
                     {
-                        int removeCount = pool.Count - maxCacheCount;
+                        int removeCount = m_Pool.Count - m_MaxCacheCount;
                         while (removeCount > 0)
                         {
-                            T t = pool.Pop();
+                            T obj = m_Pool.Pop();
                             removeCount--;
-                            //Mono类型的对象 需要销毁
                             if (typeof(T).IsSubclassOf(typeof(MonoBehaviour)))
-                                UnityEngine.Object.Destroy((t as MonoBehaviour).gameObject);
+                                UnityEngine.Object.Destroy((obj as MonoBehaviour).gameObject);
                         }
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// 设置对象的创建方法
-        /// （从对象池中获取对象时 如果池中为空 需要调用创建方法来创建新的对象实例）
-        /// </summary>
-        /// <param name="createMethod">创建方法</param>
         public void CreateBy(Func<T> createMethod)
         {
-            this.createMethod = createMethod;
+            m_CreateMethod = createMethod;
         }
 
-        /// <summary>
-        /// 从对象池中获取对象
-        /// </summary>
-        /// <returns>对象</returns>
         public T Allocate()
         {
-            //当前池中数量不为0 从池中获取 否则通过创建方法创建新的对象
-            T retT = pool.Count > 0 ? pool.Pop() : createMethod.Invoke();
-            retT.IsRecycled = false;
-            return retT;
+            T obj = m_Pool.Count > 0
+                ? m_Pool.Pop()
+                : m_CreateMethod.Invoke();
+            obj.isRecycled = false;
+            return obj;
         }
 
-        /// <summary>
-        /// 回收对象
-        /// </summary>
-        /// <param name="t">对象</param>
-        /// <returns>true：回收成功  false：回收失败</returns>
-        public bool Recycle(T t)
+        public bool Recycle(T obj)
         {
-            if (null == t || t.IsRecycled) return false;
-            t.IsRecycled = true;
-            t.OnRecycled();
-            
-            //池中数量未达到最大缓存数量上限 将其放入池中缓存
-            if (pool.Count < maxCacheCount)
-                pool.Push(t);
-            //池中数量已达到最大缓存数量上限
+            if (obj == null || obj.isRecycled) return false;
+            obj.isRecycled = true;
+            obj.OnRecycled();
+
+            if (m_Pool.Count < m_MaxCacheCount)
+                m_Pool.Push(obj);
             else
             {
-                //Mono类型的对象 直接销毁
                 if (typeof(T).IsSubclassOf(typeof(MonoBehaviour)))
-                    UnityEngine.Object.Destroy((t as MonoBehaviour).gameObject);
+                    UnityEngine.Object.Destroy((obj as MonoBehaviour).gameObject);
             }
             return true;
         }
-        
-        /// <summary>
-        /// 释放对象池
-        /// </summary>
+
         public void Release()
         {
-            //Mono类型的对象 全部销毁
             if (typeof(T).IsSubclassOf(typeof(MonoBehaviour)))
             {
-                foreach (var t in pool)
-                {
-                    UnityEngine.Object.Destroy((t as MonoBehaviour).gameObject);
-                }
+                foreach (var obj in m_Pool)
+                    UnityEngine.Object.Destroy((obj as MonoBehaviour).gameObject);
             }
-            pool.Clear();
-            instance = null;
+            m_Pool.Clear();
+            m_Instance = null;
         }
     }
 }

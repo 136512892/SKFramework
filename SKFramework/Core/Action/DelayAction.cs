@@ -1,35 +1,42 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using System;
+using UnityEngine;
 
 namespace SK.Framework.Actions
 {
-    public class DelayAction : AbstractAction
+    public class DelayAction : AbstactAction
     {
-        private readonly float duration;
+        private readonly float m_Duration;
 
-        private float beginTime;
-        
-        private bool isBegan;
+        private float m_BeginTime;
 
-        public DelayAction(float duration, UnityAction action)
+        private bool m_IsBegan;
+
+        public DelayAction(float duration, System.Action action)
         {
-            this.duration = duration;
-            onCompleted = action;
+            m_Duration = duration;
+            m_OnCompleted = action;
         }
 
         protected override void OnInvoke()
         {
-            if (!isBegan)
+            if (!m_IsBegan)
             {
-                isBegan = true;
-                beginTime = Time.time;
+                m_IsBegan = true;
+                m_BeginTime = Time.time;
             }
-            isCompleted = Time.time - beginTime >= duration;
+            m_IsCompleted = Time.time - m_BeginTime >= m_Duration;
         }
 
         protected override void OnReset()
         {
-            isBegan = false;
+            base.OnReset();
+            m_IsBegan = false;
         }
     }
 }

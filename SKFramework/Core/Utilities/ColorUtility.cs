@@ -1,19 +1,15 @@
-﻿using UnityEngine;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
 
-namespace SK.Framework.Utility
+using UnityEngine;
+
+namespace SK.Framework
 {
-    public class ColorUtility 
+    public static class ColorUtility
     {
-        public static bool IsApproximatelyBlack(Color color)
-        {
-            return color.r + color.g + color.b <= Mathf.Epsilon;
-        }
-
-        public static bool IsApproximatelyWhite(Color color)
-        {
-            return color.r + color.g + color.b >= 1 - Mathf.Epsilon;
-        }
-
         public static Color Invert(Color color)
         {
             color.r = 1 - color.r;
@@ -23,7 +19,7 @@ namespace SK.Framework.Utility
             return color;
         }
 
-        public static Color WithAlpha(Color color, float alpha)
+        public static Color Alpha(Color color, float alpha)
         {
             color.a = alpha;
             return color;

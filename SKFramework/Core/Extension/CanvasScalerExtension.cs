@@ -1,9 +1,15 @@
-﻿using UnityEngine;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace SK.Framework
 {
-    public static class CanvasScalerExtension 
+    public static class CanvasScalerExtension
     {
         public static CanvasScaler SetScaleMode(this CanvasScaler self, CanvasScaler.ScaleMode scaleMode)
         {

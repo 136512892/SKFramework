@@ -1,4 +1,10 @@
-﻿using UnityEngine;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using UnityEngine;
 
 namespace SK.Framework
 {
@@ -14,6 +20,7 @@ namespace SK.Framework
             self.material = physicMaterial;
             return self;
         }
+
         public static T SetBoxCenter<T>(this T self, Vector3 center) where T : BoxCollider
         {
             self.center = center;
@@ -24,6 +31,7 @@ namespace SK.Framework
             self.size = size;
             return self;
         }
+
         public static T SetCapsuleCenter<T>(this T self, Vector3 center) where T : CapsuleCollider
         {
             self.center = center;
@@ -44,6 +52,7 @@ namespace SK.Framework
             self.direction = direction;
             return self;
         }
+
         public static T SetSphereCenter<T>(this T self, Vector3 center) where T : SphereCollider
         {
             self.center = center;

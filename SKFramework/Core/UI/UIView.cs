@@ -1,62 +1,28 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-using SK.Framework.Actions;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using UnityEngine;
 
 namespace SK.Framework.UI
 {
-    /// <summary>
-    /// UI视图基类
-    /// </summary>
-    [RequireComponent(typeof(RectTransform), typeof(CanvasGroup))]
     public class UIView : MonoBehaviour, IUIView
     {
-        private CanvasGroup canvasGroup;
+        public string viewName { get; set; }
 
-        private IActionChain animationChain;
-        [HideInInspector, SerializeField] private UIViewAnimation openAnim;
-        [HideInInspector, SerializeField] private UIViewAnimation closeAnim;
-        [HideInInspector, SerializeField] private UnityEvent onOpenEvent;
-        [HideInInspector, SerializeField] private UnityEvent onCloseEvent;
+        public virtual void OnLoad(object data = null) { }
 
-        public string Name { get; set; }
-
-        public virtual bool IsOpened
-        {
-            get
-            {
-                return gameObject.activeSelf;
-            }
-        }
-
-        public virtual void OnInit(object data) 
-        {
-            canvasGroup = GetComponent<CanvasGroup>();
-        }
-
-        public virtual void OnOpen(bool instant, object data) 
+        public virtual void OnOpen(object data = null) 
         {
             gameObject.SetActive(true);
             transform.SetAsLastSibling();
-            canvasGroup.interactable = false;
-            animationChain?.Stop();
-            onOpenEvent?.Invoke();
-            animationChain = openAnim.Play(this, instant, () =>
-            {
-                canvasGroup.interactable = true;
-                animationChain = null;
-            });
         }
 
-        public virtual void OnClose(bool instant) 
+        public virtual void OnClose() 
         {
-            canvasGroup.interactable = false;
-            animationChain?.Stop();
-            animationChain = closeAnim.Play(this, instant, () =>
-            {
-                animationChain = null;
-                onCloseEvent?.Invoke();
-                gameObject.SetActive(false);
-            });
+            gameObject.SetActive(false);
         }
 
         public virtual void OnUnload() { }

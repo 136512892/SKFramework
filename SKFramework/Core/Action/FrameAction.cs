@@ -1,35 +1,42 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using System;
+using UnityEngine;
 
 namespace SK.Framework.Actions
 {
-    public class FrameAction : AbstractAction
+    public class FrameAction : AbstactAction
     {
-        private readonly int duration;
+        private readonly int m_Duration;
 
-        private int beginFrame;
+        private int m_BeginFrame;
 
-        private bool isBegan;
+        private bool m_IsBegan;
 
-        public FrameAction(int duration, UnityAction action)
+        public FrameAction(int duration, System.Action action)
         {
-            this.duration = duration;
-            onCompleted = action;
+            m_Duration = duration;
+            m_OnCompleted = action;
         }
 
         protected override void OnInvoke()
         {
-            if (!isBegan)
+            if (!m_IsBegan)
             {
-                isBegan = true;
-                beginFrame = Time.frameCount;
+                m_IsBegan = true;
+                m_BeginFrame = Time.frameCount;
             }
-            isCompleted = Time.frameCount - beginFrame >= duration;
+            m_IsCompleted = Time.frameCount - m_BeginFrame >= m_Duration;
         }
 
         protected override void OnReset()
         {
-            isBegan = false;
+            base.OnReset();
+            m_IsBegan = false;
         }
     }
 }

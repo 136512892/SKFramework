@@ -1,11 +1,13 @@
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
 namespace SK.Framework.Debugger
 {
-    public interface IDebuggerWIndow
+    public interface IDebuggerWindow
     {
-        void OnInitilization();
-
-        void OnWindowGUI();
-
-        void OnTermination();
+        void OnGUI();
     }
 }

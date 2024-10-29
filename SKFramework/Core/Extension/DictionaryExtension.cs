@@ -1,4 +1,10 @@
-﻿using System;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using System;
 using System.Collections.Generic;
 
 namespace SK.Framework
@@ -7,7 +13,7 @@ namespace SK.Framework
     {
         public static Dictionary<K, V> ForEach<K, V>(this Dictionary<K, V> self, Action<K, V> action)
         {
-            using(var dicE = self.GetEnumerator())
+            using (var dicE = self.GetEnumerator())
             {
                 while (dicE.MoveNext())
                 {
@@ -16,9 +22,10 @@ namespace SK.Framework
             }
             return self;
         }
+
         public static Dictionary<K, V> AddRange<K, V>(this Dictionary<K, V> self, Dictionary<K, V> target, bool isOverride = false)
         {
-            using(var dicE = target.GetEnumerator())
+            using (var dicE = target.GetEnumerator())
             {
                 while (dicE.MoveNext())
                 {
@@ -36,6 +43,7 @@ namespace SK.Framework
             }
             return self;
         }
+
         public static Dictionary<K, V> TryAdd<K, V>(this Dictionary<K, V> self, K k, V v)
         {
             if (!self.ContainsKey(k))

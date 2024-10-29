@@ -1,54 +1,68 @@
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
 using UnityEngine;
 
 namespace SK.Framework
 {
     public static class AudioSourceExtension
     {
-        public static AudioSource SetClip(this AudioSource source, AudioClip clip)
+        public static AudioSource SetClip(this AudioSource self, AudioClip clip)
         {
-            source.clip = clip;
-            return source;
+            self.clip = clip;
+            return self;
         }
-        public static AudioSource SetPitch(this AudioSource source, float pitch)
+
+        public static AudioSource SetPitch(this AudioSource self, float pitch)
         {
-            source.pitch = pitch;
-            return source;
+            self.pitch = pitch;
+            return self;
         }
-        public static AudioSource SetPriority(this AudioSource source, int priority)
+
+        public static AudioSource SetPriority(this AudioSource self, int priority)
         {
-            source.priority = priority;
-            return source;
+            self.priority = priority;
+            return self;
         }
-        public static AudioSource SetLoop(this AudioSource source, bool loop)
+
+        public static AudioSource SetLoop(this AudioSource self, bool loop)
         {
-            source.loop = loop;
-            return source;
+            self.loop = loop;
+            return self;
         }
-        public static AudioSource SetPlayOnAwake(this AudioSource source, bool playOnAwake)
+
+        public static AudioSource SetPlayOnAwake(this AudioSource self, bool playOnAwake)
         {
-            source.playOnAwake = playOnAwake;
-            return source;
+            self.playOnAwake = playOnAwake;
+            return self;
         }
-        public static AudioSource SetVolume(this AudioSource source, float volume)
+
+        public static AudioSource SetVolume(this AudioSource self, float volume)
         {
-            source.volume = volume;
-            return source;
+            self.volume = volume;
+            return self;
         }
-        public static AudioSource SetPanStereo(this AudioSource source, float panStereo)
+
+        public static AudioSource SetPanStereo(this AudioSource self, float panStereo)
         {
-            source.panStereo = panStereo;
-            return source;
+            self.panStereo = panStereo;
+            return self;
         }
-        public static AudioSource SetSpatialBlend(this AudioSource source, float spatialBlend)
+
+        public static AudioSource SetSpatialBlend(this AudioSource self, float spatialBlend)
         {
-            source.spatialBlend = spatialBlend;
-            return source;
+            self.panStereo = spatialBlend;
+            return self;
         }
-        public static AudioSource Play(this AudioSource source, AudioClip clip)
+
+        public static AudioSource Play(this AudioSource self, AudioClip clip)
         {
-            source.clip = clip;
-            source.Play();
-            return source;
+            self.clip = clip;
+            self.Play();
+            return self;
         }
     }
 }

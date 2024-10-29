@@ -1,48 +1,29 @@
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
 using System;
 
 namespace SK.Framework.FSM
 {
     public interface IState
     {
-        /// <summary>
-        /// 状态名称
-        /// </summary>
-        string Name { get; set; }
+        string name { get; set; }
 
-        /// <summary>
-        /// 所属状态机
-        /// </summary>
-        IStateMachine Machine { get; set; }
+        IStateMachine machine { get; set; }
 
-        /// <summary>
-        /// 是否可切换至自身
-        /// </summary>
-        bool CanSwitch2Self { get; }
+        bool canSwitch2Self { get; }
 
-        /// <summary>
-        /// 状态初始化事件
-        /// </summary>
         void OnInitialization();
 
-        /// <summary>
-        /// 状态进入事件
-        /// </summary>
-        /// <param name="data"></param>
         void OnEnter(object data = null);
 
-        /// <summary>
-        /// 状态停留事件
-        /// </summary>
         void OnStay();
 
-        /// <summary>
-        /// 状态退出事件
-        /// </summary>
         void OnExit();
 
-        /// <summary>
-        /// 状态终止事件
-        /// </summary>
         void OnTermination();
 
         /// <summary>

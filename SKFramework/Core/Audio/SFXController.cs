@@ -1,73 +1,72 @@
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
 using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections.Generic;
 
 namespace SK.Framework.Audio
 {
-    [DisallowMultipleComponent]
-    public class SFXController : MonoBehaviour, ISFXController
+    public class SFXController : MonoBehaviour
     {
-        private bool isMuted;
+        private bool m_IsMuted;
 
-        private bool isPaused;
+        private bool m_IsPaused;
 
-        private float volume = 1f;
-        
-        private readonly List<AudioHandler> handlers = new List<AudioHandler>();
+        private float m_Volume = 1f;
 
-        public bool IsMuted
+        private readonly List<AudioHandler> m_Handlers = new List<AudioHandler>(4);
+
+        public bool isMuted
         {
             get
             {
-                return isMuted;
+                return m_IsMuted;
             }
             set
             {
-                if (isMuted != value)
+                if (m_IsMuted != value)
                 {
-                    isMuted = value;
-                    for (int i = 0; i < handlers.Count; i++)
-                    {
-                        handlers[i].SetMute(isMuted);
-                    }
+                    m_IsMuted = value;
+                    for (int i = 0; i < m_Handlers.Count; i++)
+                        m_Handlers[i].SetMute(m_IsMuted);
                 }
             }
         }
 
-        public bool IsPaused
+        public bool isPaused
         {
             get
             {
-                return isPaused;
+                return m_IsPaused;
             }
             set
             {
-                if (isPaused != value)
+                if (m_IsPaused != value)
                 {
-                    isPaused = value;
-                    for (int i = 0; i < handlers.Count; i++)
-                    {
-                        handlers[i].IsPaused = isPaused;
-                    }
+                    m_IsPaused = value;
+                    for (int i = 0; i < m_Handlers.Count; i++)
+                        m_Handlers[i].isPaused = m_IsPaused;
                 }
             }
         }
 
-        public float Volume
+        public float volume
         {
             get
             {
-                return volume;
+                return m_Volume;
             }
             set
             {
-                if (!Mathf.Approximately(value, volume))
+                if (!Mathf.Approximately(value, m_Volume))
                 {
-                    volume = value;
-                    for (int i = 0; i < handlers.Count; i++)
-                    {
-                        handlers[i].SetVolume(volume);
-                    }
+                    m_Volume = value;
+                    for (int i = 0; i < m_Handlers.Count; i++)
+                        m_Handlers[i].SetVolume(m_Volume);
                 }
             }
         }
@@ -76,17 +75,17 @@ namespace SK.Framework.Audio
         {
             var handler = AudioHandler.Allocate();
             handler.transform.SetParent(transform);
-            handlers.Add(handler);
+            m_Handlers.Add(handler);
             return handler;
         }
 
-        private void Update()
+        private void LateUpdate()
         {
-            for (int i = 0; i < handlers.Count; i++)
+            for (int i = 0; i < m_Handlers.Count; i++)
             {
-                if (handlers[i].IsRecycled)
+                if (m_Handlers[i].isRecycled)
                 {
-                    handlers.RemoveAt(i);
+                    m_Handlers.RemoveAt(i);
                     i--;
                 }
             }
@@ -94,19 +93,17 @@ namespace SK.Framework.Audio
 
         public void Stop()
         {
-            for (int i = 0; i < handlers.Count; i++)
-            {
-                handlers[i].Stop();
-            }
+            for (int i = 0; i < m_Handlers.Count; i++)
+                m_Handlers[i].Stop();
         }
 
         public AudioHandler Play(AudioClip clip, AudioMixerGroup output = null, float pitch = 1f, bool autoRecycle = true)
         {
             return GetHandler()
-                .SetMute(isMuted)
-                .SetPause(isPaused)
+                .SetMute(m_IsMuted)
+                .SetPause(m_IsPaused)
                 .SetClip(clip)
-                .SetVolume(volume)
+                .SetVolume(m_Volume)
                 .SetPitch(pitch)
                 .SetOutput(output)
                 .SetAutoRecycle(autoRecycle)
@@ -115,10 +112,10 @@ namespace SK.Framework.Audio
         public AudioHandler Play(AudioClip clip, Vector3 position, AudioMixerGroup output = null, float pitch = 1f, bool autoRecycle = true)
         {
             return GetHandler()
-                .SetMute(isMuted)
-                .SetPause(isPaused)
+                .SetMute(m_IsMuted)
+                .SetPause(m_IsPaused)
                 .SetClip(clip)
-                .SetVolume(volume)
+                .SetVolume(m_Volume)
                 .SetPitch(pitch)
                 .SetPoint(position)
                 .SetSpatialBlend(1f)
@@ -129,10 +126,10 @@ namespace SK.Framework.Audio
         public AudioHandler Play(AudioClip clip, Transform followTarget, AudioMixerGroup output = null, float pitch = 1f, bool autoRecycle = true)
         {
             return GetHandler()
-                .SetMute(isMuted)
-                .SetPause(isPaused)
+                .SetMute(m_IsMuted)
+                .SetPause(m_IsPaused)
                 .SetClip(clip)
-                .SetVolume(volume)
+                .SetVolume(m_Volume)
                 .SetPitch(pitch)
                 .SetFollowTarget(followTarget)
                 .SetSpatialBlend(1f)
@@ -143,10 +140,10 @@ namespace SK.Framework.Audio
         public AudioHandler Play(AudioClip clip, Vector3 position, float minDistance, float maxDistance, AudioMixerGroup output = null, float pitch = 1f, bool autoRecycle = true)
         {
             return GetHandler()
-                .SetMute(isMuted)
-                .SetPause(isPaused)
+                .SetMute(m_IsMuted)
+                .SetPause(m_IsPaused)
                 .SetClip(clip)
-                .SetVolume(volume)
+                .SetVolume(m_Volume)
                 .SetPitch(pitch)
                 .SetPoint(position)
                 .SetMinDistance(minDistance)
@@ -158,10 +155,10 @@ namespace SK.Framework.Audio
         public AudioHandler Play(AudioClip clip, Transform followTarget, float minDistance, float maxDistance, AudioMixerGroup output = null, float pitch = 1f, bool autoRecycle = true)
         {
             return GetHandler()
-                .SetMute(isMuted)
-                .SetPause(isPaused)
+                .SetMute(m_IsMuted)
+                .SetPause(m_IsPaused)
                 .SetClip(clip)
-                .SetVolume(volume)
+                .SetVolume(m_Volume)
                 .SetPitch(pitch)
                 .SetFollowTarget(followTarget)
                 .SetMinDistance(minDistance)

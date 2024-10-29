@@ -1,67 +1,75 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Events;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using System;
 using System.Collections.Generic;
 
 namespace SK.Framework.Actions
 {
-    public abstract class AbstractActionChain : AbstractAction, IActionChain
+    public abstract class AbstractActionChain : AbstactAction, IActionChain
     {
-        protected MonoBehaviour executer;
-        protected List<IAction> cacheList;
-        protected List<IAction> invokeList;
-        protected Func<bool> stopWhen;
-        public bool IsPaused { get; protected set; }
-        protected int loops = 1;
+        public bool isPaused { get; protected set; }
+
+        protected readonly List<IAction> m_CacheList;
+
+        protected readonly List<IAction> m_InvokeList;
+
+        protected Func<bool> m_StopWhen;
+
+        protected int m_Loops = 1;
 
         public AbstractActionChain()
         {
-            executer = Main.Actions;
-            cacheList = new List<IAction>();
-            invokeList = new List<IAction>();
+            m_CacheList = new List<IAction>();
+            m_InvokeList = new List<IAction>();
         }
-        public AbstractActionChain(MonoBehaviour executer)
-        {
-            this.executer = executer;
-            cacheList = new List<IAction>();
-            invokeList = new List<IAction>();
-        }
+
         public IActionChain Append(IAction action)
         {
-            cacheList.Add(action);
-            invokeList.Add(action);
+            m_CacheList.Add(action);
+            m_InvokeList.Add(action);
             return this;
         }
+
         public IActionChain StopWhen(Func<bool> predicate)
         {
-            stopWhen = predicate;
+            m_StopWhen = predicate;
             return this;
         }
-        public IActionChain OnStop(UnityAction action)
+
+        public IActionChain OnStop(System.Action action)
         {
-            onCompleted = action;
+            m_OnCompleted = action;
             return this;
         }
+
         public IActionChain Begin()
         {
-            Main.Actions.Execute(this, executer);
+            SKFramework.Module<Actions>().Invoke(this);
             return this;
         }
+
         public void Pause()
         {
-            IsPaused = true;
+            isPaused = true;
         }
+
         public void Resume()
         {
-            IsPaused = false;
+            isPaused = false;
         }
+
         public void Stop()
         {
-            isCompleted = true;
+            m_IsCompleted = true;
         }
+
         public IActionChain SetLoops(int loops)
         {
-            this.loops = loops;
+            m_Loops = loops;
             return this;
         }
     }

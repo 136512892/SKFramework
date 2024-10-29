@@ -1,10 +1,17 @@
-﻿using System;
-using UnityEngine.Events;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using System;
 
 namespace SK.Framework.Actions
 {
-    public interface IActionChain 
+    public interface IActionChain
     {
+        bool isPaused { get; }
+
         IActionChain Append(IAction action);
 
         IActionChain Begin();
@@ -15,11 +22,9 @@ namespace SK.Framework.Actions
 
         void Resume();
 
-        bool IsPaused { get; }
-
         IActionChain StopWhen(Func<bool> predicate);
 
-        IActionChain OnStop(UnityAction action);
+        IActionChain OnStop(System.Action action);
 
         IActionChain SetLoops(int loops);
     }

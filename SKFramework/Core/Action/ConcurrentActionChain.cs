@@ -1,51 +1,50 @@
-﻿using UnityEngine;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
 
 namespace SK.Framework.Actions
 {
     public class ConcurrentActionChain : AbstractActionChain
     {
         public ConcurrentActionChain() : base() { }
-        public ConcurrentActionChain(MonoBehaviour executer) : base(executer) { }
 
         protected override void OnInvoke()
         {
-            if(stopWhen != null && stopWhen.Invoke())
+            if (m_StopWhen != null && m_StopWhen.Invoke())
+                m_IsCompleted = true;
+            else if (!isPaused)
             {
-                isCompleted = true;
-            }
-            else if (!IsPaused)
-            {
-                for (int i = 0; i < invokeList.Count; i++)
+                for (int i = 0; i < m_InvokeList.Count; i++)
                 {
-                    if (invokeList[i].Invoke())
+                    if (m_InvokeList[i].Invoke())
                     {
-                        invokeList.RemoveAt(i);
+                        m_InvokeList.RemoveAt(i);
                         i--;
                     }
                 }
-                isCompleted = invokeList.Count == 0;
+                m_IsCompleted = m_InvokeList.Count == 0;
             }
-            if (isCompleted)
+
+            if (m_IsCompleted)
             {
-                loops--;
-                if (loops != 0)
-                {
+                m_Loops--;
+                if (m_Loops != 0)
                     Reset();
-                }
-                else
-                {
-                    isCompleted = true;
-                }
+                else m_IsCompleted = true;
             }
         }
 
         protected override void OnReset()
         {
-            IsPaused = false;
-            for (int i = 0; i < cacheList.Count; i++)
+            base.OnReset();
+            isPaused = false;
+            for (int i = 0; i < m_CacheList.Count; i++)
             {
-                cacheList[i].Reset();
-                invokeList.Add(cacheList[i]);
+                IAction action = m_CacheList[i];
+                action.Reset();
+                m_InvokeList.Add(action);
             }
         }
     }

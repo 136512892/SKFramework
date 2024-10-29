@@ -1,120 +1,116 @@
-using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
+/*============================================================
+ * SKFramework
+ * Copyright 漏 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
 using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
+
+using UnityEngine;
 
 namespace SK.Framework.Debugger
 {
-    public class InspectorWindow : IDebuggerWIndow
+    [WindowTitle("Inspector")]
+    public class InspectorWindow : DebuggerWindow
     {
-        private GameObject selected;
-        private Component[] components;
-        private Vector2 listScroll;
-        private Vector2 inspectorScroll;
-        private Component currentComponent;
+        private Component[] m_Components;
+        private readonly Dictionary<Component, bool> m_FoldoutDic
+            = new Dictionary<Component, bool>();
+        private Vector2 m_Scroll;
+        private readonly Dictionary<Component, List<InspectorField>> m_FieldDic
+            = new Dictionary<Component, List<InspectorField>>();
+        private readonly Dictionary<Type, Type> m_InspectDic
+            = new Dictionary<Type, Type>();
 
-        private Dictionary<string, IComponentInspector> inspectorDic;
-
-        public void OnInitilization()
+        public override void OnInitialized()
         {
-            inspectorDic = new Dictionary<string, IComponentInspector>();
-
-            var assembly = typeof(InspectorWindow).Assembly;
-            var types = assembly.GetTypes().Where(m => m.IsSubclassOf(typeof(ComponentInspector))).ToArray();
+            base.OnInitialized();
+            m_InspectDic.Clear();
+            Type[] types = GetType().Assembly.GetTypes().Where(m
+                => m.IsSubclassOf(typeof(InspectorField))).ToArray();
             for (int i = 0; i < types.Length; i++)
             {
-                var type = types[i];
-                var attributes = type.GetCustomAttributes(false);
-                if (attributes.Any(m => m is ComponentInspectorAttribute))
+                Type type = types[i];
+                var attribute = type.GetCustomAttribute<InspectType>();
+                if (attribute != null)
+                    m_InspectDic.Add(attribute.type, type);
+            }
+        }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            Draw4Components(Camera.main.GetComponents(typeof(Component)));
+        }
+
+        public override void OnGUI()
+        {
+            m_Scroll = GUILayout.BeginScrollView(m_Scroll);
+            for (int i = 0; i < m_Components.Length; i++)
+            {
+                Component component = m_Components[i];
+                Type type = component.GetType();
+                m_FoldoutDic[component] = GUILayout.Toggle(m_FoldoutDic[component], type.Name);
+                if (m_FoldoutDic[component])
                 {
-                    var target = Array.Find(attributes, m => m is ComponentInspectorAttribute);
-
-                    inspectorDic.Add((target as ComponentInspectorAttribute).ComponentType.FullName, Activator.CreateInstance(type) as IComponentInspector);
-                }
-            }
-        }
-
-        public void OnEnter()
-        {
-            selected = Main.Debugger.currentSelected;
-            if (selected != null)
-            {
-                components = selected.GetComponents<Component>();
-                currentComponent = components[0];
-            }
-        }
-
-        public void OnTermination()
-        {
-            selected = null;
-            components = null;
-            currentComponent = null;
-
-            inspectorDic?.Clear();
-            inspectorDic = null;
-        }
-
-        public void OnWindowGUI()
-        {
-            if (selected == null || currentComponent == null)
-            {
-                GUILayout.Label("未选中任何物体");
-                return;
-            }
-            GUILayout.BeginHorizontal("Box");
-            {
-                bool active = GUILayout.Toggle(selected.activeSelf, string.Empty);
-                if (active != selected.activeSelf)
-                {
-                    selected.SetActive(active);
-                }
-                selected.name = GUILayout.TextField(selected.name, GUILayout.Width(Screen.width * .1f));
-                GUILayout.FlexibleSpace();
-                GUILayout.Label(string.Format("Tag:{0}", selected.tag));
-                GUILayout.Space(10f);
-                GUILayout.Label(string.Format("Layer:{0}", LayerMask.LayerToName(selected.layer)));
-            }
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            {
-                GUILayout.BeginVertical("Box", GUILayout.ExpandHeight(true), GUILayout.Width(Screen.width * .075f));
-                OnListGUI();
-                GUILayout.EndVertical();
-
-                GUILayout.BeginVertical("Box", GUILayout.ExpandHeight(true));
-                OnComponentInspector();
-                GUILayout.EndVertical();
-            }
-            GUILayout.EndHorizontal();
-        }
-
-        private void OnListGUI()
-        {
-            listScroll = GUILayout.BeginScrollView(listScroll);
-            for (int i = 0; i < components.Length; i++)
-            {
-                if (GUILayout.Toggle(components[i] == currentComponent, components[i].GetType().Name))
-                {
-                    currentComponent = components[i];
+                    List<InspectorField> fields = m_FieldDic[component];
+                    for (int j = 0; j < fields.Count; j++)
+                    {
+                        fields[j].Draw();
+                    }
                 }
             }
             GUILayout.EndScrollView();
         }
 
-        private void OnComponentInspector()
+        private void Draw4Components(Component[] components)
         {
-            inspectorScroll = GUILayout.BeginScrollView(inspectorScroll);
-            string name = currentComponent.GetType().FullName;
-            if (inspectorDic.ContainsKey(name))
+            m_Components = components;
+            m_FoldoutDic.Clear();
+            m_FieldDic.Clear();
+            for (int i = 0; i < m_Components.Length; i++)
             {
-                inspectorDic[name].Draw(currentComponent);
+                Component component = m_Components[i];
+                m_FoldoutDic.Add(component, false);
+                m_FieldDic.Add(component, new List<InspectorField>());
+                Draw4Component(component);
             }
-            else
+        }
+        private void Draw4Component(Component component)
+        {
+            MemberInfo[] mis = component.GetType().GetMembers(BindingFlags.Instance
+                | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+                .Where(m => m.GetCustomAttribute<ObfuscationAttribute>() == null
+                   && ((m is FieldInfo fi && (fi.IsPublic || fi.GetCustomAttribute<SerializeField>() != null))
+                        || (m is PropertyInfo pi && pi.GetGetMethod(true).IsPublic)))
+                .ToArray();
+            for (int i = 0; i < mis.Length; i++)
             {
-                GUILayout.Label("暂不支持该类型组件的调试");
+                MemberInfo memberInfo = mis[i];
+                Type type = memberInfo is FieldInfo fi
+                    ? fi.FieldType
+                    : memberInfo is PropertyInfo pi
+                    ? pi.PropertyType
+                    : null;
+                if (m_InspectDic.TryGetValue(type, out Type inspectorFieldType))
+                {
+                    if (Activator.CreateInstance(inspectorFieldType,
+                        component, memberInfo) is InspectorField inspectorField)
+                        m_FieldDic[component].Add(inspectorField);
+                }
+                else if (!type.IsPrimitive && type.GetCustomAttribute<SerializableAttribute>() != null)
+                {
+                    var target = memberInfo is FieldInfo fieldInfo
+                        ? fieldInfo.GetValue(component)
+                        : memberInfo is PropertyInfo propertyInfo
+                        ? propertyInfo.GetValue(component)
+                        : null;
+                    m_FieldDic[component].Add(new ObjectField(target, memberInfo, m_InspectDic));
+                }
             }
-            GUILayout.EndScrollView();
         }
     }
 }

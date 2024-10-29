@@ -1,30 +1,36 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using System;
+using UnityEngine;
 
 namespace SK.Framework.Actions
 {
-    public class TimelineAction : AbstractAction
+    public class TimelineAction : AbstactAction
     {
-        protected float beginTime;
+        private readonly float m_BeginTime;
 
-        protected float duration;
+        private readonly float m_Duration;
 
-        protected UnityAction<float> playAction;
+        private readonly Action<float> m_Action;
 
         public float currentTime;
 
-        protected override void OnInvoke()
+        public TimelineAction(float beginTime, float duration, Action<float> action)
         {
-            float t = (currentTime - beginTime) / duration;
-            t = Mathf.Clamp01(t);
-            playAction.Invoke(t);
+            m_BeginTime = beginTime;
+            m_Duration = duration;
+            m_Action = action;
         }
 
-        public TimelineAction(float beginTime, float duration, UnityAction<float> playAction)
+        protected override void OnInvoke()
         {
-            this.beginTime = beginTime;
-            this.duration = duration;
-            this.playAction = playAction;
+            float t = (currentTime - m_BeginTime) / m_Duration;
+            t = Mathf.Clamp01(t);
+            m_Action.Invoke(t);
         }
     }
 }

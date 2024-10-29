@@ -1,32 +1,39 @@
-﻿using System;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+/*
+using System;
 using DG.Tweening;
 
 namespace SK.Framework.Actions
 {
-    public class TweenAction : AbstractAction
+    public class TweenAction : AbstactAction
     {
-        private Tween tween;
-        private readonly Func<Tween> action;
-        private bool isBegan;
+        private Tween m_Tween;
+        private readonly Func<Tween> m_Action;
+        private bool m_IsBegan;
 
         public TweenAction(Func<Tween> action)
         {
-            this.action = action;
+            m_Action = action;
         }
 
         protected override void OnInvoke()
         {
-            if (!isBegan)
+            if (!m_IsBegan)
             {
-                isBegan = true;
-                tween = action.Invoke();
+                m_IsBegan = true;
+                m_Tween = m_Action.Invoke();
             }
-            isCompleted = !tween.IsPlaying();
+            m_IsCompleted = !m_Tween.IsPlaying();
         }
 
         protected override void OnReset()
         {
-            isBegan = false;
+            m_IsBegan = false;
         }
     }
 
@@ -38,3 +45,4 @@ namespace SK.Framework.Actions
         }
     }
 }
+*/

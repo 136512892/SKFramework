@@ -1,9 +1,15 @@
-﻿using System;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using System;
 using System.Text.RegularExpressions;
 
-namespace SK.Framework.Utility
+namespace SK.Framework
 {
-    public class StringUtility
+    public static class StringUtility
     {
         /// <summary>
         /// 计算目标字符在字符串中出现的次数 不区分大小写

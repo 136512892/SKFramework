@@ -1,3 +1,9 @@
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
 using UnityEngine;
 
 namespace SK.Framework
@@ -9,6 +15,7 @@ namespace SK.Framework
             self.anchoredPosition = anchoredPosition;
             return self;
         }
+
         public static RectTransform SetAnchoredPosition(this RectTransform self, float x, float y)
         {
             Vector2 anchoredPosition = self.anchoredPosition;
@@ -17,6 +24,7 @@ namespace SK.Framework
             self.anchoredPosition = anchoredPosition;
             return self;
         }
+
         public static RectTransform SetAnchoredPositionX(this RectTransform self, float x)
         {
             Vector2 anchoredPosition = self.anchoredPosition;
@@ -24,6 +32,7 @@ namespace SK.Framework
             self.anchoredPosition = anchoredPosition;
             return self;
         }
+
         public static RectTransform SetAnchoredPositionY(this RectTransform self, float y)
         {
             Vector2 anchoredPosition = self.anchoredPosition;
@@ -31,11 +40,13 @@ namespace SK.Framework
             self.anchoredPosition = anchoredPosition;
             return self;
         }
+
         public static RectTransform SetOffsetMax(this RectTransform self, Vector2 offsetMax)
         {
             self.offsetMax = offsetMax;
             return self;
         }
+
         public static RectTransform SetOffsetMax(this RectTransform self, float x, float y)
         {
             Vector2 offsetMax = self.offsetMax;
@@ -44,6 +55,7 @@ namespace SK.Framework
             self.offsetMax = offsetMax;
             return self;
         }
+
         public static RectTransform SetOffsetMaxX(this RectTransform self, float x)
         {
             Vector2 offsetMax = self.offsetMax;
@@ -51,6 +63,7 @@ namespace SK.Framework
             self.offsetMax = offsetMax;
             return self;
         }
+
         public static RectTransform SetOffsetMaxY(this RectTransform self, float y)
         {
             Vector2 offsetMax = self.offsetMax;
@@ -58,11 +71,13 @@ namespace SK.Framework
             self.offsetMax = offsetMax;
             return self;
         }
+
         public static RectTransform SetOffsetMin(this RectTransform self, Vector2 offsetMin)
         {
             self.offsetMin = offsetMin;
             return self;
         }
+
         public static RectTransform SetOffsetMin(this RectTransform self, float x, float y)
         {
             Vector2 offsetMin = self.offsetMin;
@@ -71,6 +86,7 @@ namespace SK.Framework
             self.offsetMin = offsetMin;
             return self;
         }
+
         public static RectTransform SetOffsetMinX(this RectTransform self, float x)
         {
             Vector2 offsetMin = self.offsetMin;
@@ -78,6 +94,7 @@ namespace SK.Framework
             self.offsetMin = offsetMin;
             return self;
         }
+
         public static RectTransform SetOffsetMinY(this RectTransform self, float y)
         {
             Vector2 offsetMin = self.offsetMin;
@@ -85,11 +102,13 @@ namespace SK.Framework
             self.offsetMin = offsetMin;
             return self;
         }
+
         public static RectTransform SetAnchoredPosition3D(this RectTransform self, Vector3 anchoredPosition3D)
         {
             self.anchoredPosition3D = anchoredPosition3D;
             return self;
         }
+
         public static RectTransform SetAnchoredPosition3D(this RectTransform self, float x, float y)
         {
             Vector3 anchoredPosition3D = self.anchoredPosition3D;
@@ -98,6 +117,7 @@ namespace SK.Framework
             self.anchoredPosition3D = anchoredPosition3D;
             return self;
         }
+
         public static RectTransform SetAnchoredPosition3DX(this RectTransform self, float x)
         {
             Vector3 anchoredPosition3D = self.anchoredPosition3D;
@@ -105,6 +125,7 @@ namespace SK.Framework
             self.anchoredPosition3D = anchoredPosition3D;
             return self;
         }
+
         public static RectTransform SetAnchoredPosition3DY(this RectTransform self, float y)
         {
             Vector3 anchoredPosition3D = self.anchoredPosition3D;
@@ -112,11 +133,13 @@ namespace SK.Framework
             self.anchoredPosition3D = anchoredPosition3D;
             return self;
         }
+
         public static RectTransform SetAnchorMin(this RectTransform self, Vector2 anchorMin)
         {
             self.anchorMin = anchorMin;
             return self;
         }
+
         public static RectTransform SetAnchorMin(this RectTransform self, float x, float y)
         {
             Vector2 anchorMin = self.anchorMin;
@@ -125,6 +148,7 @@ namespace SK.Framework
             self.anchorMin = anchorMin;
             return self;
         }
+
         public static RectTransform SetAnchorMinX(this RectTransform self, float x)
         {
             Vector2 anchorMin = self.anchorMin;
@@ -132,6 +156,7 @@ namespace SK.Framework
             self.anchorMin = anchorMin;
             return self;
         }
+
         public static RectTransform SetAnchorMinY(this RectTransform self, float y)
         {
             Vector2 anchorMin = self.anchorMin;
@@ -139,11 +164,13 @@ namespace SK.Framework
             self.anchorMin = anchorMin;
             return self;
         }
+
         public static RectTransform SetAnchorMax(this RectTransform self, Vector2 anchorMax)
         {
             self.anchorMax = anchorMax;
             return self;
         }
+
         public static RectTransform SetAnchorMax(this RectTransform self, float x, float y)
         {
             Vector2 anchorMax = self.anchorMax;
@@ -152,6 +179,7 @@ namespace SK.Framework
             self.anchorMax = anchorMax;
             return self;
         }
+
         public static RectTransform SetAnchorMaxX(this RectTransform self, float x)
         {
             Vector2 anchorMax = self.anchorMax;
@@ -159,6 +187,7 @@ namespace SK.Framework
             self.anchorMax = anchorMax;
             return self;
         }
+
         public static RectTransform SetAnchorMaxY(this RectTransform self, float y)
         {
             Vector2 anchorMax = self.anchorMax;
@@ -166,11 +195,13 @@ namespace SK.Framework
             self.anchorMax = anchorMax;
             return self;
         }
+
         public static RectTransform SetPivot(this RectTransform self, Vector2 pivot)
         {
             self.pivot = pivot;
             return self;
         }
+
         public static RectTransform SetPivot(this RectTransform self, float x, float y)
         {
             Vector2 pivot = self.pivot;
@@ -179,6 +210,7 @@ namespace SK.Framework
             self.pivot = pivot;
             return self;
         }
+
         public static RectTransform SetPivotX(this RectTransform self, float x)
         {
             Vector2 pivot = self.pivot;
@@ -186,6 +218,7 @@ namespace SK.Framework
             self.pivot = pivot;
             return self;
         }
+
         public static RectTransform SetPivotY(this RectTransform self, float y)
         {
             Vector2 pivot = self.pivot;
@@ -193,11 +226,13 @@ namespace SK.Framework
             self.pivot = pivot;
             return self;
         }
+
         public static RectTransform SetSizeDelta(this RectTransform self, Vector2 sizeDelta)
         {
             self.sizeDelta = sizeDelta;
             return self;
         }
+
         public static RectTransform SetSizeDelta(this RectTransform self, float x, float y)
         {
             Vector2 sizeDelta = self.sizeDelta;
@@ -206,6 +241,7 @@ namespace SK.Framework
             self.sizeDelta = sizeDelta;
             return self;
         }
+
         public static RectTransform SetSizeDeltaX(this RectTransform self, float x)
         {
             Vector2 sizeDelta = self.sizeDelta;
@@ -213,6 +249,7 @@ namespace SK.Framework
             self.sizeDelta = sizeDelta;
             return self;
         }
+
         public static RectTransform SetSizeDeltaY(this RectTransform self, float y)
         {
             Vector2 sizeDelta = self.sizeDelta;
@@ -220,11 +257,13 @@ namespace SK.Framework
             self.sizeDelta = sizeDelta;
             return self;
         }
+
         public static RectTransform SetWidthWithCurrentAnchors(this RectTransform self, float width)
         {
             self.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
             return self;
         }
+
         public static RectTransform SetHeightWithCurrentAnchors(this RectTransform self, float height)
         {
             self.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);

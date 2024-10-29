@@ -1,42 +1,51 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
+/*============================================================
+ * SKFramework
+ * Copyright © 2019-2024 Zhang Shoukun. All rights reserved.
+ * Feedback: mailto:136512892@qq.com
+ *============================================================*/
+
+using System;
+using UnityEngine;
 
 namespace SK.Framework.Actions
 {
-    public class TimerAction : AbstractAction
+    public class TimerAction : AbstactAction
     {
-        private readonly float duration;
+        private readonly float m_Duration;
 
-        private readonly bool isReverse;
+        private readonly bool m_IsReverse;
 
-        private float beginTime;
+        private float m_BeginTime;
 
-        private bool isBegan;
+        private bool m_IsBegan;
 
-        private readonly UnityAction<float> action;
+        private readonly Action<float> m_Action;
 
-        public TimerAction(float duration, bool isReverse, UnityAction<float> action)
+        public TimerAction(float duration, bool isReverse, Action<float> action)
         {
-            this.duration = duration;
-            this.isReverse = isReverse;
-            this.action = action;
+            m_Duration = duration;
+            m_IsBegan = isReverse;
+            m_Action = action;
         }
 
         protected override void OnInvoke()
         {
-            if (!isBegan)
+            if (!m_IsBegan)
             {
-                isBegan = true;
-                beginTime = Time.time;
+                m_IsBegan = true;
+                m_BeginTime = Time.time;
             }
-            float elapsedTime = Time.time - beginTime;
-            action.Invoke(Mathf.Clamp(isReverse ? duration - elapsedTime : elapsedTime, 0f, duration));
-            isCompleted = elapsedTime >= duration;
+            float elapsedTime = Time.time - m_BeginTime;
+            m_Action.Invoke(Mathf.Clamp(m_IsReverse
+                ? m_Duration - elapsedTime
+                : elapsedTime, 0f, m_Duration));
+            m_IsCompleted = elapsedTime >= m_Duration;
         }
 
         protected override void OnReset()
         {
-            isBegan = false;
+            base.OnReset();
+            m_IsBegan = false;
         }
     }
 }
