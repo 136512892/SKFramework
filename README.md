@@ -29,5 +29,5 @@ SKFramework是基于Unity的一个小型开发框架，致力于提高各类项�
 
 QQ群：644180362
 
-<img src="https://github.com/136512892/SKFramework/blob/master/QQ.jpg" alt="微信图片_20240801135214" style="zoom:25%;" />
+<img src="https://github.com/136512892/SKFramework/blob/master/QQ.jpg" alt="联系方式-QQ群" style="zoom:25%;" />
 
