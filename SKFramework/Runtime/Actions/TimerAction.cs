@@ -45,11 +45,12 @@ namespace SK.Framework.Actions
             base.Release();
             SKFramework.Module<ObjectPool.ObjectPool>().Get<TimerAction>().Recycle(this);
         }
-
+        
         protected override void OnRecycled()
         {
             base.OnRecycled();
             m_Action = null;
+            m_IsBegan = false;
         }
 
         public static TimerAction Allocate(float duration, Action<float> action,

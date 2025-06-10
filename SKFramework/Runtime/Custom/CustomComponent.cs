@@ -14,12 +14,12 @@ namespace SK.Framework.Custom
 
         void ICustomComponent.OnTermination() => OnTermination();
 
-        protected internal void OnInitialization()
+        protected virtual void OnInitialization()
         {
 
         }
 
-        protected internal void OnTermination()
+        protected virtual void OnTermination()
         {
 
         }

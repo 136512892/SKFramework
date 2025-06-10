@@ -107,9 +107,21 @@ namespace SK.Framework.Config
             }
             
             string[] csvFiles = Directory.GetFiles(folder, "*.csv", SearchOption.TopDirectoryOnly);
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(m => m.GetTypes()).ToArray();
             for (int i = 0; i < csvFiles.Length; i++)
             {
-                ProcessCsvFile(csvFiles[i], folder);
+                string fileName = Path.GetFileNameWithoutExtension(csvFiles[i]);
+                if (Array.FindIndex(types, m => m.Name == fileName) == -1)
+                    ProcessCsvFile(csvFiles[i], folder);
+                else
+                {
+                    if (EditorUtility.DisplayDialog(
+                        "Warn", $"It has been detected that there is already a class named {fileName}. Should we proceed?",
+                        "Continue", "Cancle"))
+                    {
+                        ProcessCsvFile(csvFiles[i], folder);
+                    }
+                }
             }
             AssetDatabase.Refresh();
         }
@@ -233,7 +245,10 @@ namespace SK.Framework.Config
 
         private static void AddClassDefinition(StringBuilder sb, string className, string[] headers, string[] columnTypes)
         {
-            sb.AppendLine("[System.Serializable]");
+            sb.AppendLine("using System;");
+            sb.AppendLine("using System.Collections.Generic;\r\n");
+
+            sb.AppendLine("[Serializable]");
             sb.AppendLine($"public class {className}");
             sb.AppendLine("{");
             for (int i = 0; i < headers.Length; i++)
@@ -241,6 +256,31 @@ namespace SK.Framework.Config
                 string fieldName = headers[i];
                 sb.AppendLine($"    public {columnTypes[i]} {fieldName};");
             }
+
+            sb.AppendLine($"    public {className}(List<string> cells)");
+            sb.AppendLine("    {");
+            for (int i = 0; i < headers.Length; i++)
+            {
+                string fieldName = headers[i];
+                var typeName = columnTypes[i];
+                switch (typeName)
+                {
+                    case "int":
+                        sb.AppendLine($"        {fieldName} = int.Parse(cells[{i}]);");
+                        break;
+                    case "float":
+                        sb.AppendLine($"        {fieldName} = float.Parse(cells[{i}]);");
+                        break;
+                    case "bool":
+                        sb.AppendLine($"        {fieldName} = bool.Parse(cells[{i}]);");
+                        break;
+                    default:
+                        sb.AppendLine($"        {fieldName} = cells[{i}];");
+                        break;
+                }
+            }
+            sb.AppendLine("    }");
+
             sb.AppendLine("}");
         }
 

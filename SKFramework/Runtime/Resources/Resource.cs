@@ -290,22 +290,9 @@ namespace SK.Framework.Resource
                 }
             }
         }
-
+        
         private IEnumerator LoadAssetBundleDependeciesAsync(string[] dependencies, Action<float> onLoading)
         {
-            if (m_AssetBundleManifest == null)
-            {
-                if (m_IsAssetBundleManifestLoading)
-                {
-                    yield return new WaitUntil(() => m_AssetBundleManifest != null);
-                }
-                else
-                {
-                    m_IsAssetBundleManifestLoading = true;
-                    yield return LoadAssetBundleManifestAsync();
-                }
-            }
-
             for (int i = 0; i < dependencies.Length; i++)
             {
                 string dep = dependencies[i];
@@ -348,6 +335,19 @@ namespace SK.Framework.Resource
                     yield break;
                 }
 
+                if (m_AssetBundleManifest == null)
+                {
+                    if (m_IsAssetBundleManifestLoading)
+                    {
+                        yield return new WaitUntil(() => m_AssetBundleManifest != null);
+                    }
+                    else
+                    {
+                        m_IsAssetBundleManifestLoading = true;
+                        yield return LoadAssetBundleManifestAsync();
+                    }
+                }
+                
                 string[] dependencies = m_AssetBundleManifest.GetAllDependencies(assetInfo.abName);
                 bool flag = m_AssetBundleManifest != null;
                 if (flag)
@@ -405,9 +405,17 @@ namespace SK.Framework.Resource
                         loadSceneMode = LoadSceneMode.Additive,
                         localPhysicsMode = LocalPhysicsMode.None
                     });
-                while (!asyncOperation.isDone)
+                asyncOperation.allowSceneActivation = false;
+                while (asyncOperation.progress < 0.9f)
                 {
                     onLoading?.Invoke(asyncOperation.progress);
+                    yield return null;
+                }
+                asyncOperation.allowSceneActivation = true;
+                while (!asyncOperation.isDone)
+                {
+                    float progress = 0.9f + (asyncOperation.progress / 0.1f);
+                    onLoading?.Invoke(Mathf.Clamp(progress, 0.9f, 1f));
                     yield return null;
                 }
                 onLoading?.Invoke(1f);
@@ -436,6 +444,19 @@ namespace SK.Framework.Resource
                     yield break;
                 }
 
+                if (m_AssetBundleManifest == null)
+                {
+                    if (m_IsAssetBundleManifestLoading)
+                    {
+                        yield return new WaitUntil(() => m_AssetBundleManifest != null);
+                    }
+                    else
+                    {
+                        m_IsAssetBundleManifestLoading = true;
+                        yield return LoadAssetBundleManifestAsync();
+                    }
+                }
+                
                 string[] dependencies = m_AssetBundleManifest.GetAllDependencies(assetInfo.abName);
                 yield return LoadAssetBundleDependeciesAsync(dependencies, onLoading);
 
@@ -446,9 +467,17 @@ namespace SK.Framework.Resource
                     yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);
                 }
                 AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(assetInfo.name, LoadSceneMode.Additive);
-                while (!asyncOperation.isDone)
+                asyncOperation.allowSceneActivation = false;
+                while (asyncOperation.progress < 0.9f)
                 {
                     onLoading?.Invoke(asyncOperation.progress);
+                    yield return null;
+                }
+                asyncOperation.allowSceneActivation = true;
+                while (!asyncOperation.isDone)
+                {
+                    float progress = 0.9f + (asyncOperation.progress / 0.1f);
+                    onLoading?.Invoke(Mathf.Clamp(progress, 0.9f, 1f));
                     yield return null;
                 }
                 onLoading?.Invoke(1f);

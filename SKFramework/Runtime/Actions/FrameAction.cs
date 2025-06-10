@@ -37,6 +37,12 @@ namespace SK.Framework.Actions
             SKFramework.Module<ObjectPool.ObjectPool>().Get<FrameAction>().Recycle(this);
         }
 
+        protected override void OnRecycled()
+        {
+            base.OnRecycled();
+            m_IsBegan = false;
+        }
+
         public static FrameAction Allocate(int delayFrameCount, Action action = null)
         {
             var instace = SKFramework.Module<ObjectPool.ObjectPool>().Get<FrameAction>().Allocate();

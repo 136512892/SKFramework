@@ -38,6 +38,12 @@ namespace SK.Framework.Actions
             SKFramework.Module<ObjectPool.ObjectPool>().Get<DelayAction>().Recycle(this);
         }
 
+        protected override void OnRecycled()
+        {
+            base.OnRecycled();
+            m_IsBegan = false;
+        }
+
         public static DelayAction Allocate(float duration, bool ignoreTimeScale = false, Action action = null)
         {
             var instance = SKFramework.Module<ObjectPool.ObjectPool>().Get<DelayAction>().Allocate();

@@ -120,5 +120,15 @@ namespace SK.Framework.Config
             m_Logger.Error("[Config] Config not found:{0} ID={1}", typeof(T).FullName, id);
             return null;
         }
+
+        public Dictionary<int, T> Get<T>(string filePath) where T : class
+        {
+            if (m_ConfigDic.TryGetValue(filePath, out var config))
+            {
+                return config as Dictionary<int, T>;
+            }
+            m_Logger.Error("[Config] Config not found:{0} FilePath:{1}", typeof(T).FullName, filePath);
+            return null;
+        }
     }
 }

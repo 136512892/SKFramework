@@ -73,7 +73,7 @@ namespace SK.Framework.Audio
 
         private AudioHandler GetHandler()
         {
-            var handler = SKFramework.Module<ObjectPool.ObjectPool>().Get<AudioHandler>().Allocate();
+            var handler = SKFramework.Module<ObjectPool.ObjectPool>().Get<AudioHandler>(null).Allocate();
             handler.SetSource(handler.gameObject.AddComponent<AudioSource>());
             handler.transform.SetParent(transform);
             m_Handlers.Add(handler);

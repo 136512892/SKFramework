@@ -39,30 +39,27 @@ namespace SK.Framework.ObjectPool
             }
         }
 
-        public bool Create<T>(params object[] args) where T : IPoolable, new()
+        public bool Create<T>() where T : IPoolable, new()
         {
             if (!m_Dic.ContainsKey(typeof(T)))
             {
                 ConstructorInfo[] ctors = typeof(T).GetConstructors(BindingFlags.Instance | BindingFlags.Public);
-                if (Array.FindIndex(ctors, m => m.GetParameters().Length == args.Length) != -1)
+                if (Array.FindIndex(ctors, m => m.GetParameters().Length == 0) != -1)
                 {
-                    ObjectPool<T> pool = Activator.CreateInstance(typeof(ObjectPool<T>), args) as ObjectPool<T>;
+                    ObjectPool<T> pool = Activator.CreateInstance(typeof(ObjectPool<T>)) as ObjectPool<T>;
                     pool.Init(() => Activator.CreateInstance<T>(), false);
                     m_Dic.Add(typeof(T), pool);
                     m_Logger.Info("[ObjectPool] Create object pool: {0}", typeof(T).FullName);
                     return true;
                 }
-                else
-                {
-                    m_Logger.Error("[ObjectPool] A constructor with {0} arguments does not exist.", args.Length);
-                    return false;
-                }
+                m_Logger.Error("[ObjectPool] A constructor with 0 arguments does not exist in type {0}.", typeof(T).FullName);
+                return false;
             }
             m_Logger.Warning("[ObjectPool] An object pool of type {0} already exists.", typeof(T).FullName);
             return false;
         }
 
-        public bool Create<T>(Func<T> createBy = null) where T : MonoBehaviour, IPoolable
+        public bool Create<T>(Func<T> createBy) where T : MonoBehaviour, IPoolable
         {
             if (!m_Dic.ContainsKey(typeof(T)))
             {
@@ -79,16 +76,16 @@ namespace SK.Framework.ObjectPool
             return false;
         }
 
-        public ObjectPool<T> Get<T>(params object[] args) where T : IPoolable, new()
+        public ObjectPool<T> Get<T>() where T : IPoolable, new()
         {
             if (!m_Dic.TryGetValue(typeof(T), out var pool))
             {
-                return Create<T>(args) ? m_Dic[typeof(T)] as ObjectPool<T> : null;
+                return Create<T>() ? m_Dic[typeof(T)] as ObjectPool<T> : null;
             }
             return pool as ObjectPool<T>;
         }
 
-        public ObjectPool<T> Get<T>(Func<T> createBy = null) where T : MonoBehaviour, IPoolable
+        public ObjectPool<T> Get<T>(Func<T> createBy) where T : MonoBehaviour, IPoolable
         {
             if (!m_Dic.TryGetValue(typeof(T), out var pool))
             {
@@ -119,7 +116,7 @@ namespace SK.Framework.ObjectPool
         internal void Remove(IObjectPool pool)
         {
             var type = pool.GetType();
-            if(m_Dic.ContainsKey(type))
+            if (m_Dic.ContainsKey(type))
             {
                 m_Dic.Remove(type);
                 m_Logger.Info("[ObjectPool] Remove object pool: {0}", type.FullName);
@@ -209,7 +206,7 @@ namespace SK.Framework.ObjectPool
             obj.entryTime = DateTime.Now;
             obj.OnRecycled();
 
-            if (m_Pool.Count < m_MaxCacheCount) 
+            if (m_Pool.Count < m_MaxCacheCount)
                 m_Pool.Enqueue(obj);
             else
             {

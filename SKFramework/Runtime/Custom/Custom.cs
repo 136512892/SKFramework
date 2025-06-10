@@ -5,6 +5,7 @@
  *============================================================*/
 
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
@@ -35,6 +36,29 @@ namespace SK.Framework.Custom
             {
                 component.OnInitialization();
             }
+
+            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(m => m.GetTypes())
+                .Where(m => typeof(ICustomComponent).IsAssignableFrom(m) && !m.IsAbstract 
+                    && m.GetCustomAttribute<AutoRegisterAttribute>() != null);
+            foreach (var type in types)
+            {
+                if (type.IsSubclassOf(typeof(MonoBehaviour)))
+                {
+                    var obj = new GameObject(type.FullName);
+                    obj.transform.parent = transform;
+                    var component = obj.AddComponent(type) as ICustomComponent;
+                    Add(component);
+                }
+                else
+                {
+                    var ctors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
+                    if (Array.FindIndex(ctors, m => m.GetParameters().Length == 0) != -1)
+                    {
+                        var component = Activator.CreateInstance(type) as ICustomComponent;
+                        Add(component);
+                    }
+                }
+            }
         }
 
         protected internal override void OnTermination()
@@ -54,7 +78,9 @@ namespace SK.Framework.Custom
             {
                 if (type.IsSubclassOf(typeof(MonoBehaviour)))
                 {
-                    T instance = (T)(gameObject.AddComponent(type) as object);
+                    var obj = new GameObject(typeof(T).FullName);
+                    obj.transform.parent = transform;
+                    T instance = (T)(obj.AddComponent(type) as object);
                     Add(instance);
                 }
                 else
