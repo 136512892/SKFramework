@@ -14,5 +14,7 @@ namespace SK.Framework.Config
         Dictionary<int, T> Load<T>(string filePath) where T : class;
 
         void LoadAsync<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted) where T : class;
+
+        void LoadAsyncFromStreamingAssets<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted) where T : class;
     }
 }

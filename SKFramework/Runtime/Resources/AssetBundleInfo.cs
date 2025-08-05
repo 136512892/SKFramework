@@ -47,8 +47,10 @@ namespace SK.Framework.Resource
             int index = assets.FindIndex(m => m.path == assetPath);
             if (index == -1)
             {
-                assets.Add(new AssetInfo(assetPath));
-                memorySizeFormat = EditorUtility.FormatBytes(assets.Sum(m => m.memorySize));
+                var asset = new AssetInfo(assetPath);
+                assets.Add(asset);
+                memorySize += asset.memorySize;
+                memorySizeFormat = EditorUtility.FormatBytes(memorySize);
             }
         }
 
@@ -57,8 +59,10 @@ namespace SK.Framework.Resource
             int index = assets.FindIndex(m => m.path == assetPath);
             if (index != -1)
             {
+                var asset = assets[index];
                 assets.RemoveAt(index);
-                memorySizeFormat = EditorUtility.FormatBytes(assets.Sum(m => m.memorySize));
+                memorySize -= asset.memorySize;
+                memorySizeFormat = EditorUtility.FormatBytes(memorySize);
             }
         }
 

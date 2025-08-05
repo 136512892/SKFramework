@@ -405,17 +405,9 @@ namespace SK.Framework.Resource
                         loadSceneMode = LoadSceneMode.Additive,
                         localPhysicsMode = LocalPhysicsMode.None
                     });
-                asyncOperation.allowSceneActivation = false;
-                while (asyncOperation.progress < 0.9f)
-                {
-                    onLoading?.Invoke(asyncOperation.progress);
-                    yield return null;
-                }
-                asyncOperation.allowSceneActivation = true;
                 while (!asyncOperation.isDone)
                 {
-                    float progress = 0.9f + (asyncOperation.progress / 0.1f);
-                    onLoading?.Invoke(Mathf.Clamp(progress, 0.9f, 1f));
+                    onLoading?.Invoke(asyncOperation.progress);
                     yield return null;
                 }
                 onLoading?.Invoke(1f);
@@ -467,17 +459,9 @@ namespace SK.Framework.Resource
                     yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);
                 }
                 AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(assetInfo.name, LoadSceneMode.Additive);
-                asyncOperation.allowSceneActivation = false;
-                while (asyncOperation.progress < 0.9f)
-                {
-                    onLoading?.Invoke(asyncOperation.progress);
-                    yield return null;
-                }
-                asyncOperation.allowSceneActivation = true;
                 while (!asyncOperation.isDone)
                 {
-                    float progress = 0.9f + (asyncOperation.progress / 0.1f);
-                    onLoading?.Invoke(Mathf.Clamp(progress, 0.9f, 1f));
+                    onLoading?.Invoke(asyncOperation.progress);
                     yield return null;
                 }
                 onLoading?.Invoke(1f);

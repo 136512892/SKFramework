@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace SK.Framework.Events
@@ -16,24 +17,9 @@ namespace SK.Framework.Events
     {
         private readonly Queue<EventArgs> m_Queue = new Queue<EventArgs>();
         private readonly Dictionary<int, List<Action<EventArgs>>> m_Dic = new Dictionary<int, List<Action<EventArgs>>>();
-        private readonly List<SubscriptionRequest> m_UnsubscribeDic = new List<SubscriptionRequest>();
 
         private void Update()
         {
-            foreach (var item in m_UnsubscribeDic)
-            {
-                if (m_Dic.TryGetValue(item.eventId, out List<Action<EventArgs>> list))
-                {
-                    if (list.Contains(item.callback))
-                    {
-                        list.Remove(item.callback);
-                        if (list.Count == 0)
-                            m_Dic.Remove(item.eventId);
-                    }
-                }
-            }
-            m_UnsubscribeDic.Clear();
-            
             while (m_Queue.Count > 0)
             {
                 EventArgs e = m_Queue.Dequeue();
@@ -82,7 +68,15 @@ namespace SK.Framework.Events
 
         public void Unsubscribe(int eventID, Action<EventArgs> callback)
         {
-            m_UnsubscribeDic.Add(new SubscriptionRequest(eventID, callback));
+            if (m_Dic.TryGetValue(eventID, out List<Action<EventArgs>> list))
+            {
+                if (list.Contains(callback))
+                {
+                    list.Remove(callback);
+                    if (list.Count == 0)
+                        m_Dic.Remove(eventID);
+                }
+            }
         }
 
         public bool Has(int eventID, Action<EventArgs> callback)
@@ -92,18 +86,6 @@ namespace SK.Framework.Events
                 return list.Contains(callback);
             }
             return false;
-        }
-        
-        private readonly struct SubscriptionRequest
-        {
-            public readonly int eventId;
-            public readonly Action<EventArgs> callback;
-
-            public SubscriptionRequest(int eventId, Action<EventArgs> callback)
-            {
-                this.eventId = eventId;
-                this.callback = callback;
-            }
         }
     }
 }

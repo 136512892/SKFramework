@@ -49,7 +49,6 @@ namespace SK.Framework.Actions
         
         protected virtual void OnRecycled()
         {
-            m_IsCompleted = false;
             m_OnCompleted = null;
         }
     }

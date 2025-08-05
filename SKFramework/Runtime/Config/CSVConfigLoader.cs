@@ -21,11 +21,11 @@ using ILogger = SK.Framework.Logger.ILogger;
 
 namespace SK.Framework.Config
 {
-    public class CSVConfigLoader : IConfigLoader
+    public class CSVConfigLoader : ConfigLoader
     {
         private static readonly Regex m_CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 
-        public Dictionary<int, T> Load<T>(string filePath) where T : class
+        public override Dictionary<int, T> Load<T>(string filePath) where T : class
         {
             var dic = new Dictionary<int, T>();
             TextAsset csv = Resources.Load<TextAsset>(filePath);
@@ -35,18 +35,18 @@ namespace SK.Framework.Config
                 logger.Error("Csv file not found: {0}", filePath);
                 return dic;
             }
-            ParseCSVText(csv, dic);
+            ParseCSVText(csv.text, dic);
             return dic;
         }
 
-        public void LoadAsync<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
+        public override void LoadAsync<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
         {
             SKFramework.Module<Resource.Resource>().LoadAssetAsync<TextAsset>(filePath, (success, textAsset) =>
             {
                 if (success)
                 {
                     var dic = new Dictionary<int, T>();
-                    ParseCSVText(textAsset, dic);
+                    ParseCSVText(textAsset.text, dic);
                     onCompleted?.Invoke(true, dic);
                 }
                 else
@@ -56,9 +56,15 @@ namespace SK.Framework.Config
             });
         }
 
-        private void ParseCSVText<T>(TextAsset textAsset, Dictionary<int, T> dic) where T : class
+        public override void LoadAsyncFromStreamingAssets<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
         {
-            string[] lines = textAsset.text.Split('\n');
+            var path = Path.Combine(Application.streamingAssetsPath, filePath);
+            SKFramework.Module<Config>().StartCoroutine(LoadCoroutine(path, ParseCSVText, onCompleted));
+        }
+
+        private void ParseCSVText<T>(string text, Dictionary<int, T> dic) where T : class
+        {
+            string[] lines = text.Split('\n');
             if (lines.Length < 2)
                 return;
 

@@ -35,9 +35,9 @@ namespace SK.Framework.Resource
                     string newName = target.Substring(target.Length - subLength - 1, subLength) + (++number);
                     return GetUniqueAssetBundleNameRecursive(newName);
                 }
-                else return GetUniqueAssetBundleNameRecursive(assetBundleName + 1);
+                return GetUniqueAssetBundleNameRecursive(assetBundleName + 1);
             }
-            else return assetBundleName;
+            return assetBundleName;
         }
 
         public static bool CreateAssetBundle4Object(Object obj)

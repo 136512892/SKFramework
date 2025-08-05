@@ -5,18 +5,20 @@
  *============================================================*/
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
+
 using SK.Framework.Logger;
 using ILogger = SK.Framework.Logger.ILogger;
 
 namespace SK.Framework.Config
 {
-    public class JsonConfigLoader : IConfigLoader
+    public class JsonConfigLoader : ConfigLoader
     {
-        public Dictionary<int, T> Load<T>(string filePath) where T : class
+        public override Dictionary<int, T> Load<T>(string filePath) where T : class
         {
             var dic = new Dictionary<int, T>();
             TextAsset json = Resources.Load<TextAsset>(filePath);
@@ -26,18 +28,18 @@ namespace SK.Framework.Config
                 logger.Error("Json file not found: {0}", filePath);
                 return dic;
             }
-            ParseJsonText(json, dic);
+            ParseJsonText(json.text, dic);
             return dic;
         }
 
-        public void LoadAsync<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
+        public override void LoadAsync<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
         {
             SKFramework.Module<Resource.Resource>().LoadAssetAsync<TextAsset>(filePath, (success, textAsset) =>
             {
                 if (success)
                 {
                     var dic = new Dictionary<int, T>();
-                    ParseJsonText(textAsset, dic);
+                    ParseJsonText(textAsset.text, dic);
                     onCompleted?.Invoke(true, dic);
                 }
                 else
@@ -47,11 +49,17 @@ namespace SK.Framework.Config
             });
         }
 
-        private void ParseJsonText<T>(TextAsset textAsset, Dictionary<int, T> dic) where T : class
+        public override void LoadAsyncFromStreamingAssets<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
+        {
+            var path = Path.Combine(Application.streamingAssetsPath, filePath);
+            SKFramework.Module<Config>().StartCoroutine(LoadCoroutine(path, ParseJsonText, onCompleted));
+        }
+
+        private void ParseJsonText<T>(string text, Dictionary<int, T> dic) where T : class
         {
             try
             {
-                var wrapper = JsonUtility.FromJson<JsonArrayWapper<T>>($"{{\"items\":{textAsset.text}}}");
+                var wrapper = JsonUtility.FromJson<JsonArrayWapper<T>>($"{{\"items\":{text}}}");
                 for (int i = 0; i < wrapper.items.Count; i++)
                 {
                     var item = wrapper.items[i];

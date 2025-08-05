@@ -30,6 +30,7 @@ namespace SK.Framework.Resource
         private List<AssetBundleInfo> m_AssetBundleList;
         private AssetBundleInfo m_SelectedAssetBundleInfo;
         private string m_SelectedAssetPath;
+        private string[] m_AssetBundleDependencies;
         private string[] m_Dependencies;
         private const float m_TypeHeaderWidth = 48f;
         private const float m_MemorySizeHeaderWidth = 100f;
@@ -48,6 +49,7 @@ namespace SK.Framework.Resource
         private void OnEnable()
         {
             m_SelectedAssetBundleInfo = null;
+            m_AssetBundleDependencies = null;
             m_SelectedAssetPath = null;
             m_Dependencies = null;
             RefreshAssetBundles();
@@ -77,6 +79,7 @@ namespace SK.Framework.Resource
         {
             m_AssetBundleList = null;
             m_SelectedAssetBundleInfo = null;
+            m_AssetBundleDependencies = null;
             m_Dependencies = null;
             m_SelectedAssetPath = null;
             m_SearchAssetBundle = null;
@@ -121,11 +124,12 @@ namespace SK.Framework.Resource
             if (GUILayout.Button(GUIContent.none, EditorStyles.toolbarDropDown, GUILayout.Width(18f)))
             {
                 GenericMenu gm = new GenericMenu();
-                gm.AddItem(new GUIContent("Add New AssetBundle"), false, () => AddNewAssetBundle());
-                gm.AddItem(new GUIContent("Remove Unused AssetBundles"), false, () => AssetDatabase.RemoveUnusedAssetBundleNames());
+                gm.AddItem(new GUIContent("Add New AssetBundle"), false, AddNewAssetBundle);
+                gm.AddItem(new GUIContent("Remove Unused AssetBundles"), false, AssetDatabase.RemoveUnusedAssetBundleNames);
                 gm.AddItem(new GUIContent("Refresh List"), false, () =>
                 {
                     m_SelectedAssetBundleInfo = null;
+                    m_AssetBundleDependencies = null;
                     m_SelectedAssetPath = null;
                     m_Dependencies = null;
                     RefreshAssetBundles();
@@ -141,6 +145,7 @@ namespace SK.Framework.Resource
                             AssetBundleUtility.DeleteAssetBundle(assetBundles[i], false);
                         }
                         m_SelectedAssetBundleInfo = null;
+                        m_AssetBundleDependencies = null;
                         m_SelectedAssetPath = null;
                         m_Dependencies = null;
                         RefreshAssetBundles();
@@ -194,11 +199,13 @@ namespace SK.Framework.Resource
                 GUILayout.Label("Memory Size:", EditorStyles.boldLabel, GUILayout.Width(90f));
                 GUILayout.Label(m_SelectedAssetBundleInfo.memorySizeFormat);
                 GUILayout.EndHorizontal();
-                GUILayout.Label("Dependencies:", EditorStyles.boldLabel);
-                string[] dependencies = AssetDatabase.GetAssetBundleDependencies(m_SelectedAssetBundleInfo.name, true);
-                for (int i = 0; i < dependencies.Length; i++)
+                if (m_AssetBundleDependencies != null)
                 {
-                    GUILayout.Label(dependencies[i]);
+                    GUILayout.Label("Dependencies:", EditorStyles.boldLabel);
+                    for (var i = 0; i < m_AssetBundleDependencies.Length; i++)
+                    {
+                        GUILayout.Label(m_AssetBundleDependencies[i]);
+                    }
                 }
             }
             GUILayout.EndScrollView();
@@ -221,6 +228,7 @@ namespace SK.Framework.Resource
                     m_SelectedAssetBundleInfo = info;
                     m_SelectedAssetPath = null;
                     m_Dependencies = null;
+                    m_AssetBundleDependencies = AssetDatabase.GetAssetBundleDependencies(m_SelectedAssetBundleInfo.name, true);
                     Repaint();
                 }
             }
@@ -241,6 +249,7 @@ namespace SK.Framework.Resource
                 if (info == m_SelectedAssetBundleInfo)
                 {
                     m_SelectedAssetBundleInfo = null;
+                    m_AssetBundleDependencies = null;
                     m_SearchAssetPath = null;
                 }
                 m_AssetBundleList.Remove(info);
@@ -253,6 +262,7 @@ namespace SK.Framework.Resource
                 DateTime.Now.ToString("yyyyMMddHHmmssfff")));
             m_AssetBundleList.Add(instance);
             m_SelectedAssetBundleInfo = instance;
+            m_AssetBundleDependencies = AssetDatabase.GetAssetBundleDependencies(m_SelectedAssetBundleInfo.name, true);
             Repaint();
         }
 
@@ -422,7 +432,9 @@ namespace SK.Framework.Resource
                     }
                     GUILayout.Label("Per Page", GUILayout.Width(70f));
 
-                    int pages = m_Dependencies.Length / m_DependenciesCountPerPage + 1;
+                    int pages = m_Dependencies.Length / m_DependenciesCountPerPage;
+                    if (m_Dependencies.Length % m_DependenciesCountPerPage != 0)
+                        pages++;
                     if (GUILayout.Button("<", GUILayout.Width(20f)))
                     {
                         if (m_DependenciesCurrentPage > 1)
@@ -441,6 +453,8 @@ namespace SK.Framework.Resource
                     int start = (m_DependenciesCurrentPage - 1) * m_DependenciesCountPerPage;
                     for (int i = start; i < m_DependenciesCountPerPage * m_DependenciesCurrentPage; i++)
                     {
+                        if (i >= m_Dependencies.Length)
+                            break;
                         string dep = m_Dependencies[i];
                         Type type = AssetDatabase.GetMainAssetTypeAtPath(dep);
                         if (!m_IconMap.TryGetValue(type, out Texture icon))
@@ -455,8 +469,6 @@ namespace SK.Framework.Resource
                         if (Event.current.type == EventType.MouseDown
                             && GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
                             EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(dep));
-                        if (i == m_Dependencies.Length - 1)
-                            break;
                     }
                     GUILayout.EndScrollView();
                 }
@@ -488,6 +500,7 @@ namespace SK.Framework.Resource
                 m_SelectedAssetPath = null;
                 m_Dependencies = null;
                 m_SelectedAssetBundleInfo.DeleteAsset(assetPath);
+                m_AssetBundleDependencies = AssetDatabase.GetAssetBundleDependencies(m_SelectedAssetBundleInfo.name, true);
                 Repaint();
             }
         }
@@ -567,9 +580,10 @@ namespace SK.Framework.Resource
                         }
                         importer.assetBundleName = m_SelectedAssetBundleInfo.name;
                         m_SelectedAssetBundleInfo.AddAsset(path);
-                        Repaint();
                     }
                 }
+                m_AssetBundleDependencies = AssetDatabase.GetAssetBundleDependencies(m_SelectedAssetBundleInfo.name, true);
+                Repaint();
             }
         }
         private void DragDropObject2RectCheck(out IEnumerable<Object> objs)
