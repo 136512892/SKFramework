@@ -41,7 +41,14 @@ namespace SK.Framework.Debugger
         public override void OnEnter()
         {
             base.OnEnter();
-            Draw4Components(Camera.main.GetComponents<Component>());
+            m_Components = null;
+            m_FieldDic.Clear();
+            m_FoldoutDic.Clear();
+            if (SKFramework.Module<Debugger>().TryGet<HierarchyWindow>(out var window)
+                && window.SelectedObject != null)
+            {
+                Draw4Components(window.SelectedObject.GetComponents<Component>());
+            }
         }
 
         public override void OnGUI()

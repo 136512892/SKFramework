@@ -136,5 +136,17 @@ namespace SK.Framework.Debugger
             GUILayout.EndHorizontal();
             m_CurrentWindow?.OnGUI();
         }
+
+        public bool TryGet<T>(out T window) where T : DebuggerWindow
+        {
+            window = default;
+            var index = m_Windows.FindIndex(m => m.GetType() == typeof(T));
+            if (index != -1)
+            {
+                window = (T)m_Windows[index];
+                return true;
+            }
+            return false;
+        }
     }
 }
