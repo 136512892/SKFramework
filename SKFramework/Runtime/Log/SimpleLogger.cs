@@ -11,6 +11,7 @@ namespace SK.Framework.Logger
 {
     public class SimpleLogger : ILogger
     {
+        [SymbolDefine]
         private const string m_Conditional = "ENABLE_LOG";
 
         void ILogger.Info<T>(T arg) => Info(arg);

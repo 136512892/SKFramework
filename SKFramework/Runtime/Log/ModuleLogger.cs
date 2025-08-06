@@ -12,7 +12,9 @@ namespace SK.Framework.Logger
     [NecessaryLogger]
     public class ModuleLogger : ILogger
     {
+        [SymbolDefine]
         private const string m_Conditional = "ENABLE_LOG_MODULE";
+
         private const string format_Info = "<color=#00FFFF><b>[SKFramework]</b> {0}</color>";
         private const string format_Warning = "<color=#FFFF00><b>[SKFramework]</b></color> {0}";
         private const string format_Error = "<color=#FF0000><b>[SKFramework]</b></color> {0}";
