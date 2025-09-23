@@ -64,6 +64,21 @@ namespace SK.Framework.UI
             }
         }
 
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            m_ViewDic.Clear();
+            m_LevelDic.Clear();
+        }
+
+        private void Update()
+        {
+            foreach (var view in m_ViewDic.Values)
+            {
+                view.OnUpdate();
+            }
+        }
+
         public T LoadView<T>(string viewName, string resourcesPath, ViewLevel level = ViewLevel.COMMON, 
             object data = null) where T : MonoBehaviour, IUIView
         {

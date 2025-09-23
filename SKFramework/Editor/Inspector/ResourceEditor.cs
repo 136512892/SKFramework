@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 
 using UnityEditor;
+using UnityEngine;
 
 namespace SK.Framework.Resource
 {
@@ -40,13 +41,22 @@ namespace SK.Framework.Resource
         {
             base.OnInspectorGUI();
 
-            if (m_Mode.enumValueIndex == (int)Resource.MODE.SIMULATIVE)
+            switch (m_Mode.enumValueIndex)
             {
-                EditorGUILayout.HelpBox("In simulative mode, asset will be load from the StreamingAsset path:" +
-                    " Assets/StreamingAssets/AssetBundles/", MessageType.Info);
+                case (int)Resource.MODE.EDITOR:
+                    EditorGUILayout.HelpBox("Asset will be loaded through the API in the AssetDatabase.", MessageType.Info);
+                    break;
+                case (int)Resource.MODE.SIMULATED:
+                    EditorGUILayout.HelpBox("Asset will be loaded from the StreamingAsset path:" +
+                        " Assets/StreamingAssets/AssetBundles/", MessageType.Info);
+                    break;
+                case (int)Resource.MODE.REALITY:
+                    EditorGUILayout.HelpBox(string.Format("Asset will be loaded from the path: {0}/AssetBundles/",
+                        m_AssetBundleUrl.stringValue), MessageType.Info);
+                    break;
             }
-
-            int mode = EditorGUILayout.Popup("Mode", m_Mode.enumValueIndex, m_Mode.enumNames);
+            
+            var mode = EditorGUILayout.Popup("Mode", m_Mode.enumValueIndex, m_Mode.enumNames);
             if (mode != m_Mode.enumValueIndex)
             {
                 Undo.RecordObject(target, "Mode");
@@ -55,21 +65,18 @@ namespace SK.Framework.Resource
                 EditorUtility.SetDirty(target);
             }
 
-            if (mode == (int)Resource.MODE.REALITY)
+            GUI.enabled = m_Mode.enumValueIndex == (int)Resource.MODE.REALITY;
+            var url = EditorGUILayout.TextField("Asset Bundles Url", m_AssetBundleUrl.stringValue);
+            if (url != m_AssetBundleUrl.stringValue)
             {
-                EditorGUILayout.HelpBox(string.Format("Asset will be load from the path: {0}/AssetBundles/",
-                    m_AssetBundleUrl.stringValue), MessageType.Info);
-                string url = EditorGUILayout.TextField("Asset Bundles Url", m_AssetBundleUrl.stringValue);
-                if (url != m_AssetBundleUrl.stringValue)
-                {
-                    Undo.RecordObject(target, "Asset Bundles Url");
-                    m_AssetBundleUrl.stringValue = url;
-                    serializedObject.ApplyModifiedProperties();
-                    EditorUtility.SetDirty(target);
-                }
+                Undo.RecordObject(target, "Asset Bundles Url");
+                m_AssetBundleUrl.stringValue = url;
+                serializedObject.ApplyModifiedProperties();
+                EditorUtility.SetDirty(target);
             }
-
-            if (mode != 0)
+            GUI.enabled = true;
+            
+            if (m_Mode.enumValueIndex != 0)
             {
                 bool encryptEnable = EditorGUILayout.Toggle("Encrypt Enable", m_EncryptEnable.boolValue);
                 if (encryptEnable != m_EncryptEnable.boolValue)

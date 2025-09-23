@@ -22,27 +22,33 @@ namespace SK.Framework.FSM
         internal Action onExit;
         internal Action onTermination;
 
-        public virtual void OnInitialization()
+        void IState.OnInitialization() => OnInitialization();
+        void IState.OnEnter(object data) => OnEnter(data);
+        void IState.OnStay() => OnStay();
+        void IState.OnExit() => OnExit();
+        void IState.OnTermination() => OnTermination();
+
+        protected internal virtual void OnInitialization()
         {
             onInitialization?.Invoke();
         }
 
-        public virtual void OnEnter(object data = null)
+        protected internal virtual void OnEnter(object data = null)
         {
             onEnter?.Invoke();
         }
 
-        public virtual void OnStay()
+        protected internal virtual void OnStay()
         {
             onStay?.Invoke();
         }
 
-        public virtual void OnExit()
+        protected internal virtual void OnExit()
         {
             onExit?.Invoke();
         }
 
-        public virtual void OnTermination()
+        protected internal virtual void OnTermination()
         {
             onTermination?.Invoke();
         }

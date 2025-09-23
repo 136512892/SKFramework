@@ -14,6 +14,8 @@ namespace SK.Framework.UI
 
         void OnOpen(object data);
 
+        void OnUpdate();
+
         void OnClose();
 
         void OnUnload();

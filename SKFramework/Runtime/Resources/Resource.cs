@@ -33,7 +33,7 @@ namespace SK.Framework.Resource
         public enum MODE
         {
             EDITOR,
-            SIMULATIVE, //StreamingAssets
+            SIMULATED, //StreamingAssets
             REALITY,
         }
 
@@ -75,15 +75,17 @@ namespace SK.Framework.Resource
 #if UNITY_EDITOR
             if (m_Mode != MODE.EDITOR)
             {
+                Func();
+            }
+#else
+            Func();
+#endif
+            void Func()
+            {
                 m_FullAssetBundleUrl = (m_Mode == MODE.REALITY ? m_AssetBundleUrl : Application.streamingAssetsPath) + "/AssetBundles";
                 StartCoroutine(LoadAssetsMapAsync());
                 EncryptStrategyInit();
             }
-#else
-            m_FullAssetBundleUrl = (m_Mode == MODE.REALITY ? m_AssetBundleUrl : Application.streamingAssetsPath) + "/AssetBundles";
-            StartCoroutine(LoadAssetsMapAsync());
-            EncryptStrategyInit();
-#endif
         }
 
         private void EncryptStrategyInit()
@@ -129,21 +131,17 @@ namespace SK.Framework.Resource
 #if UNITY_WEBGL
                         assetsInfo = JsonUtility.FromJson<AssetsInfo>(request.downloadHandler.text);
 #else
-                        string mapPath = Application.persistentDataPath + "/map.dat";
+                        var mapPath = Application.persistentDataPath + "/map.dat";
                         File.WriteAllBytes(mapPath, request.downloadHandler.data);
-                        using (FileStream fs = new FileStream(mapPath, FileMode.Open))
+                        using (var fs = new FileStream(mapPath, FileMode.Open))
                         {
-                            BinaryFormatter bf = new BinaryFormatter();
+                            var bf = new BinaryFormatter();
                             var deserialize = bf.Deserialize(fs);
-                            if (deserialize != null)
+                            if (deserialize is byte[] buffer && buffer.Length > 0)
                             {
-                                byte[] buffer = deserialize as byte[];
-                                if (buffer != null && buffer.Length > 0)
-                                {
-                                    m_Map = new Dictionary<string, AssetInfo>();
-                                    string json = Encoding.Default.GetString(buffer);
-                                    assetsInfo = JsonUtility.FromJson<AssetsInfo>(json);
-                                }
+                                m_Map = new Dictionary<string, AssetInfo>();
+                                var json = Encoding.Default.GetString(buffer);
+                                assetsInfo = JsonUtility.FromJson<AssetsInfo>(json);
                             }
                         }
 #endif
@@ -194,7 +192,7 @@ namespace SK.Framework.Resource
                 if (flag)
                 {
                     AssetBundle ab = DownloadHandlerAssetBundle.GetContent(request);
-                    if (ab != null)
+                    if (ab)
                     {
                         m_AssetBundleManifest = ab.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
                         m_IsAssetBundleManifestLoading = false;
@@ -268,10 +266,10 @@ namespace SK.Framework.Resource
                         }
                         else ab = DownloadHandlerAssetBundle.GetContent(request);
 
-                        if (ab != null)
+                        if (ab)
                         {
                             m_AssetBundlesDic.Add(assetBundleName, ab);
-                            m_Logger.Info("[Resource] The request for downloading the asset bundle {0} was sended at time {1}," +
+                            m_Logger.Info("[Resource] The request for downloading the asset bundle {0} was sent at time {1}," +
                                 "completed at time {2},taking {3} milliseconds({4} seconds).", request.url, beginTime.ToString("T"),
                                 DateTime.Now.ToString("T"), (DateTime.Now - beginTime).TotalMilliseconds,
                                 (DateTime.Now - beginTime).TotalSeconds);
@@ -291,11 +289,11 @@ namespace SK.Framework.Resource
             }
         }
         
-        private IEnumerator LoadAssetBundleDependeciesAsync(string[] dependencies, Action<float> onLoading)
+        private IEnumerator LoadAssetBundleDependenciesAsync(string[] dependencies, Action<float> onLoading)
         {
             for (int i = 0; i < dependencies.Length; i++)
             {
-                string dep = dependencies[i];
+                var dep = dependencies[i];
                 if (!m_AssetBundlesDic.ContainsKey(dep))
                 {
                     yield return LoadAssetBundleAsync(dep, onLoading);
@@ -335,11 +333,11 @@ namespace SK.Framework.Resource
                     yield break;
                 }
 
-                if (m_AssetBundleManifest == null)
+                if (!m_AssetBundleManifest)
                 {
                     if (m_IsAssetBundleManifestLoading)
                     {
-                        yield return new WaitUntil(() => m_AssetBundleManifest != null);
+                        yield return new WaitUntil(() => m_AssetBundleManifest);
                     }
                     else
                     {
@@ -348,8 +346,8 @@ namespace SK.Framework.Resource
                     }
                 }
                 
-                string[] dependencies = m_AssetBundleManifest.GetAllDependencies(assetInfo.abName);
-                bool flag = m_AssetBundleManifest != null;
+                var dependencies = m_AssetBundleManifest.GetAllDependencies(assetInfo.abName);
+                bool flag = m_AssetBundleManifest;
                 if (flag)
                 {
                     for (int i = 0; i < dependencies.Length; i++)
@@ -363,7 +361,7 @@ namespace SK.Framework.Resource
                 }
                 if (!flag)
                 {
-                    yield return LoadAssetBundleDependeciesAsync(dependencies, onLoading);
+                    yield return LoadAssetBundleDependenciesAsync(dependencies, onLoading);
                 }
 
                 if (!m_AssetBundlesDic.ContainsKey(assetInfo.abName))
@@ -399,19 +397,25 @@ namespace SK.Framework.Resource
                 }
 
                 m_SceneDic.Add(sceneAssetPath, new Scene());
-                AsyncOperation asyncOperation = EditorSceneManager.LoadSceneAsyncInPlayMode(sceneAssetPath,
+                var asyncOperation = EditorSceneManager.LoadSceneAsyncInPlayMode(sceneAssetPath,
                     new LoadSceneParameters()
                     {
                         loadSceneMode = LoadSceneMode.Additive,
                         localPhysicsMode = LocalPhysicsMode.None
                     });
+                if (asyncOperation == null)
+                {
+                    onCompleted?.Invoke(false);
+                    m_Logger.Error("[Resource] Load scene at path {0} failed.", sceneAssetPath);
+                    yield break;
+                }
                 while (!asyncOperation.isDone)
                 {
                     onLoading?.Invoke(asyncOperation.progress);
                     yield return null;
                 }
                 onLoading?.Invoke(1f);
-                Scene scene = EditorSceneManager.GetSceneByPath(sceneAssetPath);
+                var scene = SceneManager.GetSceneByPath(sceneAssetPath);
                 m_SceneDic[sceneAssetPath] = scene;
             }
             else yield return Func();
@@ -426,7 +430,7 @@ namespace SK.Framework.Resource
                 }
                 if (!m_Map.TryGetValue(sceneAssetPath, out var assetInfo))
                 {
-                    m_Logger.Warning("[Resource] Load scene at path {0} failed.", sceneAssetPath);
+                    m_Logger.Error("[Resource] Load scene at path {0} failed.", sceneAssetPath);
                     yield break;
                 }
                 if (m_SceneDic.ContainsKey(assetInfo.name))
@@ -436,11 +440,11 @@ namespace SK.Framework.Resource
                     yield break;
                 }
 
-                if (m_AssetBundleManifest == null)
+                if (!m_AssetBundleManifest)
                 {
                     if (m_IsAssetBundleManifestLoading)
                     {
-                        yield return new WaitUntil(() => m_AssetBundleManifest != null);
+                        yield return new WaitUntil(() => m_AssetBundleManifest);
                     }
                     else
                     {
@@ -449,16 +453,22 @@ namespace SK.Framework.Resource
                     }
                 }
                 
-                string[] dependencies = m_AssetBundleManifest.GetAllDependencies(assetInfo.abName);
-                yield return LoadAssetBundleDependeciesAsync(dependencies, onLoading);
+                var dependencies = m_AssetBundleManifest.GetAllDependencies(assetInfo.abName);
+                yield return LoadAssetBundleDependenciesAsync(dependencies, onLoading);
 
-                Scene scene = SceneManager.GetSceneByPath(sceneAssetPath);
+                var scene = SceneManager.GetSceneByPath(sceneAssetPath);
                 m_SceneDic.Add(assetInfo.name, scene);
                 if (!m_AssetBundlesDic.ContainsKey(assetInfo.abName))
                 {
                     yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);
                 }
-                AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(assetInfo.name, LoadSceneMode.Additive);
+                var asyncOperation = SceneManager.LoadSceneAsync(assetInfo.name, LoadSceneMode.Additive);
+                if (asyncOperation == null)
+                {
+                    onCompleted?.Invoke(false);
+                    m_Logger.Error("[Resource] Load scene {0} failed.", assetInfo.name);
+                    yield break;
+                }
                 while (!asyncOperation.isDone)
                 {
                     onLoading?.Invoke(asyncOperation.progress);
@@ -514,19 +524,21 @@ namespace SK.Framework.Resource
         public bool UnloadScene(string sceneAssetPath)
         {
 #if UNITY_EDITOR
-            if (m_Mode == MODE.EDITOR)
+            if (m_Mode != MODE.EDITOR) 
+                return Func();
+            if (m_SceneDic.TryGetValue(sceneAssetPath, out Scene scene))
             {
-                if (m_SceneDic.TryGetValue(sceneAssetPath, out Scene scene))
-                {
-                    m_SceneDic.Remove(sceneAssetPath);
-                    EditorSceneManager.UnloadSceneAsync(scene);
-                    m_Logger.Info("[Resource] Unload scene with path: {0}", sceneAssetPath);
-                    return true;
-                }
-                m_Logger.Warning("[Resource] Scene with path {0} does not loaded.", sceneAssetPath);
-                return false;
+                m_SceneDic.Remove(sceneAssetPath);
+                SceneManager.UnloadSceneAsync(scene);
+                m_Logger.Info("[Resource] Unload scene with path: {0}", sceneAssetPath);
+                return true;
             }
-            else
+            m_Logger.Warning("[Resource] Scene with path {0} does not loaded.", sceneAssetPath);
+            return false;
+#else
+            return Func();
+#endif
+            bool Func()
             {
                 if (m_Map.TryGetValue(sceneAssetPath, out var assetInfo))
                 {
@@ -537,34 +549,12 @@ namespace SK.Framework.Resource
                         m_Logger.Info("[Resource] Unload scene with path: {0}", sceneAssetPath);
                         return true;
                     }
-                    else
-                    {
-                        m_Logger.Warning("[Resource] Scene with path {0} does not loaded.", sceneAssetPath);
-                        return false;
-                    }
+                    m_Logger.Warning("[Resource] Scene with path {0} does not loaded.", sceneAssetPath);
+                    return false;
                 }
                 m_Logger.Warning("[Resource] Scene with path {0} does not exists.", sceneAssetPath);
                 return false;
             }
-#else
-            if (m_Map.TryGetValue(sceneAssetPath, out var assetInfo))
-            {
-                if (m_SceneDic.ContainsKey(assetInfo.name))
-                {
-                    m_SceneDic.Remove(assetInfo.name);
-                    SceneManager.UnloadSceneAsync(assetInfo.name);
-                    m_Logger.Info("[Resource] Unload scene with path: {0}", sceneAssetPath);
-                    return true;
-                }
-                else
-                {
-                    m_Logger.Warning("[Resource] Scene with path {0} does not loaded.", sceneAssetPath);
-                    return false;
-                }
-            }
-            m_Logger.Warning("[Resource] Scene with path {0} does not exists.", sceneAssetPath);
-            return false;
-#endif
         }
 
         public void InstantiateAsync<T>(string assetPath, Action<bool, T> onCompleted = null, Action<float> onProgress = null) where T : Object
@@ -573,7 +563,7 @@ namespace SK.Framework.Resource
             {
                 if (success)
                 {
-                    T t = Instantiate(asset);
+                    var t = Instantiate(asset);
                     onCompleted?.Invoke(true, t);
                 }
                 else

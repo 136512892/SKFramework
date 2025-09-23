@@ -94,6 +94,35 @@ namespace SK.Framework.Config
                 m_Logger.Warning("[Config] Config with path {0} already loaded.", filePath);
             }
         }
+        
+        public void LoadAsyncFromStreamingAssets<L, T>(string filePath, Action onCompleted = null) where L : IConfigLoader where T : class
+        {
+            if (!m_ConfigDic.ContainsKey(filePath))
+            {
+                if (m_LoaderDic.TryGetValue(typeof(L), out IConfigLoader loader))
+                {
+                    loader.LoadAsyncFromStreamingAssets<T>(filePath, (success, dic) =>
+                    {
+                        if (success)
+                        {
+                            m_ConfigDic.Add(filePath, dic);
+                            onCompleted?.Invoke();
+                            m_Logger.Info("[Config] Load config with type {0} from the streaming assets path: {1}", typeof(T).FullName, filePath);
+                        }
+                        else
+                        {
+                            m_Logger.Error("[Config] Load config fail from the streaming assets path: {0}", filePath);
+                        }
+                    });
+                    return;
+                }
+                m_Logger.Error("[Config] The config loader of type {0} does not exist.", typeof(L).FullName);
+            }
+            else
+            {
+                m_Logger.Warning("[Config] Config with the streaming assets path {0} already loaded.", filePath);
+            }
+        }
 
         public bool Unload(string filePath)
         {
