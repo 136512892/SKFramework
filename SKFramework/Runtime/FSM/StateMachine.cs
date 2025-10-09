@@ -14,7 +14,7 @@ namespace SK.Framework.FSM
 {
     public class StateMachine : IStateMachine
     {
-        private readonly List<IState> m_States = new List<IState>(8);
+        protected readonly List<IState> m_States = new List<IState>(8);
         private readonly List<StateSwitchCondition> m_Conditions = new List<StateSwitchCondition>(0);
         private ILogger m_Logger;
 

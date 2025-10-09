@@ -35,7 +35,7 @@ namespace SK.Framework.ObjectPool
             var pools = m_Dic.Values.GetEnumerator();
             while (pools.MoveNext())
             {
-                pools.Current.Update();
+                pools.Current?.Update();
             }
         }
 
@@ -43,20 +43,17 @@ namespace SK.Framework.ObjectPool
         {
             if (!m_Dic.ContainsKey(typeof(T)))
             {
-                ConstructorInfo[] ctors = typeof(T).GetConstructors(BindingFlags.Instance | BindingFlags.Public);
-                if (Array.FindIndex(ctors, m => m.GetParameters().Length == 0) != -1)
+                var ctors = typeof(T).GetConstructors(BindingFlags.Instance | BindingFlags.Public);
+                if (Array.FindIndex(ctors, m => m.GetParameters().Length == 0) != -1
+                    && Activator.CreateInstance(typeof(ObjectPool<T>)) is ObjectPool<T> pool)
                 {
-                    ObjectPool<T> pool = Activator.CreateInstance(typeof(ObjectPool<T>)) as ObjectPool<T>;
-                    pool.Init(() => Activator.CreateInstance<T>(), false);
+                    pool.Init(Activator.CreateInstance<T>, false);
                     m_Dic.Add(typeof(T), pool);
                     m_Logger.Info("[ObjectPool] Create object pool: {0}", typeof(T).FullName);
                     return true;
                 }
-                else
-                {
-                    m_Logger.Error("[ObjectPool] A constructor with 0 arguments does not exist in type {0}.", typeof(T).FullName);
-                    return false;
-                }
+                m_Logger.Error("[ObjectPool] A constructor with 0 arguments does not exist in type {0}.", typeof(T).FullName);
+                return false;
             }
             m_Logger.Warning("[ObjectPool] An object pool of type {0} already exists.", typeof(T).FullName);
             return false;
@@ -66,11 +63,8 @@ namespace SK.Framework.ObjectPool
         {
             if (!m_Dic.ContainsKey(typeof(T)))
             {
-                ObjectPool<T> pool = Activator.CreateInstance<ObjectPool<T>>();
-                if (createBy != null)
-                    pool.Init(createBy, true);
-                else
-                    pool.Init(() => new GameObject(typeof(T).FullName).AddComponent<T>(), true);
+                var pool = Activator.CreateInstance<ObjectPool<T>>();
+                pool.Init(createBy ?? (() => new GameObject(typeof(T).FullName).AddComponent<T>()), true);
                 m_Dic.Add(typeof(T), pool);
                 m_Logger.Info("[ObjectPool] Create object pool: {0}", typeof(T).FullName);
                 return true;
@@ -104,9 +98,9 @@ namespace SK.Framework.ObjectPool
 
         public void Release<T>() where T : IPoolable
         {
-            if (m_Dic.TryGetValue(typeof(T), out var pool))
+            if (m_Dic.TryGetValue(typeof(T), out var pool) && pool is ObjectPool<T> matched)
             {
-                (pool as ObjectPool<T>).Release();
+                matched.Release();
                 m_Dic.Remove(typeof(T));
                 m_Logger.Info("[ObjectPool] Release object pool: {0}", typeof(T).FullName);
             }
@@ -155,20 +149,18 @@ namespace SK.Framework.ObjectPool
             }
             set
             {
-                if (m_MaxCacheCount != value)
+                if (m_MaxCacheCount == value) 
+                    return;
+                m_MaxCacheCount = value;
+                if (m_MaxCacheCount <= 0 || m_MaxCacheCount >= m_Pool.Count) 
+                    return;
+                var removeCount = m_Pool.Count - m_MaxCacheCount;
+                while (removeCount > 0)
                 {
-                    m_MaxCacheCount = value;
-                    if (m_MaxCacheCount > 0 && m_MaxCacheCount < m_Pool.Count)
-                    {
-                        int removeCount = m_Pool.Count - m_MaxCacheCount;
-                        while (removeCount > 0)
-                        {
-                            var obj = m_Pool.Dequeue() as IPoolable;
-                            removeCount--;
-                            if (m_IsSubclassMonoBehaviour)
-                                Object.Destroy((obj as MonoBehaviour).gameObject);
-                        }
-                    }
+                    var obj = m_Pool.Dequeue() as IPoolable;
+                    removeCount--;
+                    if (m_IsSubclassMonoBehaviour && obj is MonoBehaviour mono)
+                        Object.Destroy(mono.gameObject);
                 }
             }
         }
@@ -196,7 +188,7 @@ namespace SK.Framework.ObjectPool
 
         public T Allocate()
         {
-            T obj = (T)(m_Pool.Count > 0 ? m_Pool.Dequeue() : m_CreateMethod.Invoke());
+            var obj = (T)(m_Pool.Count > 0 ? m_Pool.Dequeue() : m_CreateMethod.Invoke());
             obj.isRecycled = false;
             return obj;
         }
@@ -213,23 +205,21 @@ namespace SK.Framework.ObjectPool
                 m_Pool.Enqueue(obj);
             else
             {
-                if (m_IsSubclassMonoBehaviour)
-                    Object.Destroy((obj as MonoBehaviour).gameObject);
+                if (m_IsSubclassMonoBehaviour && obj is MonoBehaviour mono)
+                    Object.Destroy(mono.gameObject);
             }
             return true;
         }
 
         public void Update()
         {
-            if (m_Pool.Count > 0)
+            if (m_Pool.Count <= 0) 
+                return;
+            if (m_Pool.First() is IPoolable first && (DateTime.Now - first.entryTime).TotalMinutes > m_MaxKeepDuration)
             {
-                var first = m_Pool.First() as IPoolable;
-                if ((DateTime.Now - first.entryTime).TotalMinutes > m_MaxKeepDuration)
-                {
-                    var obj = m_Pool.Dequeue();
-                    if (m_IsSubclassMonoBehaviour)
-                        Object.Destroy((obj as MonoBehaviour).gameObject);
-                }
+                var obj = m_Pool.Dequeue();
+                if (m_IsSubclassMonoBehaviour && obj is MonoBehaviour mono)
+                    Object.Destroy(mono.gameObject);
             }
         }
 
@@ -239,7 +229,10 @@ namespace SK.Framework.ObjectPool
             {
                 foreach (var obj in m_Pool)
                 {
-                    Object.Destroy((obj as MonoBehaviour).gameObject);
+                    if (obj is MonoBehaviour mono)
+                    {
+                        Object.Destroy(mono.gameObject);
+                    }
                 }
             }
             m_Pool.Clear();

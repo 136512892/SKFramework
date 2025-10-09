@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using SK.Framework.Logger;
+using UnityEditor;
 using ILogger = SK.Framework.Logger.ILogger;
 
 namespace SK.Framework.UI
@@ -25,6 +26,8 @@ namespace SK.Framework.UI
         private readonly Dictionary<ViewLevel, Transform> m_LevelDic = new Dictionary<ViewLevel, Transform>();
         private readonly Dictionary<string, IUIView> m_ViewDic = new Dictionary<string, IUIView>();
         private ILogger m_Logger;
+        
+        public Vector2 resolution => m_Resolotion;
 
         protected internal override void OnInitialization()
         {
@@ -67,15 +70,16 @@ namespace SK.Framework.UI
         protected internal override void OnTermination()
         {
             base.OnTermination();
-            m_ViewDic.Clear();
             m_LevelDic.Clear();
+            m_ViewDic.Clear();
         }
 
         private void Update()
         {
             foreach (var view in m_ViewDic.Values)
             {
-                view.OnUpdate();
+                if (view.isActive)
+                    view.OnUpdate();
             }
         }
 
@@ -158,9 +162,9 @@ namespace SK.Framework.UI
         public T OpenView<T>(string viewName, ViewLevel level = ViewLevel.COMMON,
             object data = null) where T : MonoBehaviour, IUIView
         {
-            if (m_ViewDic.TryGetValue(viewName, out IUIView view))
+            if (m_ViewDic.TryGetValue(viewName, out IUIView view) && view is MonoBehaviour mono)
             {
-                var instance = (view as MonoBehaviour).gameObject;
+                var instance = mono.gameObject;
                 instance.SetActive(true);
                 if (instance.transform.parent != m_LevelDic[level])
                     instance.transform.SetParent(m_LevelDic[level], false);
@@ -180,9 +184,9 @@ namespace SK.Framework.UI
 
         public bool CloseView(string viewName)
         {
-            if (m_ViewDic.TryGetValue(viewName, out IUIView view))
+            if (m_ViewDic.TryGetValue(viewName, out IUIView view) && view is MonoBehaviour mono)
             {
-                var instance = (view as MonoBehaviour).gameObject;
+                var instance = mono.gameObject;
                 instance.SetActive(false);
                 view.OnClose();
                 m_Logger.Info("[UI] Close view {0}", viewName);
@@ -235,9 +239,9 @@ namespace SK.Framework.UI
 
         public bool UnloadView(string viewName)
         {
-            if (m_ViewDic.TryGetValue(viewName, out IUIView view))
+            if (m_ViewDic.TryGetValue(viewName, out IUIView view) && view is MonoBehaviour mono)
             {
-                var instance = (view as MonoBehaviour).gameObject;
+                var instance = mono.gameObject;
                 if (instance.activeSelf)
                     view.OnClose();
                 view.OnUnload();

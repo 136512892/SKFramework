@@ -12,6 +12,8 @@ namespace SK.Framework.UI
     {
         public string viewName { get; set; }
 
+        public bool isActive => gameObject.activeSelf;
+
         void IUIView.OnLoad(object data) => OnLoad(data);
         void IUIView.OnOpen(object data) => OnOpen(data);
         void IUIView.OnUpdate() => OnUpdate();

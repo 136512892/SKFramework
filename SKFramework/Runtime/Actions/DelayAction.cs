@@ -32,6 +32,12 @@ namespace SK.Framework.Actions
             m_IsBegan = false;
         }
 
+        protected override void OnRecycled()
+        {
+            base.OnRecycled();
+            m_IsBegan = false;
+        }
+
         protected override void Release()
         {
             base.Release();

@@ -9,6 +9,8 @@ namespace SK.Framework.UI
     public interface IUIView
     {
         string viewName { get; set; }
+
+        bool isActive { get; }
         
         void OnLoad(object data);
 

@@ -12,12 +12,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+using SK.Framework.Logger;
+using ILogger = SK.Framework.Logger.ILogger;
+
 namespace SK.Framework.Networking
 {
     internal class WebRequestAgent : MonoBehaviour, IWebRequestAgent
     {
         private int m_MaxRetries;
         private int m_Timeout;
+        private ILogger m_Logger;
         private readonly WebRequestResponse m_Response = new WebRequestResponse();
 
         bool IWebRequestAgent.isIdle
@@ -32,6 +36,7 @@ namespace SK.Framework.Networking
         private void Awake()
         {
             m_Monitor = SKFramework.Module<WebRequest>().Monitor;
+            m_Logger = SKFramework.Module<Log>().GetLogger<ModuleLogger>();
         }
 
         public void Send(WebRequestTask task, int retryCount, int timeout)
@@ -51,8 +56,11 @@ namespace SK.Framework.Networking
             {
                 using (UnityWebRequest request = CreateWebRequest(url, method, headers, postData))
                 {
+                    var timeStart = DateTime.Now;
                     m_Monitor.TrackStart(request);
                     yield return request.SendWebRequest();
+                    m_Logger.Info("于{0}发起网络请求，Url：{1}，Data：{2}\r\n于{3}收到网络响应：{4}", 
+                        timeStart, url, postData, DateTime.Now, request.downloadHandler.text);
                     m_Monitor.TrackEnd(request);
                     m_Response.code = request.responseCode;
                     m_Response.data = request.downloadHandler?.text;

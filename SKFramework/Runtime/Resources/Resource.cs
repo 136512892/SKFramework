@@ -488,6 +488,11 @@ namespace SK.Framework.Resource
         {
             StartCoroutine(LoadSceneAsyncCoroutine(sceneAssetPath, onCompleted, onLoading));
         }
+        
+        public bool IsSceneLoaded(string sceneAssetPath)
+        {
+            return m_SceneDic.ContainsKey(sceneAssetPath);
+        }
 
         public void UnloadAsset(string assetPath, bool unloadAllLoadedObjects = false)
         {
