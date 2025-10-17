@@ -55,7 +55,7 @@ namespace SK.Framework
             throw new Exception($"Module of type {typeof(T).FullName} is not exists.");
         }
 
-        public static bool Has<T>()
+        public static bool Has<T>() where T : ModuleBase
         {
             return m_ModuleDic != null && m_ModuleDic.ContainsKey(typeof(T));
         }

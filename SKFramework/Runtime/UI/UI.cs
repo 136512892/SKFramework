@@ -25,6 +25,7 @@ namespace SK.Framework.UI
 
         private readonly Dictionary<ViewLevel, Transform> m_LevelDic = new Dictionary<ViewLevel, Transform>();
         private readonly Dictionary<string, IUIView> m_ViewDic = new Dictionary<string, IUIView>();
+        private readonly List<IUIView> m_ViewListCache = new List<IUIView>();
         private ILogger m_Logger;
         
         public Vector2 resolution => m_Resolotion;
@@ -76,10 +77,11 @@ namespace SK.Framework.UI
 
         private void Update()
         {
-            foreach (var view in m_ViewDic.Values)
+            m_ViewListCache.Clear();
+            m_ViewListCache.AddRange(m_ViewDic.Values);
+            for (int i = 0; i < m_ViewListCache.Count; i++)
             {
-                if (view.isActive)
-                    view.OnUpdate();
+                m_ViewListCache[i].OnUpdate();
             }
         }
 

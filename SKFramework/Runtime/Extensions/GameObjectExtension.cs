@@ -147,5 +147,16 @@ namespace SK.Framework
             self.gameObject.tag = tag;
             return self;
         }
+
+        public static bool TryGetComponentInChildren<T>(this Component self, out T component) where T : Component
+        {
+            component = null;
+            foreach (Transform child in self.transform)
+            {
+                if (child.gameObject.TryGetComponent(out component))
+                    return true;
+            }
+            return false;
+        }
     }
 }
