@@ -137,11 +137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Priority: 0
-  m_Mode: 0
-  m_AssetBundleUrl: D:/UnityProjects/SKFramework/Assets/StreamingAssets
-  m_EncryptEnable: 1
-  m_EncryptStrategy: SK.Framework.Resource.AssetBundleMaskEncryptStrategy
-  m_SecretKey: 
+  m_Agent: {fileID: 11400000, guid: 24e783f3768a678409af77d996bee76b, type: 2}
 --- !u!1 &5705524042116475327
 GameObject:
   m_ObjectHideFlags: 0
@@ -418,7 +414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Priority: -1
-  m_LoggerName: SK.Framework.Logger.SimpleLogger
+  m_LoggerName: SK.Framework.Logger.SampleLogger
   m_OptionalLoggerNameList: []
 --- !u!1 &5705524043225839384
 GameObject:

@@ -12,8 +12,8 @@ using UnityEngine;
 
 namespace SK.Framework.Resource
 {
-    [CustomEditor(typeof(Resource))]
-    public class ResourceEditor : BaseEditor
+    [CustomEditor(typeof(ResourceAgent), true)]
+    public class ResourceAgentEditor : BaseEditor
     {
         private SerializedProperty m_Mode;
         private SerializedProperty m_AssetBundleUrl;
@@ -43,19 +43,19 @@ namespace SK.Framework.Resource
 
             switch (m_Mode.enumValueIndex)
             {
-                case (int)Resource.MODE.EDITOR:
+                case (int)ResourceAgent.MODE.EDITOR:
                     EditorGUILayout.HelpBox("Asset will be loaded through the API in the AssetDatabase.", MessageType.Info);
                     break;
-                case (int)Resource.MODE.SIMULATED:
+                case (int)ResourceAgent.MODE.SIMULATED:
                     EditorGUILayout.HelpBox("Asset will be loaded from the StreamingAsset path:" +
                         " Assets/StreamingAssets/AssetBundles/", MessageType.Info);
                     break;
-                case (int)Resource.MODE.REALITY:
+                case (int)ResourceAgent.MODE.REALITY:
                     EditorGUILayout.HelpBox(string.Format("Asset will be loaded from the path: {0}/AssetBundles/",
                         m_AssetBundleUrl.stringValue), MessageType.Info);
                     break;
             }
-            
+
             var mode = EditorGUILayout.Popup("Mode", m_Mode.enumValueIndex, m_Mode.enumNames);
             if (mode != m_Mode.enumValueIndex)
             {
@@ -65,7 +65,7 @@ namespace SK.Framework.Resource
                 EditorUtility.SetDirty(target);
             }
 
-            GUI.enabled = m_Mode.enumValueIndex == (int)Resource.MODE.REALITY;
+            GUI.enabled = m_Mode.enumValueIndex == (int)ResourceAgent.MODE.REALITY;
             var url = EditorGUILayout.TextField("Asset Bundles Url", m_AssetBundleUrl.stringValue);
             if (url != m_AssetBundleUrl.stringValue)
             {
@@ -75,7 +75,7 @@ namespace SK.Framework.Resource
                 EditorUtility.SetDirty(target);
             }
             GUI.enabled = true;
-            
+
             if (m_Mode.enumValueIndex != 0)
             {
                 bool encryptEnable = EditorGUILayout.Toggle("Encrypt Enable", m_EncryptEnable.boolValue);

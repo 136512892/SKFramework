@@ -9,7 +9,7 @@ using Debug = UnityEngine.Debug;
 
 namespace SK.Framework.Logger
 {
-    public class SimpleLogger : ILogger
+    public class SampleLogger : ILogger
     {
         [SymbolDefine]
         private const string m_Conditional = "ENABLE_LOG";

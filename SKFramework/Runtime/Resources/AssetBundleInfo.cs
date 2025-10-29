@@ -18,6 +18,21 @@ namespace SK.Framework.Resource
     public class AssetBundleInfo
     {
         public string name;
+        public string md5;
+        public long size;
+
+        public AssetBundleInfo(string name, string md5, long size)
+        {
+            this.name = name;
+            this.md5 = md5;
+            this.size = size;
+        }
+    }
+
+    [Serializable]
+    public class AssetBundleEditorInfo
+    {
+        public string name;
 
         public string[] dependencies;
 
@@ -28,7 +43,7 @@ namespace SK.Framework.Resource
         public string memorySizeFormat;
 
 #if UNITY_EDITOR
-        public AssetBundleInfo(string name)
+        public AssetBundleEditorInfo(string name)
         {
             this.name = name;
             dependencies = AssetDatabase.GetAssetBundleDependencies(name, true);

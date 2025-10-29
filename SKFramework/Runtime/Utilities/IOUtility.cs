@@ -4,7 +4,11 @@
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
+using System;
 using System.IO;
+using System.Collections;
+using System.Threading.Tasks;
+
 using UnityEngine;
 
 namespace SK.Framework
@@ -68,6 +72,30 @@ namespace SK.Framework
                 return true;
             }
             return false;
+        }
+
+        public static IEnumerator WriteBytesAsync(string path, byte[] bytes, Action<bool> onCompleted = null)
+        {
+            var task = Task.Run(() =>
+            {
+                try
+                {
+                    var directory = Path.GetDirectoryName(path);
+                    if (!Directory.Exists(directory))
+                        Directory.CreateDirectory(directory);
+                    File.WriteAllBytes(path, bytes);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            });
+            while (!task.IsCompleted)
+            {
+                yield return null;
+            }
+            onCompleted?.Invoke(task.Result);
         }
     }
 }

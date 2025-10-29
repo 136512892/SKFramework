@@ -27,8 +27,8 @@ namespace SK.Framework.Resource
         private Vector2 m_LScrollPosition, m_RScrollPosition;
         private float m_SplitterLPos, m_SplitterRPos, m_SplitterRBPos;
         private bool m_IsSplitterLDragging, m_IsSplitterRDragging, m_IsSplitterRBDragging;
-        private List<AssetBundleInfo> m_AssetBundleList;
-        private AssetBundleInfo m_SelectedAssetBundleInfo;
+        private List<AssetBundleEditorInfo> m_AssetBundleList;
+        private AssetBundleEditorInfo m_SelectedAssetBundleInfo;
         private string m_SelectedAssetPath;
         private string[] m_AssetBundleDependencies;
         private string[] m_Dependencies;
@@ -161,7 +161,7 @@ namespace SK.Framework.Resource
             {
                 for (int i = 0; i < m_AssetBundleList.Count; i++)
                 {
-                    AssetBundleInfo info = m_AssetBundleList[i];
+                    AssetBundleEditorInfo info = m_AssetBundleList[i];
                     if (!string.IsNullOrEmpty(m_SearchAssetBundle)
                         && !info.name.ToLower().Contains(m_SearchAssetBundle.ToLower())) continue;
 
@@ -176,8 +176,6 @@ namespace SK.Framework.Resource
                         Vector2 mousePosition = Event.current.mousePosition;
                         if (rect.Contains(mousePosition))
                         {
-                            rect.x = mousePosition.x;
-                            rect.y = mousePosition.y;
                             OnAssetBundleListItemMouseDown(info, rect);
                             Event.current.Use();
                         }
@@ -213,13 +211,13 @@ namespace SK.Framework.Resource
         private void RefreshAssetBundles(bool repaint = false)
         {
             string[] assetBundeNames = AssetDatabase.GetAllAssetBundleNames();
-            m_AssetBundleList = new List<AssetBundleInfo>();
+            m_AssetBundleList = new List<AssetBundleEditorInfo>();
             for (int i = 0; i < assetBundeNames.Length; i++)
-                m_AssetBundleList.Add(new AssetBundleInfo(assetBundeNames[i]));
+                m_AssetBundleList.Add(new AssetBundleEditorInfo(assetBundeNames[i]));
             if (repaint)
                 Repaint();
         }
-        private void OnAssetBundleListItemMouseDown(AssetBundleInfo info, Rect rect)
+        private void OnAssetBundleListItemMouseDown(AssetBundleEditorInfo info, Rect rect)
         {
             if (Event.current.button == 0)
             {
@@ -242,7 +240,7 @@ namespace SK.Framework.Resource
                 gm.ShowAsContext();
             }
         }
-        private void DeleteAssetBundle(AssetBundleInfo info)
+        private void DeleteAssetBundle(AssetBundleEditorInfo info)
         {
             if (AssetBundleUtility.DeleteAssetBundle(info.name))
             {
@@ -258,7 +256,7 @@ namespace SK.Framework.Resource
         }
         private void AddNewAssetBundle()
         {
-            var instance = new AssetBundleInfo(string.Format("ab{0}",
+            var instance = new AssetBundleEditorInfo(string.Format("ab{0}",
                 DateTime.Now.ToString("yyyyMMddHHmmssfff")));
             m_AssetBundleList.Add(instance);
             m_SelectedAssetBundleInfo = instance;

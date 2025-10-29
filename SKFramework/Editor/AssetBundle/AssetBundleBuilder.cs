@@ -86,12 +86,9 @@ namespace SK.Framework.Resource
             EditorGUILayout.Space();
             OnOptionsGUI();
             EditorGUILayout.Space();
-            OnSerializeGUI();
-            EditorGUILayout.Space();
             OnEncryptGUI();
 
             GUILayout.FlexibleSpace();
-            GUI.enabled = m_Data.serializeWithJson || m_Data.serializeWithBinaryFormatter;
             if (GUILayout.Button("Build"))
             {
                 if (EditorUtility.DisplayDialog("提醒",
@@ -101,11 +98,11 @@ namespace SK.Framework.Resource
                     GUIUtility.ExitGUI();
                 }
             }
-            GUI.enabled = true;
             EditorGUILayout.EndScrollView();
         }
         private void OnBuildSettingsGUI()
         {
+            m_Data.version = EditorGUILayout.IntField("Version", m_Data.version);
             m_Data.buildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build Target", m_Data.buildTarget);
             GUILayout.BeginHorizontal();
             m_Data.outputPath = EditorGUILayout.TextField("Output Path", m_Data.outputPath);
@@ -140,15 +137,7 @@ namespace SK.Framework.Resource
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
         }
-        private void OnSerializeGUI()
-        {
-            GUILayout.Label("Serialization", EditorStyles.boldLabel);
-            m_Data.serializeWithBinaryFormatter = EditorGUILayout.Toggle(
-                new GUIContent("BinaryFormatter", "WebGL Unsupported"),
-                m_Data.serializeWithBinaryFormatter);
-            m_Data.serializeWithJson = EditorGUILayout.Toggle(
-                "Json", m_Data.serializeWithJson);
-        }
+
         private void OnEncryptGUI()
         {
             GUILayout.Label("Encrypt", EditorStyles.boldLabel);
@@ -186,19 +175,19 @@ namespace SK.Framework.Resource
 
                 AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles(
                     outputPath, m_Data.GetBuildOptions(), m_Data.buildTarget);
-
-                BuildAssetInfoMap(manifest, outputPath);
+                string[] assetBundles = manifest.GetAllAssetBundles();
 
                 if (m_Data.encrypt.enable && !string.IsNullOrEmpty(m_Data.encrypt.strategy))
                 {
                     Type type = Type.GetType(m_EncryptStrategies[m_CurrentStrategyIndex]);
                     var strategy = Activator.CreateInstance(type) as AssetBundleEncryptStrategy;
-                    EncryptAssetBundle(strategy, manifest, outputPath);
+                    EncryptAssetBundle(strategy, assetBundles, outputPath);
                 }
+
+                BuildAssetInfoMap(assetBundles, outputPath);
 
                 if (m_Data.copy2StreamingAssets)
                 {
-                    //如果输出路径本身已经是StreamingAssets路径 不处理
                     if (!outputPath.StartsWith(Application.streamingAssetsPath))
                         CopyDirectory(outputPath, Application.streamingAssetsPath);
                     AssetDatabase.Refresh();
@@ -211,42 +200,8 @@ namespace SK.Framework.Resource
                 Debug.LogError(e);
             }
         }
-        private void BuildAssetInfoMap(AssetBundleManifest manifest, string outputPath)
+        private void EncryptAssetBundle(AssetBundleEncryptStrategy strategy, string[] assetBundles, string outputPath)
         {
-            List<AssetInfo> map = new List<AssetInfo>();
-            string[] assetBundleNames = manifest.GetAllAssetBundles();
-            for (int i = 0; i < assetBundleNames.Length; i++)
-            {
-                string[] paths = AssetDatabase.GetAssetPathsFromAssetBundle(assetBundleNames[i]);
-                for (int j = 0; j < paths.Length; j++)
-                {
-                    map.Add(new AssetInfo(null, paths[j], assetBundleNames[i]));
-                }
-            }
-            string json = JsonUtility.ToJson(new AssetsInfo(Application.version, map));
-            if (m_Data.serializeWithJson)
-            {
-                string mapPath = Path.Combine(outputPath, "map.json");
-                using (FileStream fs = File.Create(mapPath))
-                {
-                    byte[] bytes = Encoding.UTF8.GetBytes(json);
-                    fs.Write(bytes, 0, bytes.Length);
-                }
-            }
-            if (m_Data.serializeWithBinaryFormatter)
-            {
-                byte[] buffer = Encoding.Default.GetBytes(json);
-                string mapPath = Path.Combine(outputPath, "map.dat");
-                using (FileStream fs = File.Create(mapPath))
-                {
-                    BinaryFormatter bf = new BinaryFormatter();
-                    bf.Serialize(fs, buffer);
-                }
-            }
-        }
-        private void EncryptAssetBundle(AssetBundleEncryptStrategy strategy, AssetBundleManifest manifest, string outputPath)
-        {
-            string[] assetBundles = manifest.GetAllAssetBundles();
             for (int i = 0; i < assetBundles.Length; i++)
             {
                 string filePath = outputPath + "/" + assetBundles[i];
@@ -258,6 +213,29 @@ namespace SK.Framework.Resource
                     if (m_Data.copy2StreamingAssets)
                         AssetDatabase.Refresh();
                 }
+            }
+        }
+        private void BuildAssetInfoMap(string[] assetBundles, string outputPath)
+        {
+            List<AssetInfo> assets = new List<AssetInfo>();
+            List<AssetBundleInfo> abs = new List<AssetBundleInfo>();
+            for (int i = 0; i < assetBundles.Length; i++)
+            {
+                string[] paths = AssetDatabase.GetAssetPathsFromAssetBundle(assetBundles[i]);
+                for (int j = 0; j < paths.Length; j++)
+                {
+                    assets.Add(new AssetInfo(null, paths[j], assetBundles[i]));
+                }
+                string filePath = outputPath + "/" + assetBundles[i];
+                string md5 = MD5Utility.CalculateFileMD5(filePath);
+                abs.Add(new AssetBundleInfo(assetBundles[i], md5, new FileInfo(filePath).Length));
+            }
+            string json = JsonUtility.ToJson(new AssetsInfo(m_Data.version.ToString(), assets, abs));
+            string mapPath = Path.Combine(outputPath, "map.json");
+            using (FileStream fs = File.Create(mapPath))
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(json);
+                fs.Write(bytes, 0, bytes.Length);
             }
         }
         private void CopyDirectory(string sourceDir, string destDir)
@@ -285,6 +263,7 @@ namespace SK.Framework.Resource
         [Serializable]
         internal class BuildTabData
         {
+            public int version;
             public string outputPath;
             public enum CompressionType { Uncompressed, LZMA, LZ4 }
             public CompressionType compressionType;
@@ -292,8 +271,6 @@ namespace SK.Framework.Resource
             public bool copy2StreamingAssets;
             public BuildOptions buildOptions;
             public EncryptSettings encrypt;
-            public bool serializeWithBinaryFormatter = true;
-            public bool serializeWithJson;
 
             public BuildTabData()
             {

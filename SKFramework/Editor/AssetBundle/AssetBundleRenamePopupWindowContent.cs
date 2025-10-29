@@ -11,10 +11,10 @@ namespace SK.Framework.Resource
 {
     public class AssetBundleRenamePopupWindowContent : PopupWindowContent
     {
-        private readonly AssetBundleInfo m_AssetBundleInfo;
+        private readonly AssetBundleEditorInfo m_AssetBundleInfo;
         private string m_NameInput;
 
-        public AssetBundleRenamePopupWindowContent(AssetBundleInfo info)
+        public AssetBundleRenamePopupWindowContent(AssetBundleEditorInfo info)
         {
             m_AssetBundleInfo = info;
             m_NameInput = info.name;
