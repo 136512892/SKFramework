@@ -162,7 +162,7 @@ namespace SK.Framework.Resource
                 File.Delete(cachePath);
             }
             string url = loadFromCache ? cachePath : (m_FullAssetBundleUrl + "/" + assetBundleName);
-            using (var request = m_Strategy != null ? UnityWebRequest.Get(url) : UnityWebRequestAssetBundle.GetAssetBundle(url))
+            using (var request = UnityWebRequest.Get(url))
             {
                 m_LoadingDic.Add(assetBundleName, request);
 #if UNITY_2017_2_OR_NEWER
@@ -196,7 +196,12 @@ namespace SK.Framework.Resource
                         yield return createRequest;
                         ab = createRequest.assetBundle;
                     }
-                    else ab = DownloadHandlerAssetBundle.GetContent(request);
+                    else
+                    {
+                        AssetBundleCreateRequest createRequest = AssetBundle.LoadFromMemoryAsync(request.downloadHandler.data);
+                        yield return createRequest;
+                        ab = createRequest.assetBundle;
+                    }
 
                     if (ab)
                     {
@@ -205,7 +210,7 @@ namespace SK.Framework.Resource
                             "completed at time {2},taking {3} milliseconds({4} seconds).", request.url, beginTime.ToString("T"),
                             DateTime.Now.ToString("T"), (DateTime.Now - beginTime).TotalMilliseconds,
                             (DateTime.Now - beginTime).TotalSeconds);
-                        if (!loadFromCache)
+                        if (m_Mode == MODE.REALITY && !loadFromCache)
                         {
                             yield return IOUtility.WriteBytesAsync(cachePath, request.downloadHandler.data, succeed =>
                             {

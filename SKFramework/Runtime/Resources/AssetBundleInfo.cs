@@ -20,6 +20,8 @@ namespace SK.Framework.Resource
         public string name;
         public string md5;
         public long size;
+        
+        public AssetBundleInfo() { }
 
         public AssetBundleInfo(string name, string md5, long size)
         {

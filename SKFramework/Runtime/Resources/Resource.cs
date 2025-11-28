@@ -16,6 +16,12 @@ namespace SK.Framework.Resource
     {
         [SerializeField] private ResourceAgent m_Agent;
 
+        protected internal override void OnInitialization()
+        {
+            base.OnInitialization();
+            m_Agent.OnInitialization();
+        }
+
         public void LoadAssetAsync<T>(string assetPath, Action<bool, T> onCompleted = null, Action<float> onLoading = null) where T : Object
         {
             m_Agent.LoadAssetAsync(assetPath, onCompleted, onLoading);

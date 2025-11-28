@@ -15,7 +15,6 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using Unity.VisualScripting;
 
 using SK.Framework.Logger;
 using ILogger = SK.Framework.Logger.ILogger;
@@ -479,7 +478,7 @@ namespace SK.Framework.Config
                 for (int i = 1; i < m_SelectedTable.Count; i++)
                 {
                     var color = GUI.backgroundColor;
-                    GUI.backgroundColor = i == m_SelectedRowIndex ? Color.cyan.WithAlpha(.5f) : color;
+                    GUI.backgroundColor = i == m_SelectedRowIndex ? Color.cyan : color;
                     GUILayout.BeginHorizontal(GUILayout.Height(22f));
                     string[] line = m_SelectedTable[i];
                     GUILayout.Label(i.ToString(), m_StyleRowLabel, GUILayout.Width(30f));

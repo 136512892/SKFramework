@@ -11,7 +11,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using SK.Framework.Logger;
-using UnityEditor;
 using ILogger = SK.Framework.Logger.ILogger;
 
 namespace SK.Framework.UI

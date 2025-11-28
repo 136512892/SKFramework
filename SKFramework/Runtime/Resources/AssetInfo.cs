@@ -22,6 +22,8 @@ namespace SK.Framework.Resource
         public long memorySize;
 
         public string memorySizeFormat;
+        
+        public AssetInfo() { }
 
         public AssetInfo(string name, string path, string abName)
         {
