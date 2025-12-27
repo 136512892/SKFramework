@@ -57,7 +57,7 @@ namespace SK.Framework
 
         public static bool TryGetModule<T>(out T module) where T : ModuleBase
         {
-            if (m_ModuleDic.TryGetValue(typeof(T), out var target))
+            if (m_ModuleDic != null && m_ModuleDic.TryGetValue(typeof(T), out var target))
             {
                 module = target as T;
                 return true;
