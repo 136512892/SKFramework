@@ -89,7 +89,7 @@ namespace SK.Framework.Debugger
         {
             MemberInfo[] mis = component.GetType().GetMembers(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
-                .Where(m => m.GetCustomAttribute<ObfuscationAttribute>() == null
+                .Where(m => m.GetCustomAttribute<ObsoleteAttribute>() == null
                    && ((m is FieldInfo fi && ((fi.IsPublic && fi.GetCustomAttribute<HideInInspector>() == null)
                         || fi.GetCustomAttribute<SerializeField>() != null))
                         || (m is PropertyInfo pi && pi.GetGetMethod(true).IsPublic)))
