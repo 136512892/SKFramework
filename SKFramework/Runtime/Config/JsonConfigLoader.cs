@@ -51,7 +51,7 @@ namespace SK.Framework.Config
 
         public override void LoadAsyncFromStreamingAssets<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
         {
-            var path = Path.Combine(Application.streamingAssetsPath, filePath);
+            var path = Path.Combine(IOUtility.streamingAssetsPath, filePath);
             SKFramework.Module<Config>().StartCoroutine(LoadCoroutine(path, ParseJsonText, onCompleted));
         }
 

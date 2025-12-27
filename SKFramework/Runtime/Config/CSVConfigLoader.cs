@@ -58,10 +58,7 @@ namespace SK.Framework.Config
 
         public override void LoadAsyncFromStreamingAssets<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
         {
-            var path = Path.Combine(Application.streamingAssetsPath, filePath);
-#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-            path = "file://" + path;
-#endif
+            var path = Path.Combine(IOUtility.streamingAssetsPath, filePath);
             SKFramework.Module<Config>().StartCoroutine(LoadCoroutine(path, ParseCSVText, onCompleted));
         }
 
