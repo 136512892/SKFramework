@@ -416,6 +416,7 @@ MonoBehaviour:
   m_Priority: -1
   m_LoggerName: SK.Framework.Logger.SampleLogger
   m_OptionalLoggerNameList: []
+  m_Level: 1
 --- !u!1 &5705524043225839384
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,7 +20,7 @@ namespace SK.Framework
 
         private void Awake()
         {
-            Debug.Log("SKFramework Launch...");
+            Debug.Log("SKFramework Launching...");
             m_ModuleDic = new Dictionary<Type, ModuleBase>();
             var modules = GetComponentsInChildren<ModuleBase>(true);
             for (int i = 0; i < modules.Length; i++)
@@ -53,6 +53,17 @@ namespace SK.Framework
                 return module as T;
             }
             throw new Exception($"Module of type {typeof(T).FullName} is not exists.");
+        }
+
+        public static bool TryGetModule<T>(out T module) where T : ModuleBase
+        {
+            if (m_ModuleDic.TryGetValue(typeof(T), out var target))
+            {
+                module = target as T;
+                return true;
+            }
+            module = default;
+            return false;
         }
 
         public static bool Has<T>() where T : ModuleBase

@@ -114,8 +114,16 @@ namespace SK.Framework.FSM
         public int Switch(string stateName, object data = null)
         {
             var target = m_States.Find(m => m.name == stateName);
-            if (target == null) return -1;
-            if (currentState == target && !target.canSwitch2Self) return -2;
+            if (target == null)
+            {
+                m_Logger.Debug("[FSM] The target state({0}) does not exist in the state machine {1}.", stateName, name);
+                return -1;
+            }
+            if (currentState == target && !target.canSwitch2Self)
+            {
+                m_Logger.Debug("[FSM] The current state of the state machine {0} is already the target state({1}) and cannot be switched to itself.", stateName);
+                return -2;
+            }
             currentState?.OnExit();
             currentState = target;
             currentState.OnEnter(data);
@@ -146,6 +154,7 @@ namespace SK.Framework.FSM
                 currentState.OnEnter();
                 return true;
             }
+            m_Logger.Debug("[FSM] The state list of the state machine {0} is empty", name);
             return false;
         }
 
@@ -168,6 +177,7 @@ namespace SK.Framework.FSM
                 currentState.OnEnter();
                 return true;
             }
+            m_Logger.Debug("[FSM] The state list of the state machine {0} is empty", name);
             return false;
         }
 

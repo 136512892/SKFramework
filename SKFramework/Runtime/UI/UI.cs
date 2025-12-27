@@ -101,11 +101,8 @@ namespace SK.Framework.UI
                     m_Logger.Info("[UI] Load view {0}", viewName);
                     return view as T;
                 }
-                else
-                {
-                    m_Logger.Error("[UI] Failed to load view asset from the Resources folder, please check the file exists at {0}.", resourcesPath);
-                    return null;
-                }
+                m_Logger.Error("[UI] Failed to load view asset from the Resources folder, please check the file exists at {0}.", resourcesPath);
+                return null;
             }
             m_Logger.Warning("[UI] A view with name {0} already exists.", viewName);
             return view as T;

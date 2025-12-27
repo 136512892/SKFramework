@@ -5,6 +5,7 @@
  *============================================================*/
 
 using UnityEngine;
+using SK.Framework.Logger;
 
 namespace SK.Framework.Audio
 {
@@ -24,7 +25,7 @@ namespace SK.Framework.Audio
             AudioListener listener = FindObjectOfType<AudioListener>();
             if (listener != null)
                 Destroy(listener);
-            listener = new GameObject(typeof(AudioListener).Name).AddComponent<AudioListener>();
+            listener = new GameObject(nameof(AudioListener)).AddComponent<AudioListener>();
             listener.SetParent(transform);
             m_AudioListener = listener;
             m_BGMController = new GameObject("BGM").AddComponent<BGMController>().SetParent(transform);
@@ -49,13 +50,15 @@ namespace SK.Framework.Audio
 
         private void Update()
         {
-            if (m_ListenerTrans != null)
+            if (m_ListenerTrans)
                 m_AudioListener.transform.position = m_ListenerTrans.position;
         }
 
         public void SetListener(Transform listenerTrans)
         {
             m_ListenerTrans = listenerTrans;
+            SKFramework.Module<Log>().Info("[Audio] Set Listener：{0}", 
+                listenerTrans != null ? listenerTrans.name : string.Empty);
         }
     }
 }
