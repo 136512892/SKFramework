@@ -45,7 +45,7 @@ namespace SK.Framework.Debugger
             m_FieldDic.Clear();
             m_FoldoutDic.Clear();
             if (SKFramework.Module<Debugger>().TryGet<HierarchyWindow>(out var window)
-                && window.SelectedObject != null)
+                && window.SelectedObject)
             {
                 Draw4Components(window.SelectedObject.GetComponents<Component>());
             }

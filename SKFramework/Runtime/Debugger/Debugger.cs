@@ -32,7 +32,7 @@ namespace SK.Framework.Debugger
         protected internal override void OnInitialization()
         {
             base.OnInitialization();
-            bool flag = true;
+            bool flag = false;
             switch (m_WorkingType)
             {
                 case WorkingType.ALWAYS_OPEN:
