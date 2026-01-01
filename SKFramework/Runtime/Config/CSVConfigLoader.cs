@@ -409,6 +409,12 @@ namespace SK.Framework.Config
             {
                 SaveCurrentFile();
             }
+            if (m_SelectedTable != null && GUILayout.Button("PING", EditorStyles.toolbarButton, GUILayout.Width(40f)))
+            {
+                var assetPath = m_SelectedFilePath.Replace(Application.dataPath, "Assets");
+                var asset = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
+                EditorGUIUtility.PingObject(asset);
+            }
             GUILayout.EndHorizontal();
         }
 
@@ -648,6 +654,10 @@ namespace SK.Framework.Config
 
             int columnCount = m_SelectedTable[0].Length;
             string[] newRow = new string[columnCount];
+            for (int i = 0; i < newRow.Length; i++)
+            {
+                newRow[i] = string.Empty;
+            }
             index += below ? 1 : 0;
             m_SelectedTable.Insert(index, newRow);
             m_SelectedRowIndex = index;
