@@ -6,6 +6,7 @@
 
 #if UNITY_EDITOR
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using UnityEditor;
@@ -79,7 +80,8 @@ namespace SK.Framework.Resource
                 }
                 return false;
             }
-            AssetDatabase.RemoveAssetBundleName(assetBundleName, true);
+            if (AssetDatabase.GetAllAssetBundleNames().Contains(assetBundleName))
+                AssetDatabase.RemoveAssetBundleName(assetBundleName, true);
             return true;
         }
     }
