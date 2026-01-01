@@ -67,21 +67,24 @@ namespace SK.Framework.UI
             }
         }
 
-        protected internal override void OnTermination()
+        protected internal override void OnUpdate()
         {
-            base.OnTermination();
-            m_LevelDic.Clear();
-            m_ViewDic.Clear();
-        }
-
-        private void Update()
-        {
+            base.OnUpdate();
             m_ViewListCache.Clear();
             m_ViewListCache.AddRange(m_ViewDic.Values);
             for (int i = 0; i < m_ViewListCache.Count; i++)
             {
                 m_ViewListCache[i].OnUpdate();
             }
+        }
+
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            m_LevelDic.Clear();
+            m_ViewDic.Clear();
+            m_ViewListCache.Clear();
+            m_Logger = null;
         }
 
         public T LoadView<T>(string viewName, string resourcesPath, ViewLevel level = ViewLevel.COMMON, 
@@ -98,7 +101,7 @@ namespace SK.Framework.UI
                     view.viewName = viewName;
                     view.OnLoad(data);
                     m_ViewDic.Add(viewName, view);
-                    m_Logger.Info("[UI] Load view {0}", viewName);
+                    m_Logger.Debug("[UI] Load view {0}", viewName);
                     return view as T;
                 }
                 m_Logger.Error("[UI] Failed to load view asset from the Resources folder, please check the file exists at {0}.", resourcesPath);
@@ -135,7 +138,7 @@ namespace SK.Framework.UI
                         view.viewName = viewName;
                         view.OnLoad(data);
                         m_ViewDic.Add(viewName, view);
-                        m_Logger.Info("[UI] Load view {0} from path: {1}", viewName, assetPath);
+                        m_Logger.Debug("[UI] Load view {0} from path: {1}", viewName, assetPath);
                         onCompleted?.Invoke(view as T);
                     }
                     else
@@ -168,7 +171,7 @@ namespace SK.Framework.UI
                     instance.transform.SetParent(m_LevelDic[level], false);
                 instance.transform.SetAsLastSibling();
                 view.OnOpen(data);
-                m_Logger.Info("[UI] Open view {0}", viewName);
+                m_Logger.Debug("[UI] Open view {0}", viewName);
                 return view as T;
             }
             m_Logger.Warning("[UI] A view with name {0} does not exists.", viewName);
@@ -187,7 +190,7 @@ namespace SK.Framework.UI
                 var instance = mono.gameObject;
                 instance.SetActive(false);
                 view.OnClose();
-                m_Logger.Info("[UI] Close view {0}", viewName);
+                m_Logger.Debug("[UI] Close view {0}", viewName);
                 return true;
             }
             m_Logger.Warning("[UI] A view with name {0} does not exists.", viewName);
@@ -245,7 +248,7 @@ namespace SK.Framework.UI
                 view.OnUnload();
                 Destroy(instance);
                 m_ViewDic.Remove(viewName);
-                m_Logger.Info("[UI] Unload view {0}", viewName);
+                m_Logger.Debug("[UI] Unload view {0}", viewName);
                 return true;
             }
             m_Logger.Warning("[UI] A view with name {0} does not exists.", viewName);

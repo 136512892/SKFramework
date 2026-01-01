@@ -61,6 +61,15 @@ namespace SK.Framework.Custom
             }
         }
 
+        protected internal override void OnUpdate()
+        {
+            base.OnUpdate();
+            foreach (var component in m_Dic.Values)
+            {
+                component.OnUpdate();
+            }
+        }
+
         protected internal override void OnTermination()
         {
             base.OnTermination();

@@ -17,9 +17,10 @@ namespace SK.Framework.Events
     {
         private readonly Queue<EventArgs> m_Queue = new Queue<EventArgs>();
         private readonly Dictionary<int, List<Action<EventArgs>>> m_Dic = new Dictionary<int, List<Action<EventArgs>>>();
-
-        private void Update()
+   
+        protected internal override void OnUpdate()
         {
+            base.OnUpdate();
             while (m_Queue.Count > 0)
             {
                 EventArgs e = m_Queue.Dequeue();
@@ -27,9 +28,9 @@ namespace SK.Framework.Events
             }
         }
 
-        /* The difference between the Publish method and the PublishImmediate method 
-         * is that the former will queue Event first, waiting for the next frame to 
-         * execute, while the latter will be executed immediately,  so be careful 
+        /* The difference between the Publish method and the PublishImmediate method
+         * is that the former will queue Event first, waiting for the next frame to
+         * execute, while the latter will be executed immediately,  so be careful
          * to call it in the main thread */
 
         public void Publish<T>(T e) where T : EventArgs

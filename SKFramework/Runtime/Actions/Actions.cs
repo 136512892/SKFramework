@@ -14,9 +14,10 @@ namespace SK.Framework.Actions
     public class Actions : ModuleBase
     {
         private readonly List<IAction> m_List = new List<IAction>();
-        
-        private void Update()
+
+        protected internal override void OnUpdate()
         {
+            base.OnUpdate();
             for (int i = 0; i < m_List.Count; i++)
             {
                 var action = m_List[i];

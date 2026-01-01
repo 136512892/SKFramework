@@ -47,6 +47,14 @@ namespace SK.Framework.Config
             }
         }
 
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            m_LoaderDic.Clear();
+            m_ConfigDic.Clear();
+            m_Logger = null;
+        }
+
         public void Load<L, T>(string filePath) where L : IConfigLoader where T : class
         {
             if (!m_ConfigDic.ContainsKey(filePath))

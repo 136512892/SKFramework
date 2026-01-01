@@ -18,20 +18,6 @@ namespace SK.Framework.Audio
         private BGMController m_BGMController;
         private SFXController m_SFXController;
 
-        protected internal override void OnInitialization()
-        {
-            base.OnInitialization();
-
-            AudioListener listener = FindObjectOfType<AudioListener>();
-            if (listener != null)
-                Destroy(listener);
-            listener = new GameObject(nameof(AudioListener)).AddComponent<AudioListener>();
-            listener.SetParent(transform);
-            m_AudioListener = listener;
-            m_BGMController = new GameObject("BGM").AddComponent<BGMController>().SetParent(transform);
-            m_SFXController = new GameObject("SFX").AddComponent<SFXController>().SetParent(transform);
-        }
-
         public BGMController BGM
         {
             get
@@ -47,11 +33,35 @@ namespace SK.Framework.Audio
                 return m_SFXController;
             }
         }
-
-        private void Update()
+        
+        protected internal override void OnInitialization()
         {
+            base.OnInitialization();
+
+            AudioListener listener = FindObjectOfType<AudioListener>();
+            if (listener != null)
+                Destroy(listener);
+            listener = new GameObject(nameof(AudioListener)).AddComponent<AudioListener>();
+            listener.SetParent(transform);
+            m_AudioListener = listener;
+            m_BGMController = new GameObject("BGM").AddComponent<BGMController>().SetParent(transform);
+            m_SFXController = new GameObject("SFX").AddComponent<SFXController>().SetParent(transform);
+        }
+
+        protected internal override void OnUpdate()
+        {
+            base.OnUpdate();
             if (m_ListenerTrans)
                 m_AudioListener.transform.position = m_ListenerTrans.position;
+        }
+
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            m_AudioListener = null;
+            m_ListenerTrans = null;
+            m_BGMController = null;
+            m_SFXController = null;
         }
 
         public void SetListener(Transform listenerTrans)

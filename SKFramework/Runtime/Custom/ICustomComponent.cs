@@ -10,6 +10,8 @@ namespace SK.Framework.Custom
     {
         void OnInitialization();
 
+        void OnUpdate();
+
         void OnTermination();
     }
 }

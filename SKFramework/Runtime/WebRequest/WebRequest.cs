@@ -43,8 +43,9 @@ namespace SK.Framework.Networking
             }
         }
 
-        private void Update()
+        protected internal override void OnUpdate()
         {
+            base.OnUpdate();
             if (m_TaskList.Count > 0)
             {
                 int index = m_Agents.FindIndex(m => m.isIdle);
@@ -58,6 +59,17 @@ namespace SK.Framework.Networking
                     SKFramework.Module<ObjectPool.ObjectPool>().Get<WebRequestTask>().Recycle(task);
                 }
             }
+        }
+
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            m_Agents.Clear();
+            m_Agents = null;
+            m_TaskList.Clear();
+            m_TaskList = null;
+            Cache = null;
+            Monitor = null;
         }
 
         public void Send(string url, WebRequestMethod method)

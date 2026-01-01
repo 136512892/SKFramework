@@ -36,6 +36,14 @@ namespace SK.Framework
             DontDestroyOnLoad(this);
         }
 
+        private void Update()
+        {
+            foreach (var module in m_ModuleDic.Values)
+            {
+                module.OnUpdate();
+            }
+        }
+
         private void OnDestroy()
         {
             foreach (var module in m_ModuleDic.Values)

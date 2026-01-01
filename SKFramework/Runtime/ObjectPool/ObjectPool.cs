@@ -30,13 +30,21 @@ namespace SK.Framework.ObjectPool
             m_Logger = SKFramework.Module<Log>().GetLogger<ModuleLogger>();
         }
 
-        private void Update()
+        protected internal override void OnUpdate()
         {
+            base.OnUpdate();
             var pools = m_Dic.Values.GetEnumerator();
             while (pools.MoveNext())
             {
                 pools.Current?.Update();
             }
+        }
+
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            m_Dic.Clear();
+            m_Logger = null;
         }
 
         public bool Create<T>() where T : IPoolable, new()

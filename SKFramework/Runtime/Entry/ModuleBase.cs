@@ -17,6 +17,11 @@ namespace SK.Framework
 
         }
 
+        protected internal virtual void OnUpdate()
+        {
+            
+        }
+
         protected internal virtual void OnTermination()
         {
 
