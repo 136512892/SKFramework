@@ -12,6 +12,44 @@ using UnityEngine;
 
 namespace SK.Framework.Resource
 {
+    [CustomEditor(typeof(Resource))]
+    public class ResourceEditor : BaseEditor
+    {
+        private SerializedProperty m_Agent;
+        private Editor m_AgentEditor;
+        
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            m_Agent = serializedObject.FindProperty("m_Agent");
+            if (m_Agent.objectReferenceValue != null)
+                m_AgentEditor = CreateEditor(m_Agent.objectReferenceValue, typeof(ResourceAgentEditor));
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(m_Agent);
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+                EditorUtility.SetDirty(target);
+                if (m_Agent.objectReferenceValue != null && !m_AgentEditor)
+                    m_AgentEditor = CreateEditor(m_Agent.objectReferenceValue, typeof(ResourceAgentEditor));
+                else if (m_Agent.objectReferenceValue == null && m_AgentEditor)
+                    m_AgentEditor = null;
+            }
+
+            if (m_AgentEditor)
+            {
+                EditorGUILayout.BeginVertical("Box");
+                m_AgentEditor.OnInspectorGUI();
+                EditorGUILayout.EndVertical();
+            }
+        }
+    }
+    
     [CustomEditor(typeof(ResourceAgent), true)]
     public class ResourceAgentEditor : BaseEditor
     {
