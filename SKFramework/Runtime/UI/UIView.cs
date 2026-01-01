@@ -21,9 +21,23 @@ namespace SK.Framework.UI
         void IUIView.OnUnload() => OnUnload();
         
         protected internal virtual void OnLoad(object data) { }
-        protected internal virtual void OnOpen(object data) { }
+
+        protected internal virtual void OnOpen(object data)
+        {
+            gameObject.SetActive(true);
+            transform.SetAsLastSibling();
+        }
+        
         protected internal virtual void OnUpdate() { }
-        protected internal virtual void OnClose() { }
-        protected internal virtual void OnUnload() { }
+
+        protected internal virtual void OnClose()
+        {
+            gameObject.SetActive(false);
+        }
+
+        protected internal virtual void OnUnload()
+        {
+            Destroy(gameObject);
+        }
     }
 }

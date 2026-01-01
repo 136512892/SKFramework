@@ -166,10 +166,8 @@ namespace SK.Framework.UI
             if (m_ViewDic.TryGetValue(viewName, out IUIView view) && view is MonoBehaviour mono)
             {
                 var instance = mono.gameObject;
-                instance.SetActive(true);
                 if (instance.transform.parent != m_LevelDic[level])
                     instance.transform.SetParent(m_LevelDic[level], false);
-                instance.transform.SetAsLastSibling();
                 view.OnOpen(data);
                 m_Logger.Debug("[UI] Open view {0}", viewName);
                 return view as T;
@@ -187,8 +185,6 @@ namespace SK.Framework.UI
         {
             if (m_ViewDic.TryGetValue(viewName, out IUIView view) && view is MonoBehaviour mono)
             {
-                var instance = mono.gameObject;
-                instance.SetActive(false);
                 view.OnClose();
                 m_Logger.Debug("[UI] Close view {0}", viewName);
                 return true;
@@ -246,7 +242,6 @@ namespace SK.Framework.UI
                 if (instance.activeSelf)
                     view.OnClose();
                 view.OnUnload();
-                Destroy(instance);
                 m_ViewDic.Remove(viewName);
                 m_Logger.Debug("[UI] Unload view {0}", viewName);
                 return true;
