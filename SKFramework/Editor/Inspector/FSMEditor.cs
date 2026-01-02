@@ -4,12 +4,6 @@
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
-/*============================================================
- * SKFramework
- * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
- * Feedback: mailto:136512892@qq.com
- *============================================================*/
-
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
