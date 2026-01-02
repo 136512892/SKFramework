@@ -10,11 +10,10 @@ namespace SK.Framework.Logger
 {
     public class SampleLogger : ILogger
     {
-        [SymbolDefine]
-        private const string m_Conditional = "ENABLE_LOG";
-        
+        [SymbolDefine] private const string m_Conditional = "ENABLE_LOG";
+
         public LogLevel Level { get; set; } = LogLevel.Debug;
-        
+
         void ILogger.Debug<T>(T arg) => Debug(arg);
         void ILogger.Debug<T>(string format, T arg) => Debug(format, arg);
         void ILogger.Debug<T1, T2>(string format, T1 arg1, T2 arg2) => Debug(format, arg1, arg2);
@@ -40,7 +39,7 @@ namespace SK.Framework.Logger
         void ILogger.Info<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9) => Info(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
         void ILogger.Info<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10) => Info(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
         void ILogger.Info<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11) => Info(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
-        
+
         void ILogger.Warning<T>(T arg) => Warning(arg);
         void ILogger.Warning<T>(string format, T arg) => Warning(format, arg);
         void ILogger.Warning<T1, T2>(string format, T1 arg1, T2 arg2) => Warning(format, arg1, arg2);
@@ -53,7 +52,7 @@ namespace SK.Framework.Logger
         void ILogger.Warning<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9) => Warning(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
         void ILogger.Warning<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10) => Warning(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
         void ILogger.Warning<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11) => Warning(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
-        
+
         void ILogger.Error<T>(T arg) => Error(arg);
         void ILogger.Error<T>(string format, T arg) => Error(format, arg);
         void ILogger.Error<T1, T2>(string format, T1 arg1, T2 arg2) => Error(format, arg1, arg2);
@@ -74,6 +73,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(arg);
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T>(string format, T arg)
         {
@@ -81,6 +81,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2>(string format, T1 arg1, T2 arg2)
         {
@@ -88,6 +89,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3>(string format, T1 arg1, T2 arg2, T3 arg3)
         {
@@ -95,6 +97,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3, T4>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
         {
@@ -102,6 +105,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3, T4, T5>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
         {
@@ -109,6 +113,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3, T4, T5, T6>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
         {
@@ -116,6 +121,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3, T4, T5, T6, T7>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
         {
@@ -123,6 +129,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3, T4, T5, T6, T7, T8>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
         {
@@ -130,6 +137,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
         {
@@ -137,6 +145,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
         {
@@ -144,6 +153,7 @@ namespace SK.Framework.Logger
                 return;
             UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10));
         }
+
         [Conditional(m_Conditional)]
         private void Debug<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
         {
@@ -155,220 +165,265 @@ namespace SK.Framework.Logger
         [Conditional(m_Conditional)]
         private void Info<T>(T arg)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(arg);
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(arg);
         }
+
         [Conditional(m_Conditional)]
         private void Info<T>(string format, T arg)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2>(string format, T1 arg1, T2 arg2)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3>(string format, T1 arg1, T2 arg2, T3 arg3)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3, T4>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3, T4, T5>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3, T4, T5, T6>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3, T4, T5, T6, T7>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3, T4, T5, T6, T7, T8>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10));
         }
+
         [Conditional(m_Conditional)]
         private void Info<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
         {
-            if (Level >= LogLevel.Info)
-                UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11));
+            if (Level > LogLevel.Info)
+                return;
+            UnityEngine.Debug.Log(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11));
         }
-        
+
         [Conditional(m_Conditional)]
         private void Warning<T>(T arg)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(arg);
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(arg);
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T>(string format, T arg)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2>(string format, T1 arg1, T2 arg2)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3>(string format, T1 arg1, T2 arg2, T3 arg3)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3, T4>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3, T4, T5>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3, T4, T5, T6>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3, T4, T5, T6, T7>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3, T4, T5, T6, T7, T8>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10));
         }
+
         [Conditional(m_Conditional)]
         private void Warning<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
         {
-            if (Level >= LogLevel.Warning)
-                UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11));
+            if (Level > LogLevel.Warning)
+                return;
+            UnityEngine.Debug.LogWarning(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11));
         }
 
         [Conditional(m_Conditional)]
         private void Error<T>(T arg)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(arg);
+            UnityEngine.Debug.LogError(arg);
         }
+
         [Conditional(m_Conditional)]
         private void Error<T>(string format, T arg)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg));
+            UnityEngine.Debug.LogError(string.Format(format, arg));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2>(string format, T1 arg1, T2 arg2)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3>(string format, T1 arg1, T2 arg2, T3 arg3)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3, T4>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3, T4, T5>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3, T4, T5, T6>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3, T4, T5, T6, T7>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3, T4, T5, T6, T7, T8>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10));
         }
+
         [Conditional(m_Conditional)]
         private void Error<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
         {
-            if (Level >= LogLevel.Error)
-                UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11));
+            UnityEngine.Debug.LogError(string.Format(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11));
         }
     }
 }
