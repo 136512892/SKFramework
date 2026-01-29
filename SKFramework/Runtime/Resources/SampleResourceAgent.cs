@@ -1,20 +1,19 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
 using System;
 using System.IO;
 using System.Collections;
-using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace SK.Framework.Resource
 {
-    [CreateAssetMenu(menuName = "SKFramework/Resource/Sample Resource Agent")]
+    [CreateAssetMenu(menuName = "SKFramework/Resource/Resource Agent（Sample）")]
     public class SampleResourceAgent : ResourceAgent
     {
         protected override IEnumerator LoadAssetsMapAsync()
@@ -62,47 +61,6 @@ namespace SK.Framework.Resource
                             }
                             m_Logger.Info("[Resource] Version: {0}", assetsInfo.version);
                         }
-                        var cachePath = Path.Combine(Application.persistentDataPath, m_AssetBundleCache, "map.json");
-                        if (File.Exists(cachePath))
-                        {
-                            using (var request2 = UnityWebRequest.Get(cachePath))
-                            {
-#if UNITY_2017_2_OR_NEWER
-                                yield return request2.SendWebRequest();
-#else
-                                yield return request2.Send();
-#endif
-#if UNITY_2020_2_OR_NEWER
-                                flag = request2.result == UnityWebRequest.Result.Success;
-#elif UNITY_2017_1_OR_NEWER
-                                flag = !(request2.isNetworkError || request2.isHttpError);
-#else
-                                flag = !request2.isError;
-#endif
-                                if (flag)
-                                {
-                                    var assetsInfoCache = JsonUtility.FromJson<AssetsInfo>(request2.downloadHandler.text);
-                                    if (assetsInfoCache == null || assetsInfoCache.version == assetsInfo.version
-                                        || MD5Utility.CalculateBytesMD5(request.downloadHandler.data) != MD5Utility.CalculateBytesMD5(request2.downloadHandler.data))
-                                    {
-                                        yield return CleanInvalidAssetBundleCache(m_AssetBundles, assetsInfoCache.assetBundles);
-                                        yield return IOUtility.WriteBytesAsync(cachePath, request.downloadHandler.data, succeed =>
-                                        {
-                                            if (!succeed)
-                                                m_Logger.Error("[Resource] Write to cache {0} failed.", cachePath);
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            yield return IOUtility.WriteBytesAsync(cachePath, request.downloadHandler.data, succeed =>
-                            {
-                                if (!succeed)
-                                    m_Logger.Error("[Resource] Write to cache {0} failed.", cachePath);
-                            });
-                        }
                         m_IsMapLoading = false;
                     }
                     else
@@ -110,32 +68,6 @@ namespace SK.Framework.Resource
                         m_Logger.Error("[Resource] Load assets map error: {0}", request.error);
                     }
                 }
-            }
-        }
-
-        private IEnumerator CleanInvalidAssetBundleCache(Dictionary<string, AssetBundleInfo> dic, List<AssetBundleInfo> cache)
-        {
-            if (cache == null || cache.Count == 0)
-                yield break;
-            for (int i = 0; i < cache.Count; i++)
-            {
-                var cachePath = Path.Combine(Application.persistentDataPath, m_AssetBundleCache, cache[i].name);
-                if (!dic.TryGetValue(cache[i].name, out var target) || cache[i].md5 != target.md5)
-                {
-                    if (File.Exists(cachePath))
-                    {
-                        try
-                        {
-                            File.Delete(cachePath);
-                            m_Logger.Info("[Resource] Delete cache: {0}", cachePath);
-                        }
-                        catch (Exception e)
-                        {
-                            m_Logger.Error("[Resource] Delete cache {0} failed: {1}", cachePath, e.Message);
-                        }
-                    }
-                }
-                yield return null;
             }
         }
 
@@ -153,15 +85,7 @@ namespace SK.Framework.Resource
                 yield break;
             }
             var cachePath = Path.Combine(Application.persistentDataPath, m_AssetBundleCache, assetBundleName);
-            bool loadFromCache = m_Mode == MODE.REALITY && File.Exists(cachePath);
-            if (loadFromCache && m_AssetBundles.TryGetValue(assetBundleName, out var assetBundle)
-                && (new FileInfo(cachePath).Length != assetBundle.size
-                    || assetBundle.md5 != MD5Utility.CalculateFileMD5(cachePath)))
-            {
-                loadFromCache = false;
-                File.Delete(cachePath);
-            }
-            string url = loadFromCache ? cachePath : (m_FullAssetBundleUrl + "/" + assetBundleName);
+            string url = m_FullAssetBundleUrl + "/" + assetBundleName;
             using (var request = m_Strategy != null ? UnityWebRequest.Get(url) : UnityWebRequestAssetBundle.GetAssetBundle(url))
             {
                 m_LoadingDic.Add(assetBundleName, request);
@@ -189,10 +113,9 @@ namespace SK.Framework.Resource
                     AssetBundle ab;
                     if (m_Strategy != null)
                     {
-                        byte[] decryptBytes = new byte[request.downloadHandler.data.Length];
-                        Buffer.BlockCopy(request.downloadHandler.data, 0, decryptBytes, 0, decryptBytes.Length);
-                        m_Strategy.Decrypt(ref decryptBytes, m_SecretKey);
-                        AssetBundleCreateRequest createRequest = AssetBundle.LoadFromMemoryAsync(decryptBytes);
+                        byte[] bytes = request.downloadHandler.data;
+                        m_Strategy.Decrypt(ref bytes, m_SecretKey);
+                        AssetBundleCreateRequest createRequest = AssetBundle.LoadFromMemoryAsync(bytes);
                         yield return createRequest;
                         ab = createRequest.assetBundle;
                     }
@@ -205,16 +128,6 @@ namespace SK.Framework.Resource
                             "completed at time {2},taking {3} milliseconds({4} seconds).", request.url, beginTime.ToString("T"),
                             DateTime.Now.ToString("T"), (DateTime.Now - beginTime).TotalMilliseconds,
                             (DateTime.Now - beginTime).TotalSeconds);
-                        if (!loadFromCache)
-                        {
-                            yield return IOUtility.WriteBytesAsync(cachePath, request.downloadHandler.data, succeed =>
-                            {
-                                if (succeed)
-                                    m_Logger.Info("[Resource] Save the asset bundle {0} to cache {1} succeed.", assetBundleName, cachePath);
-                                else
-                                    m_Logger.Warning("[Resource] Save the asset bundle {0} to cache {1} failed.", assetBundleName, cachePath);
-                            });
-                        }
                     }
                     else
                     {

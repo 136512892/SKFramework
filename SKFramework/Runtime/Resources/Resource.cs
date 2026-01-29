@@ -1,6 +1,6 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
@@ -15,6 +15,12 @@ namespace SK.Framework.Resource
     public class Resource : ModuleBase
     {
         [SerializeField] private ResourceAgent m_Agent;
+
+        protected internal override void OnInitialization()
+        {
+            base.OnInitialization();
+            m_Agent.OnInitialization();
+        }
 
         public void LoadAssetAsync<T>(string assetPath, Action<bool, T> onCompleted = null, Action<float> onLoading = null) where T : Object
         {

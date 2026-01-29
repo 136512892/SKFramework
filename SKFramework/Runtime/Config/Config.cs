@@ -1,6 +1,6 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
@@ -45,6 +45,14 @@ namespace SK.Framework.Config
                     m_Logger.Error("[Config] A constructor with 0 arguments does not exist.");
                 }
             }
+        }
+
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            m_LoaderDic.Clear();
+            m_ConfigDic.Clear();
+            m_Logger = null;
         }
 
         public void Load<L, T>(string filePath) where L : IConfigLoader where T : class

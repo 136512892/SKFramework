@@ -1,15 +1,15 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
 using UnityEngine;
-using System.Linq;
 
 namespace SK.Framework.Logger
 {
@@ -19,16 +19,35 @@ namespace SK.Framework.Logger
     {
         [SerializeField] private string m_LoggerName;
         [SerializeField] private List<string> m_OptionalLoggerNameList;
-
+        [SerializeField] private LogLevel m_Level = LogLevel.Debug;
+        
         private ILogger m_Logger;
         private readonly Dictionary<Type, ILogger> m_LoggerDic = new Dictionary<Type, ILogger>();
+        
+        public LogLevel Level
+        {
+            get { return m_Level; }
+            set
+            {
+                if (m_Level == value) 
+                    return;
+                m_Level = value;
+                if (!Application.isPlaying)
+                    return;
+                m_Logger.Level = m_Level;
+                foreach (var logger in m_LoggerDic.Values)
+                {
+                    logger.Level = m_Level;
+                }
+            }
+        }
 
         protected internal override void OnInitialization()
         {
             base.OnInitialization();
             var loggerType = Type.GetType(m_LoggerName, true);
-            if (loggerType != null)
-                m_Logger = Activator.CreateInstance(loggerType) as ILogger;
+            m_Logger = Activator.CreateInstance(loggerType) as ILogger;
+            m_Logger.Level = m_Level;
 
             var necessaryLoggers = GetType().Assembly.GetTypes()
                 .Where(m => !m.IsAbstract && typeof(ILogger).IsAssignableFrom(m)
@@ -44,10 +63,60 @@ namespace SK.Framework.Logger
                 if (Array.FindIndex(ctors, m => m.GetParameters().Length == 0) != -1)
                 {
                     var logger = Activator.CreateInstance(loggerType) as ILogger;
+                    logger.Level = m_Level;
                     m_LoggerDic.Add(loggerType, logger);
                 }
                 else throw new Exception("A constructor with 0 arguments does not exist.");
             }
+        }
+        
+        public void Debug<T>(T arg)
+        {
+            m_Logger.Debug(arg);
+        }
+        public void Debug<T>(string format, T arg)
+        {
+            m_Logger.Debug(format, arg);
+        }
+        public void Debug<T1, T2>(string format, T1 arg1, T2 arg2)
+        {
+            m_Logger.Debug(format, arg1, arg2);
+        }
+        public void Debug<T1, T2, T3>(string format, T1 arg1, T2 arg2, T3 arg3)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3);
+        }
+        public void Debug<T1, T2, T3, T4>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3, arg4);
+        }
+        public void Debug<T1, T2, T3, T4, T5>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3, arg4, arg5);
+        }
+        public void Debug<T1, T2, T3, T4, T5, T6>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3, arg4, arg5, arg6);
+        }
+        public void Debug<T1, T2, T3, T4, T5, T6, T7>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+        }
+        public void Debug<T1, T2, T3, T4, T5, T6, T7, T8>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+        }
+        public void Debug<T1, T2, T3, T4, T5, T6, T7, T8, T9>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+        }
+        public void Debug<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+        }
+        public void Debug<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(string format, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11)
+        {
+            m_Logger.Debug(format, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
         }
 
         public void Info<T>(T arg)

@@ -1,6 +1,6 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
@@ -148,9 +148,9 @@ namespace SK.Framework.Resource
             {
                 if (m_Assets.TryGetValue(sceneAssetPath, out var assetInfo))
                 {
-                    if (m_SceneDic.ContainsKey(assetInfo.name))
+                    if (m_SceneDic.ContainsKey(sceneAssetPath))
                     {
-                        m_SceneDic.Remove(assetInfo.name);
+                        m_SceneDic.Remove(sceneAssetPath);
                         SceneManager.UnloadSceneAsync(assetInfo.name);
                         m_Logger.Info("[Resource] Unload scene with path: {0}", sceneAssetPath);
                         return true;
@@ -353,7 +353,7 @@ namespace SK.Framework.Resource
                     m_Logger.Error("[Resource] Load scene at path {0} failed.", sceneAssetPath);
                     yield break;
                 }
-                if (m_SceneDic.ContainsKey(assetInfo.name))
+                if (m_SceneDic.ContainsKey(sceneAssetPath))
                 {
                     m_Logger.Warning("[Resource] Scene {0} already loaded.", sceneAssetPath);
                     onCompleted?.Invoke(false);
@@ -377,7 +377,7 @@ namespace SK.Framework.Resource
                 yield return LoadAssetBundleDependenciesAsync(dependencies, onLoading);
 
                 var scene = SceneManager.GetSceneByPath(sceneAssetPath);
-                m_SceneDic.Add(assetInfo.name, scene);
+                m_SceneDic.Add(sceneAssetPath, scene);
                 if (!m_AssetBundlesDic.ContainsKey(assetInfo.abName))
                 {
                     yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);

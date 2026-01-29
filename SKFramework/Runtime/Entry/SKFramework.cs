@@ -1,6 +1,6 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
@@ -20,7 +20,7 @@ namespace SK.Framework
 
         private void Awake()
         {
-            Debug.Log("SKFramework Launch...");
+            Debug.Log("SKFramework Launching...");
             m_ModuleDic = new Dictionary<Type, ModuleBase>();
             var modules = GetComponentsInChildren<ModuleBase>(true);
             for (int i = 0; i < modules.Length; i++)
@@ -34,6 +34,14 @@ namespace SK.Framework
                 module.Value.OnInitialization();
             }
             DontDestroyOnLoad(this);
+        }
+
+        private void Update()
+        {
+            foreach (var module in m_ModuleDic.Values)
+            {
+                module.OnUpdate();
+            }
         }
 
         private void OnDestroy()
@@ -53,6 +61,17 @@ namespace SK.Framework
                 return module as T;
             }
             throw new Exception($"Module of type {typeof(T).FullName} is not exists.");
+        }
+
+        public static bool TryGetModule<T>(out T module) where T : ModuleBase
+        {
+            if (m_ModuleDic != null && m_ModuleDic.TryGetValue(typeof(T), out var target))
+            {
+                module = target as T;
+                return true;
+            }
+            module = default;
+            return false;
         }
 
         public static bool Has<T>() where T : ModuleBase

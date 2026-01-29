@@ -1,6 +1,6 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
@@ -13,7 +13,7 @@ namespace SK.Framework.Debugger
     public class ConsoleWindow : DebuggerWindow
     {
         private List<ConsoleWindowItem> m_Items;
-        private Vector2 m_listScroll;
+        private Vector2 m_ListScroll;
         private Vector2 m_DetailScroll;
         private int m_InfoCount;
         private int m_WarnCount;
@@ -23,12 +23,9 @@ namespace SK.Framework.Debugger
         private bool m_ShowWarn = true;
         private bool m_ShowError = true;
 
-        private int m_MaxCacheCount = 999;
+        private const int m_MaxCacheCount = 999;
         private string m_SearchContent;
         private ConsoleWindowItem m_Selected;
-
-        public int warnCount { get { return m_WarnCount; } }
-        public int errorCount { get { return m_ErrorCount; } }
 
         public override void OnInitialized()
         {
@@ -93,7 +90,7 @@ namespace SK.Framework.Debugger
             GUILayout.EndHorizontal();
 
             GUILayout.BeginVertical("Box", GUILayout.Height(Screen.height * .3f - 20f));
-            m_listScroll = GUILayout.BeginScrollView(m_listScroll);
+            m_ListScroll = GUILayout.BeginScrollView(m_ListScroll);
             if (m_Items.Count > 0)
             {
                 for (int i = m_Items.Count - 1; i >= 0; i--)

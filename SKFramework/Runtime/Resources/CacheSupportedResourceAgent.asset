@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a97eff461610edc49917697f7d5df35d, type: 3}
-  m_Name: Sample Resource Agent
+  m_Name: CacheSupportedResourceAgent
   m_EditorClassIdentifier: 
   m_Mode: 0
   m_AssetBundleUrl: D:/UnityProjects/SKFramework/Assets/StreamingAssets
-  m_EncryptEnable: 1
+  m_EncryptEnable: 0
   m_EncryptStrategy: SK.Framework.Resource.AssetBundleMaskEncryptStrategy
   m_SecretKey: 

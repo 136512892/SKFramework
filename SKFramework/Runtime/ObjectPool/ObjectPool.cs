@@ -1,6 +1,6 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
@@ -30,13 +30,21 @@ namespace SK.Framework.ObjectPool
             m_Logger = SKFramework.Module<Log>().GetLogger<ModuleLogger>();
         }
 
-        private void Update()
+        protected internal override void OnUpdate()
         {
+            base.OnUpdate();
             var pools = m_Dic.Values.GetEnumerator();
             while (pools.MoveNext())
             {
                 pools.Current?.Update();
             }
+        }
+
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            m_Dic.Clear();
+            m_Logger = null;
         }
 
         public bool Create<T>() where T : IPoolable, new()
@@ -52,7 +60,7 @@ namespace SK.Framework.ObjectPool
                     m_Logger.Info("[ObjectPool] Create object pool: {0}", typeof(T).FullName);
                     return true;
                 }
-                m_Logger.Error("[ObjectPool] A constructor with 0 arguments does not exist in type {0}.", typeof(T).FullName);
+                m_Logger.Error("[ObjectPool] A constructor with 0 arguments does not exist in the type {0}.", typeof(T).FullName);
                 return false;
             }
             m_Logger.Warning("[ObjectPool] An object pool of type {0} already exists.", typeof(T).FullName);

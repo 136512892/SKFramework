@@ -1,6 +1,6 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
@@ -26,10 +26,23 @@ namespace SK.Framework.FSM
             m_Logger = SKFramework.Module<Log>().GetLogger<ModuleLogger>();
         }
 
-        private void Update()
+        protected internal override void OnUpdate()
         {
+            base.OnUpdate();
             for (int i = 0; i < m_Machines.Count; i++)
                 m_Machines[i].OnUpdate();
+        }
+
+        protected internal override void OnTermination()
+        {
+            base.OnTermination();
+            for (int i = 0; i < m_Machines.Count; i++)
+            {
+                var machine = m_Machines[i];
+                machine?.OnTermination();
+            }
+            m_Machines.Clear();
+            m_Logger = null;
         }
 
         public T Create<T>(string stateMachineName) where T : IStateMachine, new()

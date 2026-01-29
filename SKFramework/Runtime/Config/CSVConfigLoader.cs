@@ -1,6 +1,6 @@
 /*============================================================
  * SKFramework
- * Copyright © 2019-2025 Zhang Shoukun. All rights reserved.
+ * Copyright © 2019-2026 Zhang Shoukun. All rights reserved.
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
@@ -15,7 +15,6 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using Unity.VisualScripting;
 
 using SK.Framework.Logger;
 using ILogger = SK.Framework.Logger.ILogger;
@@ -59,10 +58,7 @@ namespace SK.Framework.Config
 
         public override void LoadAsyncFromStreamingAssets<T>(string filePath, Action<bool, Dictionary<int, T>> onCompleted = null) where T : class
         {
-            var path = Path.Combine(Application.streamingAssetsPath, filePath);
-#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-            path = "file://" + path;
-#endif
+            var path = Path.Combine(IOUtility.streamingAssetsPath, filePath);
             SKFramework.Module<Config>().StartCoroutine(LoadCoroutine(path, ParseCSVText, onCompleted));
         }
 
@@ -413,6 +409,12 @@ namespace SK.Framework.Config
             {
                 SaveCurrentFile();
             }
+            if (m_SelectedTable != null && GUILayout.Button("PING", EditorStyles.toolbarButton, GUILayout.Width(40f)))
+            {
+                var assetPath = m_SelectedFilePath.Replace(Application.dataPath, "Assets");
+                var asset = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
+                EditorGUIUtility.PingObject(asset);
+            }
             GUILayout.EndHorizontal();
         }
 
@@ -479,7 +481,7 @@ namespace SK.Framework.Config
                 for (int i = 1; i < m_SelectedTable.Count; i++)
                 {
                     var color = GUI.backgroundColor;
-                    GUI.backgroundColor = i == m_SelectedRowIndex ? Color.cyan.WithAlpha(.5f) : color;
+                    GUI.backgroundColor = i == m_SelectedRowIndex ? Color.cyan : color;
                     GUILayout.BeginHorizontal(GUILayout.Height(22f));
                     string[] line = m_SelectedTable[i];
                     GUILayout.Label(i.ToString(), m_StyleRowLabel, GUILayout.Width(30f));
@@ -652,6 +654,10 @@ namespace SK.Framework.Config
 
             int columnCount = m_SelectedTable[0].Length;
             string[] newRow = new string[columnCount];
+            for (int i = 0; i < newRow.Length; i++)
+            {
+                newRow[i] = string.Empty;
+            }
             index += below ? 1 : 0;
             m_SelectedTable.Insert(index, newRow);
             m_SelectedRowIndex = index;
