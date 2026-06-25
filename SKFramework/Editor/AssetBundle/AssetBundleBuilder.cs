@@ -6,14 +6,16 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+
+using SK.Framework.UI;
 
 namespace SK.Framework.Resource
 {
@@ -25,6 +27,12 @@ namespace SK.Framework.Resource
         private string[] m_EncryptStrategies;
         private int m_CurrentStrategyIndex;
         private AnimBool m_EncryptAnimBool;
+        public AssetBundleProfile profile;
+
+        public AssetBundleBuilder(AssetBundleProfile profile)
+        {
+            this.profile = profile;
+        }
 
         public void OnEnable(EditorWindow window)
         {
@@ -40,6 +48,7 @@ namespace SK.Framework.Resource
                 ? -1 : Array.FindIndex(m_EncryptStrategies, m => m == m_Data.encrypt.strategy);
             m_EncryptAnimBool = new AnimBool(m_Data.encrypt.enable, window.Repaint);
         }
+
         public void OnDisable()
         {
             CacheSave(m_CacheFilePath);
@@ -69,6 +78,7 @@ namespace SK.Framework.Resource
             }
             return false;
         }
+
         private void CacheSave(string filePath)
         {
             using (FileStream fs = File.Create(filePath))
@@ -89,6 +99,7 @@ namespace SK.Framework.Resource
             OnEncryptGUI();
 
             GUILayout.FlexibleSpace();
+            GUI.enabled = profile != null;
             if (GUILayout.Button("Build"))
             {
                 if (EditorUtility.DisplayDialog("提醒",
@@ -98,8 +109,10 @@ namespace SK.Framework.Resource
                     GUIUtility.ExitGUI();
                 }
             }
+            GUI.enabled = true;
             EditorGUILayout.EndScrollView();
         }
+
         private void OnBuildSettingsGUI()
         {
             m_Data.version = EditorGUILayout.IntField("Version", m_Data.version);
@@ -116,6 +129,7 @@ namespace SK.Framework.Resource
             m_Data.compressionType = (BuildTabData.CompressionType)EditorGUILayout.EnumPopup("Compression", m_Data.compressionType);
             m_Data.copy2StreamingAssets = EditorGUILayout.Toggle(GUIContents.copy2StreamingAssets, m_Data.copy2StreamingAssets);
         }
+
         private void OnOptionsGUI()
         {
             GUILayout.Label("Build Options", EditorStyles.boldLabel);
@@ -161,6 +175,22 @@ namespace SK.Framework.Resource
             EditorGUILayout.EndFadeGroup();
         }
 
+        private List<AssetBundleBuild> GetBuildsFromProfile()
+        {
+            var builds = new List<AssetBundleBuild>();
+            foreach (var entry in profile.entries)
+            {
+                if (entry.assetPaths == null || entry.assetPaths.Count == 0)
+                    continue;
+                builds.Add(new AssetBundleBuild
+                {
+                    assetBundleName = entry.bundleName,
+                    assetNames = entry.assetPaths.ToArray()
+                });
+            }
+            return builds;
+        }
+
         private void BuildAssetBundle()
         {
             try
@@ -168,13 +198,18 @@ namespace SK.Framework.Resource
                 DateTime beginTime = DateTime.Now;
                 string outputPath = string.Format("{0}/AssetBundles", m_Data.outputPath);
                 if (!Directory.Exists(outputPath))
-                {
-                    Debug.Log(string.Format("路径不存在，进行创建 {0}", outputPath));
                     Directory.CreateDirectory(outputPath);
-                }
+
+                List<AssetBundleBuild> builds = GetBuildsFromProfile();
+                if (builds.Count == 0)
+                    return;
 
                 AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles(
-                    outputPath, m_Data.GetBuildOptions(), m_Data.buildTarget);
+                    outputPath,
+                    builds.ToArray(),
+                    m_Data.GetBuildOptions(),
+                    m_Data.buildTarget);
+
                 string[] assetBundles = manifest.GetAllAssetBundles();
 
                 if (m_Data.encrypt.enable && !string.IsNullOrEmpty(m_Data.encrypt.strategy))
@@ -192,6 +227,7 @@ namespace SK.Framework.Resource
                         CopyDirectory(outputPath, Application.streamingAssetsPath);
                     AssetDatabase.Refresh();
                 }
+
                 double duration = (DateTime.Now - beginTime).TotalSeconds;
                 Debug.Log(string.Format("构建完成，耗时{0}s", duration));
             }
@@ -200,6 +236,7 @@ namespace SK.Framework.Resource
                 Debug.LogError(e);
             }
         }
+
         private void EncryptAssetBundle(AssetBundleEncryptStrategy strategy, string[] assetBundles, string outputPath)
         {
             for (int i = 0; i < assetBundles.Length; i++)
@@ -215,22 +252,29 @@ namespace SK.Framework.Resource
                 }
             }
         }
+
         private void BuildAssetInfoMap(string[] assetBundles, string outputPath)
         {
-            List<AssetInfo> assets = new List<AssetInfo>();
-            List<AssetBundleInfo> abs = new List<AssetBundleInfo>();
+            var assets = new List<AssetInfo>();
+            var abs = new List<AssetBundleInfo>();
+
             for (int i = 0; i < assetBundles.Length; i++)
             {
-                string[] paths = AssetDatabase.GetAssetPathsFromAssetBundle(assetBundles[i]);
+                var entry = profile.GetEntry(assetBundles[i]);
+                var paths = entry?.assetPaths?.ToArray() ?? new string[0];
                 for (int j = 0; j < paths.Length; j++)
                 {
                     assets.Add(new AssetInfo(null, paths[j], assetBundles[i]));
                 }
+
                 string filePath = outputPath + "/" + assetBundles[i];
                 string md5 = MD5Utility.CalculateFileMD5(filePath);
-                abs.Add(new AssetBundleInfo(assetBundles[i], md5, new FileInfo(filePath).Length));
+                var tags = entry?.tags?.ToArray() ?? new string[0];
+                abs.Add(new AssetBundleInfo(assetBundles[i], md5, new FileInfo(filePath).Length, tags));
             }
-            string json = JsonUtility.ToJson(new AssetsInfo(m_Data.version.ToString(), assets, abs));
+
+            var viewAssets = BuildUIViewAssetInfoMap();
+            string json = JsonUtility.ToJson(new AssetsInfo(m_Data.version.ToString(), assets, abs, viewAssets));
             string mapPath = Path.Combine(outputPath, "map.json");
             using (FileStream fs = File.Create(mapPath))
             {
@@ -238,6 +282,32 @@ namespace SK.Framework.Resource
                 fs.Write(bytes, 0, bytes.Length);
             }
         }
+
+        private List<UIView.AssetInfo> BuildUIViewAssetInfoMap()
+        {
+            var types = TypeCache.GetTypesDerivedFrom<MonoBehaviour>()
+                .Where(m => typeof(IUIView).IsAssignableFrom(m) && !m.IsAbstract)
+                .Select(m => m.Name)
+                .ToArray();
+
+            var guids = AssetDatabase.FindAssets("t:Prefab");
+            var list = new List<UIView.AssetInfo>();
+            foreach (var guid in guids)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var fileName = Path.GetFileNameWithoutExtension(path);
+                if (types.Contains(fileName))
+                {
+                    list.Add(new UIView.AssetInfo
+                    {
+                        name = fileName,
+                        path = path,
+                    });
+                }
+            }
+            return list;
+        }
+
         private void CopyDirectory(string sourceDir, string destDir)
         {
             if (!Directory.Exists(destDir))
@@ -342,9 +412,9 @@ namespace SK.Framework.Resource
             public static GUIContent ignoreTypeTreeChanges = new GUIContent(
                 "Ignore Type Tree Changes", "Ignore the type tree changes when doing the incremental build check.");
             public static GUIContent appendHash = new GUIContent(
-                "Append Hash", "Append the hash to to asset bundle name.");
+                "Append Hash", "Append the hash to the asset bundle name.");
             public static GUIContent strictMode = new GUIContent(
-                "Strict Mode", " Do not allow the build to succeed if any errors are reporting during it.");
+                "Strict Mode", "Do not allow the build to succeed if any errors are reporting during it.");
             public static GUIContent dryRunBuild = new GUIContent(
                 "Dry Run Build", "Do a dry run build.");
         }

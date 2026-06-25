@@ -5,6 +5,8 @@
  *============================================================*/
 
 using System;
+using System.IO;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,6 +20,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 #endif
 
+using SK.Framework.UI;
 using SK.Framework.Logger;
 using ILogger = SK.Framework.Logger.ILogger;
 
@@ -49,6 +52,8 @@ namespace SK.Framework.Resource
         protected readonly Dictionary<string, AssetInfo> m_Assets = new Dictionary<string, AssetInfo>();
 
         protected readonly Dictionary<string, AssetBundleInfo> m_AssetBundles = new Dictionary<string, AssetBundleInfo>();
+
+        protected readonly Dictionary<string, string> m_UIViewAssets = new Dictionary<string, string>();
 
         protected const string m_AssetBundleCache = "AssetBundleCache";
 
@@ -163,6 +168,47 @@ namespace SK.Framework.Resource
             }
         }
 
+        public void LoadAssetBundlesWithTag(string tag, Action onCompleted = null, Action<float> onLoading = null)
+        {
+#if UNITY_EDITOR
+            if (m_Mode != MODE.EDITOR)
+            {
+                SKFramework.Module<Resource>().StartCoroutine(LoadAssetBundlesAsyncWithTag(tag, onCompleted, onLoading));
+            }
+            else
+            {
+                onCompleted?.Invoke();
+            }
+#else
+            SKFramework.Module<Resource>().StartCoroutine(LoadAssetBundlesAsyncWithTag(tag, onCompleted, onLoading));
+#endif
+        }
+
+        public string GetUIViewAssetPath<T>() where T : MonoBehaviour, IUIView
+        {
+#if UNITY_EDITOR
+            if (m_UIViewAssets.Count == 0)
+            {
+                var types = TypeCache.GetTypesDerivedFrom<MonoBehaviour>()
+               .Where(m => typeof(IUIView).IsAssignableFrom(m) && !m.IsAbstract)
+               .Select(m => m.Name)
+               .ToArray();
+
+                var guids = AssetDatabase.FindAssets("t:Prefab");
+                var list = new List<UIView.AssetInfo>();
+                foreach (var guid in guids)
+                {
+                    var path = AssetDatabase.GUIDToAssetPath(guid);
+                    var fileName = Path.GetFileNameWithoutExtension(path);
+                    if (types.Contains(fileName))
+                        m_UIViewAssets[fileName] = path;
+                }
+            }
+#endif
+            m_UIViewAssets.TryGetValue(typeof(T).Name, out var assetPath);
+            return assetPath;
+        }
+
         private void EncryptStrategyInit()
         {
             if (m_EncryptEnable)
@@ -225,16 +271,20 @@ namespace SK.Framework.Resource
         }
         protected IEnumerator LoadAssetAsyncCoroutine<T>(string assetPath, Action<bool, T> onCompleted, Action<float> onLoading) where T : Object
         {
-            Object asset = null;
 #if UNITY_EDITOR
             if (m_Mode == MODE.EDITOR)
             {
                 onLoading?.Invoke(1f);
 
-                asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+                var asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
                 if (asset == null)
                 {
                     m_Logger.Error("[Resource] Load asset at path {0} failed.", assetPath);
+                    onCompleted?.Invoke(false, null);
+                }
+                else
+                {
+                    onCompleted?.Invoke(true, asset);
                 }
             }
             else yield return Func();
@@ -244,9 +294,7 @@ namespace SK.Framework.Resource
             IEnumerator Func()
             {
                 if (m_IsMapLoading)
-                {
                     yield return new WaitUntil(() => m_IsMapLoading == false);
-                }
 
                 if (!m_Assets.TryGetValue(assetPath, out var assetInfo))
                 {
@@ -254,55 +302,84 @@ namespace SK.Framework.Resource
                     yield break;
                 }
 
-                if (!m_AssetBundleManifest)
+                yield return SKFramework.Module<Resource>().StartCoroutine(LoadAssetBundleAsync(assetInfo.abName, () => 
                 {
-                    if (m_IsAssetBundleManifestLoading)
+                    var asset = m_AssetBundlesDic[assetInfo.abName].LoadAsset<T>(assetInfo.name);
+                    if (asset == null)
                     {
-                        yield return new WaitUntil(() => m_AssetBundleManifest);
+                        m_Logger.Error("[Resource] Load asset at path {0} failed.", assetPath);
+                        onCompleted?.Invoke(false, null);
                     }
                     else
                     {
-                        m_IsAssetBundleManifestLoading = true;
-                        yield return LoadAssetBundleManifestAsync();
+                        onCompleted?.Invoke(true, asset);
                     }
-                }
+                }, onLoading));
+            }
+        }
+        protected IEnumerator LoadAssetBundleAsync(string assetBundleName, Action onCompleted, Action<float> onLoading)
+        {
+            if (m_IsMapLoading)
+                yield return new WaitUntil(() => m_IsMapLoading == false);
 
-                var dependencies = m_AssetBundleManifest.GetAllDependencies(assetInfo.abName);
-                bool flag = m_AssetBundleManifest;
-                if (flag)
+            if (!m_AssetBundleManifest)
+            {
+                if (m_IsAssetBundleManifestLoading)
                 {
-                    for (int i = 0; i < dependencies.Length; i++)
-                    {
-                        if (!m_AssetBundlesDic.ContainsKey(dependencies[i]))
-                        {
-                            flag = false;
-                            break;
-                        }
-                    }
-                }
-                if (!flag)
-                {
-                    yield return LoadAssetBundleDependenciesAsync(dependencies, onLoading);
-                }
-
-                if (!m_AssetBundlesDic.ContainsKey(assetInfo.abName))
-                {
-                    yield return LoadAssetBundleAsync(assetInfo.abName, onLoading);
+                    yield return new WaitUntil(() => m_AssetBundleManifest);
                 }
                 else
                 {
-                    onLoading?.Invoke(1f);
-                }
-                asset = m_AssetBundlesDic[assetInfo.abName].LoadAsset<T>(assetInfo.name);
-                if (asset == null)
-                {
-                    m_Logger.Error("[Resource] Load asset at path {0} failed.", assetPath);
+                    m_IsAssetBundleManifestLoading = true;
+                    yield return LoadAssetBundleManifestAsync();
                 }
             }
-            if (asset != null)
-                onCompleted?.Invoke(true, asset as T);
+
+            var dependencies = m_AssetBundleManifest.GetAllDependencies(assetBundleName);
+            bool flag = m_AssetBundleManifest;
+            if (flag)
+            {
+                for (int i = 0; i < dependencies.Length; i++)
+                {
+                    if (!m_AssetBundlesDic.ContainsKey(dependencies[i]))
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+            }
+            if (!flag)
+            {
+                yield return LoadAssetBundleDependenciesAsync(dependencies, onLoading);
+            }
+
+            if (!m_AssetBundlesDic.ContainsKey(assetBundleName))
+            {
+                yield return LoadAssetBundleAsync(assetBundleName, onLoading);
+            }
             else
-                onCompleted?.Invoke(false, null);
+            {
+                onLoading?.Invoke(1f);
+            }
+            onCompleted?.Invoke();
+        }
+        protected IEnumerator LoadAssetBundlesAsyncWithTag(string tag, Action onCompleted, Action<float> onLoading)
+        {
+            yield return null;
+            if (m_IsMapLoading)
+                yield return new WaitUntil(() => m_IsMapLoading);
+            var assetBundleNames = new List<string>();
+            foreach (var assetBundle in m_AssetBundles.Values)
+            {
+                if (assetBundle.tags.Contains(tag))
+                    assetBundleNames.Add(assetBundle.name);
+            }
+            for (int i = 0; i < assetBundleNames.Count; i++)
+            {
+                var assetBundle = assetBundleNames[i];
+                yield return SKFramework.Module<Resource>().StartCoroutine(LoadAssetBundleAsync(assetBundle, null, onLoading));
+            }
+            onCompleted?.Invoke();
         }
         protected IEnumerator LoadSceneAsyncCoroutine(string sceneAssetPath, Action<bool> onCompleted, Action<float> onLoading)
         {
@@ -400,6 +477,33 @@ namespace SK.Framework.Resource
         }
 
         protected abstract IEnumerator LoadAssetsMapAsync();
-        protected abstract IEnumerator LoadAssetBundleAsync(string assetBundleName, Action<float> onLoading = null);
+        protected abstract IEnumerator LoadAssetBundleAsync(string assetBundleName, Action<float> onLoading);
+
+        protected AssetsInfo AssetsMapParse(string content)
+        {
+            var assetsInfo = JsonUtility.FromJson<AssetsInfo>(content);
+            m_Logger.Debug("[Resource] {0}", content);
+            if (assetsInfo != null)
+            {
+                for (int i = 0; i < assetsInfo.assets.Count; i++)
+                {
+                    var info = assetsInfo.assets[i];
+                    info.name = Path.GetFileNameWithoutExtension(info.path);
+                    m_Assets[info.path] = info;
+                }
+                for (int i = 0; i < assetsInfo.assetBundles.Count; i++)
+                {
+                    var info = assetsInfo.assetBundles[i];
+                    m_AssetBundles[info.name] = info;
+                }
+                for (int i = 0; i < assetsInfo.viewAssets.Count; i++)
+                {
+                    var info = assetsInfo.viewAssets[i];
+                    m_UIViewAssets[info.name] = info.path;
+                }
+                m_Logger.Info("[Resource] Version: {0}", assetsInfo.version);
+            }
+            return assetsInfo;
+        }
     }
 }

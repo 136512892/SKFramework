@@ -5,8 +5,11 @@
  *============================================================*/
 
 using System;
+
 using UnityEngine;
 using Object = UnityEngine.Object;
+
+using SK.Framework.UI;
 
 namespace SK.Framework.Resource
 {
@@ -50,6 +53,17 @@ namespace SK.Framework.Resource
         public bool UnloadScene(string sceneAssetPath)
         {
             return m_Agent.UnloadScene(sceneAssetPath);
+        }
+
+        public bool TryGetUIViewAssetPath<T>(out string path) where T : MonoBehaviour, IUIView
+        {
+            path = m_Agent.GetUIViewAssetPath<T>();
+            return !string.IsNullOrEmpty(path); 
+        }
+
+        public void LoadAssetBundlesWithTag(string tag, Action onCompleted = null, Action<float> onLoading = null)
+        {
+            m_Agent.LoadAssetBundlesWithTag(tag, onCompleted, onLoading);
         }
     }
 }

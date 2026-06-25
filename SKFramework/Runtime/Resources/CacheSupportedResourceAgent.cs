@@ -39,29 +39,7 @@ namespace SK.Framework.Resource
 #endif
                     if (flag)
                     {
-                        var assetsInfo = JsonUtility.FromJson<AssetsInfo>(request.downloadHandler.text);
-                        if (assetsInfo != null)
-                        {
-                            int counter = 0;
-                            for (int i = 0; i < assetsInfo.assets.Count; i++)
-                            {
-                                var info = assetsInfo.assets[i];
-                                info.name = Path.GetFileNameWithoutExtension(info.path);
-                                m_Assets[info.path] = info;
-                                if (++counter == 100)
-                                {
-                                    counter = 0;
-                                    yield return null;
-                                }
-                            }
-                            for (int i = 0; i < assetsInfo.assetBundles.Count; i++)
-                            {
-                                var info = assetsInfo.assetBundles[i];
-                                m_AssetBundles[info.name] = info;
-                                yield return null;
-                            }
-                            m_Logger.Info("[Resource] Version: {0}", assetsInfo.version);
-                        }
+                        var assetsInfo = AssetsMapParse(request.downloadHandler.text);
                         var cachePath = Path.Combine(Application.persistentDataPath, m_AssetBundleCache, "map.json");
                         if (File.Exists(cachePath))
                         {
@@ -139,7 +117,7 @@ namespace SK.Framework.Resource
             }
         }
 
-        protected override IEnumerator LoadAssetBundleAsync(string assetBundleName, Action<float> onLoading = null)
+        protected override IEnumerator LoadAssetBundleAsync(string assetBundleName, Action<float> onLoading)
         {
             DateTime beginTime = DateTime.Now;
             if (m_LoadingDic.TryGetValue(assetBundleName, out var target))

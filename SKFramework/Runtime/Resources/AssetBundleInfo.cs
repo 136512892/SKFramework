@@ -20,17 +20,20 @@ namespace SK.Framework.Resource
         public string name;
         public string md5;
         public long size;
-        
+        public string[] tags;
+
         public AssetBundleInfo() { }
 
-        public AssetBundleInfo(string name, string md5, long size)
+        public AssetBundleInfo(string name, string md5, long size, string[] tags)
         {
             this.name = name;
             this.md5 = md5;
             this.size = size;
+            this.tags = tags;
         }
     }
 
+#if UNITY_EDITOR
     [Serializable]
     public class AssetBundleEditorInfo
     {
@@ -44,7 +47,6 @@ namespace SK.Framework.Resource
 
         public string memorySizeFormat;
 
-#if UNITY_EDITOR
         public AssetBundleEditorInfo(string name)
         {
             this.name = name;
@@ -73,26 +75,15 @@ namespace SK.Framework.Resource
 
         public void DeleteAsset(string assetPath)
         {
-            int index = assets.FindIndex(m => m.path == assetPath);
+            var index = assets.FindIndex(m =>m.path == assetPath);
             if (index != -1)
             {
                 var asset = assets[index];
-                assets.RemoveAt(index);
+                assets.Remove(asset);
                 memorySize -= asset.memorySize;
                 memorySizeFormat = EditorUtility.FormatBytes(memorySize);
             }
         }
-
-        public void Rename(string newName)
-        {
-            name = AssetBundleUtility.GetUniqueAssetBundleNameRecursive(newName);
-            for (int i = 0; i < assets.Count; i++)
-            {
-                AssetImporter importer = AssetImporter.GetAtPath(assets[i].path);
-                if (importer != null)
-                    importer.assetBundleName = name;
-            }
-        }
-#endif
     }
+#endif
 }
