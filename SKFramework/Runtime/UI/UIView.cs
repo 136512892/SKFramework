@@ -4,12 +4,20 @@
  * Feedback: mailto:136512892@qq.com
  *============================================================*/
 
+using System;
 using UnityEngine;
 
 namespace SK.Framework.UI
 {
     public abstract class UIView : MonoBehaviour, IUIView
     {
+        [Serializable]
+        public class AssetInfo
+        {
+            public string name;
+            public string path;
+        }
+
         public string viewName { get; set; }
 
         public bool isActive => gameObject.activeSelf;

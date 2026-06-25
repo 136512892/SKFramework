@@ -160,6 +160,14 @@ namespace SK.Framework.UI
             LoadViewAsync(typeof(T).Name, assetPath, level, data, onCompleted);
         }
 
+        public void LoadViewAsync<T>(ViewLevel level = ViewLevel.COMMON, object data = null, Action<T> onCompleted = null) where T : MonoBehaviour, IUIView
+        {
+            if (SKFramework.Module<Resource.Resource>().TryGetUIViewAssetPath<T>(out var path))
+                LoadViewAsync(typeof(T).Name, path, level, data, onCompleted);
+            else
+                m_Logger.Error("[UI] Failed to find the asset path for {0}.", typeof(T).Name);
+        }
+
         public T OpenView<T>(string viewName, ViewLevel level = ViewLevel.COMMON,
             object data = null) where T : MonoBehaviour, IUIView
         {
