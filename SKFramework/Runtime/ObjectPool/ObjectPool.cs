@@ -117,20 +117,6 @@ namespace SK.Framework.ObjectPool
                 m_Logger.Warning("[ObjectPool] An object pool of type {0} does not exists.", typeof(T).FullName);
             }
         }
-
-        internal void Remove(IObjectPool pool)
-        {
-            var type = pool.GetType();
-            if (m_Dic.ContainsKey(type))
-            {
-                m_Dic.Remove(type);
-                m_Logger.Info("[ObjectPool] Remove object pool: {0}", type.FullName);
-            }
-            else
-            {
-                m_Logger.Warning("[ObjectPool] An object pool of type {0} does not exists.", type.FullName);
-            }
-        }
     }
 
     public class ObjectPool<T> : IObjectPool where T : IPoolable
