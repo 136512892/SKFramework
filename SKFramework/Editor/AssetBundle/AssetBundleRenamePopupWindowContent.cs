@@ -30,15 +30,37 @@ namespace SK.Framework.Resource
 
         public override void OnGUI(Rect rect)
         {
+            HandleKeyboardEvents();
+
             EditorGUILayout.BeginHorizontal();
             newName = EditorGUILayout.TextField(newName);
             if (GUILayout.Button("Ok", GUILayout.Width(40f)))
-            {
-                if (!string.IsNullOrEmpty(newName) && newName != m_AssetBundleInfo.name)
-                    m_Configure.RenameBundle(m_AssetBundleInfo.name, newName.ToLower());
-                editorWindow.Close();
-            }
+                OnInputEnd();
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void HandleKeyboardEvents()
+        {
+            Event current = Event.current;
+            if (current.type != EventType.KeyDown)
+                return;
+            switch (current.keyCode)
+            {
+                case KeyCode.Return:
+                case KeyCode.KeypadEnter:
+                    {
+                        OnInputEnd();
+                        Event.current.Use();
+                        break;
+                    }
+            }
+        }
+
+        private void OnInputEnd()
+        {
+            if (!string.IsNullOrEmpty(newName) && newName != m_AssetBundleInfo.name)
+                m_Configure.RenameBundle(m_AssetBundleInfo.name, newName.ToLower());
+            editorWindow.Close();
         }
     }
 
