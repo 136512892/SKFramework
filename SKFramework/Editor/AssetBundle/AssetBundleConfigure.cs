@@ -175,7 +175,6 @@ namespace SK.Framework.Resource
             DrawSplitLine(2f, true);
             OnAssetBundleListGUI();
             DragDropObject2AssetBundleListRectCheck();
-            GUILayout.FlexibleSpace();
             OnAssetBundleDetailGUI();
             DrawSplitLine(2f, true);
             OnRedundanciesGUI();
@@ -817,7 +816,7 @@ namespace SK.Framework.Resource
                 {
                     string path = AssetDatabase.GetAssetPath(obj);
                     if (string.IsNullOrEmpty(path)) continue;
-                    string bundleName = "ab_" + System.IO.Path.GetFileNameWithoutExtension(path);
+                    string bundleName = "ab_" + System.IO.Path.GetFileNameWithoutExtension(path).ToLower();
                     var entry = m_Profile.GetOrCreateEntry(bundleName);
                     if (!entry.assetPaths.Contains(path))
                         entry.assetPaths.Add(path);
